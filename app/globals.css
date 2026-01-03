@@ -1,8 +1,17 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "DuukaSans";
+  src: url("/fonts/weblysleekuisb.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #0f172a; /* Slate 900 */
+  --font-sans: "DuukaSans", Arial, Helvetica, sans-serif;
   --primary: #3b82f6; /* Blue 500 */
   --primary-foreground: #ffffff;
   --secondary: #f97316; /* Orange 500 */
@@ -65,5 +74,5 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
 }

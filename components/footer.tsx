@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Facebook, Instagram, Linkedin, Mail, Phone, MapPin, Send } from 'lucide-react';
+import { Facebook, Instagram, Linkedin, Mail, Phone } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -11,7 +11,7 @@ const Footer = () => {
         <div className="grid md:grid-cols-2 gap-8 items-center border-b border-slate-700 pb-12 mb-12">
             <div>
                 <h3 className="text-2xl font-bold text-white mb-2">Join our newsletter</h3>
-                <p className="text-slate-400">We'll send you a nice letter once per week. No spam.</p>
+                <p className="text-slate-400">We&rsquo;ll send you a nice letter once per week. No spam.</p>
             </div>
             <div className="flex w-full gap-2">
                 <input 
