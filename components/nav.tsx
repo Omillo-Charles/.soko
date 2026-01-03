@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Search, ShoppingCart, User, Heart, Menu, Phone } from "lucide-react";
+import { Search, ShoppingCart, User, Heart, Menu, Phone, Home, Store, Users } from "lucide-react";
 
 const Navbar = () => {
   return (
@@ -40,10 +40,18 @@ const Navbar = () => {
             {/* Search Bar */}
             <div className="flex-1 w-full max-w-2xl md:mx-4 relative order-last md:order-none">
                 <div className="flex w-full">
+                    <select className="hidden sm:block border border-r-0 border-slate-300 rounded-l-md bg-slate-50 text-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent cursor-pointer max-w-[150px]">
+                        <option value="all">All Categories</option>
+                        <option value="electronics">Electronics</option>
+                        <option value="fashion">Fashion</option>
+                        <option value="home">Home & Garden</option>
+                        <option value="beauty">Beauty</option>
+                        <option value="sports">Sports</option>
+                    </select>
                     <input 
                         type="text" 
                         placeholder="Search..." 
-                        className="w-full border border-r-0 border-slate-300 rounded-l-md py-2 px-4 text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent placeholder:text-slate-400 text-sm md:text-base"
+                        className="w-full border border-slate-300 rounded-l-md sm:rounded-l-none border-r-0 py-2 px-4 text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent placeholder:text-slate-400 text-sm md:text-base"
                     />
                     <button className="bg-primary text-white px-4 md:px-6 rounded-r-md hover:bg-blue-600 transition-colors flex items-center justify-center cursor-pointer">
                         <Search className="w-5 h-5" />
@@ -97,12 +105,16 @@ const Navbar = () => {
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 shadow-[0_-1px_3px_rgba(0,0,0,0.1)] z-50">
           <div className="flex justify-around items-center p-2 text-[10px] font-medium text-slate-600">
               <Link href="/" className="flex flex-col items-center gap-1 p-2 hover:text-primary">
-                  <Menu className="w-5 h-5" />
+                  <Home className="w-5 h-5" />
                   <span>Home</span>
               </Link>
               <Link href="/shop" className="flex flex-col items-center gap-1 p-2 hover:text-primary">
-                  <Search className="w-5 h-5" />
+                  <Store className="w-5 h-5" />
                   <span>Shop</span>
+              </Link>
+              <Link href="/vendors" className="flex flex-col items-center gap-1 p-2 hover:text-primary">
+                  <Users className="w-5 h-5" />
+                  <span>Vendors</span>
               </Link>
               <Link href="/cart" className="flex flex-col items-center gap-1 p-2 hover:text-primary relative">
                   <div className="relative">
