@@ -6,61 +6,6 @@ import { useRef } from "react";
 
 const items = [
   {
-    name: "Clothing & Apparel",
-    href: "/shop?cat=clothing-apparel",
-    image: "/categories/clothing/clothing.jpg",
-  },
-  {
-    name: "Footwear",
-    href: "/shop?cat=footwear",
-    image: "/categories/footwear/footwear.jpg",
-  },
-  {
-    name: "Fashion Accessories",
-    href: "/shop?cat=fashion-accessories",
-    image: "/categories/fashion/fashionaccessories.jpg",
-  },
-  {
-    name: "Electronics",
-    href: "/shop?cat=electronics",
-    image: "/categories/electronics/electronics.jpg",
-  },
-  {
-    name: "Phone Accessories",
-    href: "/shop?cat=phone-accessories",
-    image: "/categories/phone accessories/phones.jpg",
-  },
-  {
-    name: "Home Appliances",
-    href: "/shop?cat=home-appliances",
-    image: "/categories/home appliances/home.jpg",
-  },
-  {
-    name: "Beauty Products",
-    href: "/shop?cat=beauty-products",
-    image: "/categories/beauty products/beauty.jpg",
-  },
-  {
-    name: "Personal Care Items",
-    href: "/shop?cat=personal-care",
-    image: "/categories/personal care/personal.jpg",
-  },
-  {
-    name: "Watches & Jewelry",
-    href: "/shop?cat=watches-jewelry",
-    image: "/categories/jewelary/watches.jpg",
-  },
-  {
-    name: "Groceries & Packaged Foods",
-    href: "/shop?cat=groceries-packaged-foods",
-    image: "/categories/groceries and foods/groceries.jpg",
-  },
-  {
-    name: "Furniture",
-    href: "/shop?cat=furniture",
-    image: "/categories/furniture/furniture.jpg",
-  },
-  {
     name: "Home Décor",
     href: "/shop?cat=home-decor",
     image: "/categories/home decor/decor.jpg",
@@ -129,6 +74,61 @@ const items = [
     name: "Event & Party Supplies",
     href: "/shop?cat=event-party-supplies",
     image: "/categories/events and parties/event.jpg",
+  },
+  {
+    name: "Clothing & Apparel",
+    href: "/shop?cat=clothing-apparel",
+    image: "/categories/clothing/clothing.jpg",
+  },
+  {
+    name: "Footwear",
+    href: "/shop?cat=footwear",
+    image: "/categories/footwear/footwear.jpg",
+  },
+  {
+    name: "Fashion Accessories",
+    href: "/shop?cat=fashion-accessories",
+    image: "/categories/fashion/fashionaccessories.jpg",
+  },
+  {
+    name: "Electronics",
+    href: "/shop?cat=electronics",
+    image: "/categories/electronics/electronics.jpg",
+  },
+  {
+    name: "Phone Accessories",
+    href: "/shop?cat=phone-accessories",
+    image: "/categories/phone accessories/phones.jpg",
+  },
+  {
+    name: "Home Appliances",
+    href: "/shop?cat=home-appliances",
+    image: "/categories/home appliances/home.jpg",
+  },
+  {
+    name: "Beauty Products",
+    href: "/shop?cat=beauty-products",
+    image: "/categories/beauty products/beauty.jpg",
+  },
+  {
+    name: "Personal Care Items",
+    href: "/shop?cat=personal-care",
+    image: "/categories/personal care/personal.jpg",
+  },
+  {
+    name: "Watches & Jewelry",
+    href: "/shop?cat=watches-jewelry",
+    image: "/categories/jewelary/watches.jpg",
+  },
+  {
+    name: "Groceries & Packaged Foods",
+    href: "/shop?cat=groceries-packaged-foods",
+    image: "/categories/groceries and foods/groceries.jpg",
+  },
+  {
+    name: "Furniture",
+    href: "/shop?cat=furniture",
+    image: "/categories/furniture/furniture.jpg",
   },
 ];
 
