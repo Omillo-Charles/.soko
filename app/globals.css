@@ -26,6 +26,12 @@
   --input: #e2e8f0;
   --ring: #3b82f6;
   --radius: 0.5rem;
+  
+  /* Minimalist Color Combo */
+  --brand-light: #f8fafc;
+  --brand-soft-blue: #eff6ff;
+  --brand-soft-indigo: #eef2ff;
+  --brand-deep: #0f172a;
 }
 
 @theme inline {
@@ -44,6 +50,10 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-brand-light: var(--brand-light);
+  --color-brand-soft-blue: var(--brand-soft-blue);
+  --color-brand-soft-indigo: var(--brand-soft-indigo);
+  --color-brand-deep: var(--brand-deep);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
