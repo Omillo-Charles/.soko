@@ -12,7 +12,8 @@ import {
   Instagram,
   Youtube,
   Search,
-  BadgeCheck
+  BadgeCheck,
+  X
 } from 'lucide-react';
 
 const XIcon = () => (
@@ -21,7 +22,7 @@ const XIcon = () => (
   </svg>
 );
 
-const RightSideBar = () => {
+const RightSidebar = () => {
   const topVendors = [
     { name: "TechGiant", rating: 4.9, color: "bg-blue-500", icon: Store },
     { name: "StyleVault", rating: 4.8, color: "bg-purple-500", icon: Store },
@@ -35,7 +36,7 @@ const RightSideBar = () => {
   ];
 
   return (
-    <aside className="hidden lg:flex flex-col w-[350px] h-[calc(100vh-64px)] fixed top-[64px] right-0 p-6 gap-6 overflow-y-auto no-scrollbar border-l border-slate-50 bg-white z-30">
+    <aside className="hidden lg:flex flex-col w-[350px] h-[calc(100vh-80px)] fixed top-20 right-0 p-6 gap-6 overflow-y-auto no-scrollbar border-l border-slate-50 bg-white z-30">
       {/* Search Bar Widget */}
       <div className="relative group">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors" />
@@ -55,7 +56,7 @@ const RightSideBar = () => {
           {topVendors.map((vendor) => (
             <div key={vendor.name} className="flex items-center justify-between group cursor-pointer">
               <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 ${vendor.color} rounded-xl flex items-center justify-center text-white shadow-lg shadow-${vendor.color.split('-')[1]}-200 group-hover:scale-110 transition-transform`}>
+                <div className={`w-10 h-10 ${vendor.color} rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-200 group-hover:scale-110 transition-transform`}>
                   <vendor.icon className="w-5 h-5" />
                 </div>
                 <div>
@@ -117,4 +118,4 @@ const RightSideBar = () => {
   );
 };
 
-export default RightSideBar;
+export default RightSidebar;
