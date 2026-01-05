@@ -162,7 +162,7 @@ const ContactPage = () => {
               <div className="text-sm text-slate-600">Sat: 10:00 AM – 4:00 PM</div>
               <div className="text-sm text-slate-600">Sun: Closed</div>
               <div className="mt-6 font-semibold">Follow Us</div>
-              <div className="mt-2 flex items-center gap-3">
+              <div className="mt-2 flex flex-wrap items-center gap-3">
                 <a href="#" aria-label="X" className="p-3 rounded-full bg-black text-white shadow hover:scale-105 transition">
                   <XIcon />
                 </a>
