@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ShoppingCart, User, Heart, Menu, Phone, Home, Store, Users } from "lucide-react";
+import { ShoppingCart, User, Heart, Menu, Phone, Home, Store } from "lucide-react";
 import SearchBar from "@/components/searchBar";
 
 const Navbar = () => {
@@ -112,12 +112,6 @@ const Navbar = () => {
                 Shop
               </Link>
               <Link
-                href="/vendors"
-                className="hover:text-slate-200 transition-colors"
-              >
-                Vendors
-              </Link>
-              <Link
                 href="/blog"
                 className="hover:text-slate-200 transition-colors"
               >
@@ -153,13 +147,6 @@ const Navbar = () => {
           >
             <Store className="w-5 h-5" />
             <span>Shop</span>
-          </Link>
-          <Link
-            href="/vendors"
-            className="flex flex-col items-center gap-1 p-2 hover:text-primary"
-          >
-            <Users className="w-5 h-5" />
-            <span>Vendors</span>
           </Link>
           <Link
             href="/cart"

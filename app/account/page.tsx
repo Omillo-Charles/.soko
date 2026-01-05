@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { 
   Mail, 
   Lock, 
@@ -16,7 +17,9 @@ import {
   Headphones,
   RefreshCw,
   Tag,
-  Trophy
+  Trophy,
+  AlertCircle,
+  User
 } from "lucide-react";
 
 const GoogleIcon = () => (
@@ -29,15 +32,39 @@ const GoogleIcon = () => (
 );
 
 const AccountPage = () => {
+  const router = useRouter();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (error) setError(null);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulate auth
-    setTimeout(() => setIsLoading(false), 1500);
+    setError(null);
+
+    // Mock authentication delay
+    setTimeout(() => {
+      setIsLoading(false);
+      // For demo purposes, we'll just redirect to home
+      router.push('/');
+    }, 1500);
+  };
+
+  const handleSocialAuth = (provider: 'google' | 'github') => {
+    console.log(`Social auth with ${provider}`);
   };
 
   return (
@@ -162,12 +189,23 @@ const AccountPage = () => {
             </button>
           </div>
 
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-700 rounded-2xl flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 shrink-0" />
+              <p className="text-sm font-medium">{error}</p>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-5">
             {!isLogin && (
               <div className="relative group">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary transition-colors" />
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary transition-colors" />
                 <input 
                   type="text" 
+                  name="name"
+                  required
+                  value={formData.name}
+                  onChange={handleInputChange}
                   placeholder="Full Name" 
                   className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
                 />
@@ -178,6 +216,10 @@ const AccountPage = () => {
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary transition-colors" />
               <input 
                 type="email" 
+                name="email"
+                required
+                value={formData.email}
+                onChange={handleInputChange}
                 placeholder="Email Address" 
                 className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
               />
@@ -187,6 +229,10 @@ const AccountPage = () => {
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary transition-colors" />
               <input 
                 type={showPassword ? "text" : "password"} 
+                name="password"
+                required
+                value={formData.password}
+                onChange={handleInputChange}
                 placeholder="Password" 
                 className="w-full pl-12 pr-12 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
               />
@@ -232,13 +278,19 @@ const AccountPage = () => {
 
           {/* Social Auth */}
           <div className="grid grid-cols-2 gap-4">
-            <button className="flex items-center justify-center gap-3 py-4 border border-slate-200 rounded-2xl font-bold text-slate-700 hover:bg-slate-50 transition-all group">
+            <button 
+              onClick={() => handleSocialAuth('google')}
+              className="flex items-center justify-center gap-3 py-4 border border-slate-200 rounded-2xl font-bold text-slate-700 hover:bg-slate-50 transition-all group"
+            >
               <div className="group-hover:scale-110 transition-transform">
                 <GoogleIcon />
               </div>
               Google
             </button>
-            <button className="flex items-center justify-center gap-3 py-4 border border-slate-200 rounded-2xl font-bold text-slate-700 hover:bg-slate-50 transition-all group">
+            <button 
+              onClick={() => handleSocialAuth('github')}
+              className="flex items-center justify-center gap-3 py-4 border border-slate-200 rounded-2xl font-bold text-slate-700 hover:bg-slate-50 transition-all group"
+            >
               <Github className="w-5 h-5 group-hover:scale-110 transition-transform text-slate-900" />
               Github
             </button>

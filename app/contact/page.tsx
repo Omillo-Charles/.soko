@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Phone, Mail, MapPin, Instagram, Facebook, Linkedin } from "lucide-react";
+import { Phone, Mail, MapPin, Instagram, Facebook, Linkedin, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 
 const XIcon = () => (
   <svg
@@ -13,7 +13,8 @@ const XIcon = () => (
 );
 
 const ContactPage = () => {
-  const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null);
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -21,9 +22,20 @@ const ContactPage = () => {
     setForm((f) => ({ ...f, [name]: value }));
   };
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setIsSubmitting(true);
+    setSubmitStatus(null);
+
+    // Mock form submission
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setSubmitStatus({ 
+        type: 'success', 
+        message: 'Thank you! Your message has been sent successfully.' 
+      });
+      setForm({ name: "", email: "", subject: "", message: "" });
+    }, 1500);
   };
 
   return (
@@ -58,8 +70,23 @@ const ContactPage = () => {
           </div>
 
           <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8">
-            <form onSubmit={onSubmit} className="bg-white border border-slate-200 rounded-lg p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-6">
+              <form onSubmit={onSubmit} className="bg-white border border-slate-200 rounded-lg p-6">
+                {submitStatus && (
+                  <div className={`mb-6 p-4 rounded-xl flex items-center gap-3 ${
+                    submitStatus.type === 'success' 
+                      ? 'bg-green-50 border border-green-100 text-green-700' 
+                      : 'bg-red-50 border border-red-100 text-red-700'
+                  }`}>
+                    {submitStatus.type === 'success' ? (
+                      <CheckCircle2 className="w-5 h-5 shrink-0" />
+                    ) : (
+                      <AlertCircle className="w-5 h-5 shrink-0" />
+                    )}
+                    <p className="text-sm font-medium">{submitStatus.message}</p>
+                  </div>
+                )}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="name" className="text-sm text-slate-600">Name</label>
                   <input
@@ -114,14 +141,20 @@ const ContactPage = () => {
               </div>
               <button
                 type="submit"
-                className="mt-6 w-full bg-primary text-white py-2 rounded-md hover:bg-blue-600 transition"
+                disabled={isSubmitting}
+                className="mt-6 w-full bg-primary text-white font-semibold py-3 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                Send Message
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  "Send Message"
+                )}
               </button>
-              {submitted && (
-                <div className="mt-3 text-sm text-green-600">Thanks! Your message has been recorded.</div>
-              )}
             </form>
+          </div>
 
             <div className="bg-white border border-slate-200 rounded-lg p-6">
               <div className="font-semibold">Business Hours</div>
