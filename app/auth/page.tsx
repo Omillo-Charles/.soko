@@ -70,7 +70,14 @@ const AuthContent = () => {
     const m = searchParams.get("mode") || urlParams.get("mode");
     const t = searchParams.get("token") || urlParams.get("token");
     const path = window.location.pathname;
-    
+
+    // Redirect if already logged in (and not in a special flow like reset/verify)
+    const token = localStorage.getItem("accessToken");
+    if (token && !["reset", "verify"].includes(m || "")) {
+      router.push("/account");
+      return;
+    }
+
     console.log("Auth State Sync:", { m, t, path });
 
     // Handle direct reset-password path (from rewrite)
@@ -138,7 +145,7 @@ const AuthContent = () => {
           localStorage.setItem("user", JSON.stringify(data.data.user));
           
           setSuccess("Login successful! Redirecting...");
-          setTimeout(() => router.push("/"), 1500);
+          setTimeout(() => router.push("/account"), 1500);
           break;
 
         case "register":

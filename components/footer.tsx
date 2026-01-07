@@ -1,8 +1,17 @@
-import React from 'react';
+"use client";
+
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Facebook, Instagram, Linkedin, Mail, Phone } from 'lucide-react';
 
 const Footer = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    setIsLoggedIn(!!token);
+  }, []);
+
   return (
     <footer className="bg-slate-900 text-slate-300 pt-16 pb-24 md:pb-8 mt-auto">
       <div className="container mx-auto px-4 md:px-8">
@@ -63,7 +72,7 @@ const Footer = () => {
             <div>
                 <h4 className="text-lg font-bold text-white mb-6">Customer Care</h4>
                 <ul className="space-y-4">
-                    <li><Link href="/auth" className="hover:text-primary transition-colors">My Account</Link></li>
+                    <li><Link href={isLoggedIn ? "/account" : "/auth"} className="hover:text-primary transition-colors">My Account</Link></li>
                     <li><Link href="/track-order" className="hover:text-primary transition-colors">Track Order</Link></li>
                     <li><Link href="/wishlist" className="hover:text-primary transition-colors">Wishlist</Link></li>
                     <li><Link href="/help" className="hover:text-primary transition-colors">Help Center</Link></li>
