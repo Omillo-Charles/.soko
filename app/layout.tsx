@@ -30,7 +30,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
       </head>
-      <body className={`${geistMono.variable} antialiased overflow-x-hidden`}>
+      <body className={`${geistMono.variable} antialiased relative`}>
         <Navbar />
         {children}
         <Footer />

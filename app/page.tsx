@@ -5,7 +5,7 @@ import FeaturedProducts from "@/components/featuredProducts";
 
 export default function Home() {
   return (
-    <main className="flex flex-col relative overflow-hidden">
+    <main className="flex flex-col relative">
       {/* Minimalist Gradient Background */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-gradient-to-b from-brand-soft-blue via-brand-soft-indigo/30 to-transparent"></div>
