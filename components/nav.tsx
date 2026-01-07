@@ -37,7 +37,7 @@ const Navbar = () => {
   return (
     <>
       {/* Spacer to prevent content from hiding behind the fixed navbar */}
-      <div className="h-[120px] md:h-[180px]"></div>
+      <div className="h-[100px] md:h-[160px]"></div>
       
       <header 
         className={`w-full flex flex-col shadow-sm fixed top-0 left-0 right-0 z-50 bg-white transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${
@@ -100,7 +100,7 @@ const Navbar = () => {
 
           {/* Desktop Icons (Hidden on mobile) */}
           <div className="hidden md:flex items-center gap-6 text-slate-700">
-            <Link href="/account" className="flex flex-col items-center group">
+            <Link href="/auth" className="flex flex-col items-center group">
               <User className="w-6 h-6 group-hover:text-primary transition-colors" />
               <span className="text-xs mt-1 font-medium group-hover:text-primary">
                 Account
@@ -203,9 +203,9 @@ const Navbar = () => {
           <span>Cart</span>
         </Link>
         <Link
-          href="/account"
-          className="flex flex-col items-center gap-1 p-2 hover:text-primary"
-        >
+               href="/auth"
+               className="flex flex-col items-center gap-1 p-2 hover:text-primary"
+             >
           <User className="w-5 h-5" />
           <span>Account</span>
         </Link>

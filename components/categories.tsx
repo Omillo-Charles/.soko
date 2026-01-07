@@ -144,7 +144,7 @@ const Categories = () => {
 
   return (
     <section className="bg-white">
-      <div className="container mx-auto px-4 md:px-8 py-8">
+      <div className="container mx-auto px-4 md:px-8 pt-4 pb-8">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl md:text-2xl font-bold">Shop by Category</h2>
           <div className="hidden md:flex items-center gap-2">
