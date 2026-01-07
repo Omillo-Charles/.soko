@@ -1,10 +1,51 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { ShoppingCart, User, Heart, Menu, Phone, Home, Store } from "lucide-react";
 import SearchBar from "@/components/searchBar";
 
 const Navbar = () => {
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    let scrollTimeout: NodeJS.Timeout;
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // Small debounce-like behavior to prevent jitter
+      if (Math.abs(currentScrollY - lastScrollY) < 5) return;
+
+      // Show navbar if scrolling up or if at the very top
+      if (currentScrollY < lastScrollY || currentScrollY <= 50) {
+        setIsVisible(true);
+      } 
+      // Hide navbar if scrolling down and past a threshold
+      else if (currentScrollY > lastScrollY && currentScrollY > 150) {
+        setIsVisible(false);
+      }
+      
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
+
   return (
-    <header className="w-full flex flex-col shadow-sm sticky top-0 z-50 bg-white">
+    <>
+      {/* Spacer to prevent content from hiding behind the fixed navbar */}
+      <div className="h-[120px] md:h-[180px]"></div>
+      
+      <header 
+        className={`w-full flex flex-col shadow-sm fixed top-0 left-0 right-0 z-50 bg-white transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+          isVisible 
+            ? "translate-y-0 opacity-100" 
+            : "-translate-y-full opacity-0 pointer-events-none"
+        }`}
+      >
       {/* Top Bar */}
       <div className="hidden md:flex bg-slate-900 text-slate-200 text-xs py-2 px-4 md:px-8 justify-between items-center">
         <div className="flex items-center gap-4">
@@ -130,46 +171,47 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-
-      {/* Mobile Bottom Navigation (Fixed) */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 shadow-[0_-1px_3px_rgba(0,0,0,0.1)] z-50">
-        <div className="flex justify-around items-center p-2 text-[10px] font-medium text-slate-600">
-          <Link
-            href="/"
-            className="flex flex-col items-center gap-1 p-2 hover:text-primary"
-          >
-            <Home className="w-5 h-5" />
-            <span>Home</span>
-          </Link>
-          <Link
-            href="/shop"
-            className="flex flex-col items-center gap-1 p-2 hover:text-primary"
-          >
-            <Store className="w-5 h-5" />
-            <span>Shop</span>
-          </Link>
-          <Link
-            href="/cart"
-            className="flex flex-col items-center gap-1 p-2 hover:text-primary relative"
-          >
-            <div className="relative">
-              <ShoppingCart className="w-5 h-5" />
-              <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-secondary text-white text-[9px] flex items-center justify-center rounded-full">
-                2
-              </span>
-            </div>
-            <span>Cart</span>
-          </Link>
-          <Link
-            href="/account"
-            className="flex flex-col items-center gap-1 p-2 hover:text-primary"
-          >
-            <User className="w-5 h-5" />
-            <span>Account</span>
-          </Link>
-        </div>
-      </div>
     </header>
+
+    {/* Mobile Bottom Navigation (Fixed) - Moved outside the header to keep it visible */}
+    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 shadow-[0_-1px_3px_rgba(0,0,0,0.1)] z-50">
+      <div className="flex justify-around items-center p-2 text-[10px] font-medium text-slate-600">
+        <Link
+          href="/"
+          className="flex flex-col items-center gap-1 p-2 hover:text-primary"
+        >
+          <Home className="w-5 h-5" />
+          <span>Home</span>
+        </Link>
+        <Link
+          href="/shop"
+          className="flex flex-col items-center gap-1 p-2 hover:text-primary"
+        >
+          <Store className="w-5 h-5" />
+          <span>Shop</span>
+        </Link>
+        <Link
+          href="/cart"
+          className="flex flex-col items-center gap-1 p-2 hover:text-primary relative"
+        >
+          <div className="relative">
+            <ShoppingCart className="w-5 h-5" />
+            <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-secondary text-white text-[9px] flex items-center justify-center rounded-full">
+              2
+            </span>
+          </div>
+          <span>Cart</span>
+        </Link>
+        <Link
+          href="/account"
+          className="flex flex-col items-center gap-1 p-2 hover:text-primary"
+        >
+          <User className="w-5 h-5" />
+          <span>Account</span>
+        </Link>
+      </div>
+    </div>
+    </>
   );
 };
 
