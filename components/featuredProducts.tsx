@@ -7,7 +7,7 @@ const FeaturedProducts = () => {
     {
       id: 1,
       title: "Adidas Predator Football Boots",
-      price: 129.99,
+      price: 17150,
       rating: 4.5,
       vendor: "Adidas Kenya",
       image: "/products/predator.jpg",
@@ -17,7 +17,7 @@ const FeaturedProducts = () => {
     {
       id: 2,
       title: "Premium Sound System",
-      price: 249.99,
+      price: 32990,
       rating: 4.6,
       vendor: "JBL",
       image: "/products/system.jpg",
@@ -27,7 +27,7 @@ const FeaturedProducts = () => {
     {
       id: 3,
       title: "Inter and AC Milan Jersey",
-      price: 89.99,
+      price: 11850,
       rating: 4.7,
       vendor: "Adidas Kenya",
       image: "/products/jersey.jpg",
@@ -37,7 +37,7 @@ const FeaturedProducts = () => {
     {
       id: 4,
       title: "Dr. Mattress Orthopedic Mattress",
-      price: 199.99,
+      price: 26400,
       rating: 4.8,
       vendor: "Dr. Mattress",
       image: "/products/mattress.jpg",
@@ -48,7 +48,7 @@ const FeaturedProducts = () => {
 
   return (
     <section className="bg-muted">
-      <div className="container mx-auto px-4 md:px-8 py-10">
+      <div className="w-full px-4 md:px-8 py-6">
         <div className="flex items-center justify-between">
           <h2 className="text-xl md:text-2xl font-bold">Featured Products</h2>
           <Link href="/shop" className="text-primary flex items-center gap-1 font-medium">
@@ -80,8 +80,8 @@ const FeaturedProducts = () => {
                 <div className="mt-1 font-medium">{p.title}</div>
                 <div className="mt-1 text-xs text-slate-500 font-light">{p.description}</div>
                 <div className="mt-2 flex items-center gap-2">
-                  <span className="text-lg font-bold">KSh {(p.price * 132).toFixed(0)}</span>
-                  <span className="text-slate-400 line-through text-sm">KSh {(p.price * 132 + 500).toFixed(0)}</span>
+                  <span className="text-lg font-bold">KES {p.price.toLocaleString()}</span>
+                  <span className="text-slate-400 line-through text-sm">KES {(p.price + 1500).toLocaleString()}</span>
                 </div>
                 <div className="mt-2 flex items-center gap-1 text-amber-500">
                   <Star className="w-4 h-4 fill-amber-500" />

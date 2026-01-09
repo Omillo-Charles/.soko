@@ -91,6 +91,26 @@ const AuthContent = () => {
     }
 
     // Handle query param modes
+    const errorParam = searchParams.get("error") || urlParams.get("error");
+    if (errorParam) {
+      setError(errorParam);
+    }
+
+    if (m === "social-success") {
+      const userData = searchParams.get("user") || urlParams.get("user");
+      if (t && userData) {
+        try {
+          localStorage.setItem("accessToken", t);
+          localStorage.setItem("user", userData);
+          setSuccess("Social login successful! Redirecting...");
+          setTimeout(() => router.push("/account"), 1500);
+          return;
+        } catch (e) {
+          setError("Failed to process login data");
+        }
+      }
+    }
+
     if (m === "reset") {
       setMode("reset");
       if (t) setResetToken(t);
@@ -208,10 +228,10 @@ const AuthContent = () => {
   };
 
   const handleSocialAuth = (provider: "google" | "github") => {
-    console.log(`Social auth with ${provider} placeholder`);
-    // Mock URL for now
-    const authUrl = "#";
-    window.location.href = authUrl;
+    setIsLoading(true);
+    // Redirect to backend social auth endpoint
+    // The backend will handle the OAuth flow and redirect back to /auth?mode=social-success&token=...&user=...
+    window.location.href = `${apiUrl}/auth/${provider}`;
   };
 
   const resetForm = () => {

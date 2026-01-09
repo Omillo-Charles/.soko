@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Zap, Truck, ShieldCheck, Headphones, ChevronRight } from "lucide-react";
 import Categories from "@/components/categories";
 import FeaturedProducts from "@/components/featuredProducts";
+import Footer from "@/components/footer";
 
 export default function Home() {
   return (
@@ -17,7 +18,7 @@ export default function Home() {
       <FeaturedProducts />
 
       <section className="bg-muted/30 backdrop-blur-sm">
-        <div className="container mx-auto px-4 md:px-8 py-10">
+        <div className="w-full px-4 md:px-8 py-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="flex items-center gap-3 bg-white/60 backdrop-blur-md border border-slate-200/50 rounded-2xl p-4 shadow-sm">
               <Truck className="w-6 h-6 text-primary" />
@@ -50,6 +51,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      <Footer />
     </main>
   );
 }

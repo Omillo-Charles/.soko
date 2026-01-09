@@ -14,7 +14,7 @@ const Footer = () => {
 
   return (
     <footer className="bg-slate-900 text-slate-300 pt-16 pb-24 md:pb-8 mt-auto">
-      <div className="container mx-auto px-4 md:px-8">
+      <div className="w-full px-4 md:px-8">
         
         {/* Newsletter Section */}
         <div className="grid md:grid-cols-2 gap-8 items-center border-b border-slate-700 pb-12 mb-12">

@@ -21,7 +21,7 @@ const INITIAL_CART_ITEMS = [
   {
     id: 1,
     title: "Adidas Predator Football Boots",
-    price: 129.99,
+    price: 17150,
     vendor: "Adidas Kenya",
     image: "/products/predator.jpg",
     quantity: 1,
@@ -31,7 +31,7 @@ const INITIAL_CART_ITEMS = [
   {
     id: 3,
     title: "Inter and AC Milan Jersey",
-    price: 89.99,
+    price: 11850,
     vendor: "Adidas Kenya",
     image: "/products/jersey.jpg",
     quantity: 2,
@@ -59,11 +59,13 @@ const CartPage = () => {
   };
 
   const subtotal = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-  const shipping = subtotal > 500 ? 0 : 15;
+  const shippingThreshold = 6500;
+  const shippingFee = 500;
+  const shipping = subtotal > shippingThreshold ? 0 : shippingFee;
   const total = subtotal + shipping;
 
   const formatPrice = (price: number) => {
-    return `KSh ${(price * 132).toLocaleString()}`;
+    return `KES ${price.toLocaleString()}`;
   };
 
   if (cartItems.length === 0) {
@@ -91,7 +93,7 @@ const CartPage = () => {
 
   return (
     <div className="min-h-screen bg-slate-50/50 pb-20">
-      <div className="container mx-auto px-4 md:px-8 py-10">
+      <div className="w-full px-4 md:px-8 py-10">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
           <div>
@@ -243,7 +245,7 @@ const CartPage = () => {
                 {shipping > 0 && (
                   <div className="bg-blue-50/50 p-3 rounded-xl border border-blue-100/50">
                     <p className="text-[10px] text-primary font-bold leading-tight">
-                      Add {formatPrice(500 - subtotal)} more for FREE shipping!
+                      Add {formatPrice(shippingThreshold - subtotal)} more for FREE shipping!
                     </p>
                   </div>
                 )}

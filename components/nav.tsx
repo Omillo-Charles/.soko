@@ -6,50 +6,21 @@ import { ShoppingCart, User, Heart, Menu, Phone, Home, Store } from "lucide-reac
 import SearchBar from "@/components/searchBar";
 
 const Navbar = () => {
-  const [isVisible, setIsVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     // Check login status
     const token = localStorage.getItem("accessToken");
     setIsLoggedIn(!!token);
-
-    let scrollTimeout: NodeJS.Timeout;
-
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      
-      // Small debounce-like behavior to prevent jitter
-      if (Math.abs(currentScrollY - lastScrollY) < 5) return;
-
-      // Show navbar if scrolling up or if at the very top
-      if (currentScrollY < lastScrollY || currentScrollY <= 50) {
-        setIsVisible(true);
-      } 
-      // Hide navbar if scrolling down and past a threshold
-      else if (currentScrollY > lastScrollY && currentScrollY > 150) {
-        setIsVisible(false);
-      }
-      
-      setLastScrollY(currentScrollY);
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
+  }, []);
 
   return (
     <>
       {/* Spacer to prevent content from hiding behind the fixed navbar */}
-      <div className="h-[100px] md:h-[160px]"></div>
+      <div className="h-[80px] md:h-[144px]"></div>
       
       <header 
-        className={`w-full flex flex-col shadow-sm fixed top-0 left-0 right-0 z-50 bg-white transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${
-          isVisible 
-            ? "translate-y-0 opacity-100" 
-            : "-translate-y-full opacity-0 pointer-events-none"
-        }`}
+        className="w-full flex flex-col shadow-sm fixed top-0 left-0 right-0 z-50 bg-white"
       >
       {/* Top Bar */}
       <div className="hidden md:flex bg-slate-900 text-slate-200 text-xs py-2 px-4 md:px-8 justify-between items-center">
@@ -69,14 +40,14 @@ const Navbar = () => {
             Help Center
           </Link>
           <div className="cursor-pointer hover:text-white transition-colors pl-4">
-            English / USD
+            English / KES
           </div>
         </div>
       </div>
 
       {/* Main Header */}
-      <div className="bg-white border-b border-slate-200 py-3 px-4 md:px-8">
-        <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-3 md:gap-4">
+      <div className="bg-white border-b border-slate-200 py-1.5 md:py-3 px-4 md:px-8">
+        <div className="w-full flex flex-col md:flex-row items-center justify-between gap-1.5 md:gap-4">
           {/* Mobile Top Row: Logo & Icons */}
           <div className="flex w-full md:w-auto justify-between items-center">
             {/* Logo */}
@@ -141,7 +112,7 @@ const Navbar = () => {
 
       {/* Navigation Bar (Desktop Only) */}
       <div className="bg-primary text-white hidden md:block">
-        <div className="container mx-auto px-4 md:px-8 flex items-center justify-between h-12">
+        <div className="w-full px-4 md:px-8 flex items-center justify-between h-12">
           <div className="flex items-center gap-8 text-sm font-medium">
             <div className="flex items-center gap-2 cursor-pointer bg-blue-700 h-12 px-4 hover:bg-blue-800 transition-colors">
               <Menu className="w-5 h-5" />
@@ -172,7 +143,7 @@ const Navbar = () => {
             </nav>
           </div>
           <div className="text-sm font-medium text-slate-100">
-            Free Shipping on Orders Over $50
+            Free Shipping on Orders Over KES 6,500
           </div>
         </div>
       </div>
