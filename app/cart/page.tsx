@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useCart } from '@/context/CartContext';
 import { 
   Trash2, 
   Plus, 
@@ -13,60 +15,31 @@ import {
   Truck, 
   CreditCard,
   ChevronRight,
-  Store
+  Store,
+  Loader2
 } from 'lucide-react';
 
-// Mock cart data based on featured products
-const INITIAL_CART_ITEMS = [
-  {
-    id: 1,
-    title: "Adidas Predator Football Boots",
-    price: 17150,
-    vendor: "Adidas Kenya",
-    image: "/products/predator.jpg",
-    quantity: 1,
-    size: "42",
-    color: "Core Black"
-  },
-  {
-    id: 3,
-    title: "Inter and AC Milan Jersey",
-    price: 11850,
-    vendor: "Adidas Kenya",
-    image: "/products/jersey.jpg",
-    quantity: 2,
-    size: "L",
-    color: "Home Kit"
-  }
-];
-
 const CartPage = () => {
-  const [cartItems, setCartItems] = useState(INITIAL_CART_ITEMS);
+  const { cartItems, isLoading, updateQuantity, removeFromCart, subtotal } = useCart();
+  const router = useRouter();
   const [promoCode, setPromoCode] = useState("");
 
-  const updateQuantity = (id: number, delta: number) => {
-    setCartItems(prev => prev.map(item => {
-      if (item.id === id) {
-        const newQty = Math.max(1, item.quantity + delta);
-        return { ...item, quantity: newQty };
-      }
-      return item;
-    }));
-  };
-
-  const removeItem = (id: number) => {
-    setCartItems(prev => prev.filter(item => item.id !== id));
-  };
-
-  const subtotal = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
   const shippingThreshold = 6500;
   const shippingFee = 500;
   const shipping = subtotal > shippingThreshold ? 0 : shippingFee;
   const total = subtotal + shipping;
 
   const formatPrice = (price: number) => {
-    return `KES ${price.toLocaleString()}`;
+    return `KES ${price?.toLocaleString() || 0}`;
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <Loader2 className="w-10 h-10 text-primary animate-spin" />
+      </div>
+    );
+  }
 
   if (cartItems.length === 0) {
     return (
@@ -92,7 +65,7 @@ const CartPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50/50 pb-20">
+    <div className="min-h-screen bg-slate-50/50 pb-24 lg:pb-20">
       <div className="w-full px-4 md:px-8 py-10">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
@@ -114,31 +87,35 @@ const CartPage = () => {
           {/* Cart Items List */}
           <div className="lg:col-span-2 space-y-6">
             {cartItems.map((item) => (
-              <div 
-                key={item.id} 
-                className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-md transition-shadow group"
-              >
-                <div className="flex flex-col sm:flex-row gap-6">
+              <div key={item._id} className="group bg-white rounded-[2.5rem] p-6 md:p-8 border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-primary/5 transition-all duration-500">
+                <div className="flex flex-col md:flex-row gap-8">
                   {/* Product Image */}
-                  <div className="relative w-full sm:w-32 h-32 bg-slate-50 rounded-2xl overflow-hidden shrink-0">
-                    <Image
-                      src={item.image}
-                      alt={item.title}
-                      fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-500"
+                  <div 
+                    onClick={() => router.push(`/shop/product/${item.product._id}`)}
+                    className="relative w-full md:w-48 h-48 rounded-3xl overflow-hidden bg-slate-50 border border-slate-100 shrink-0 cursor-pointer"
+                  >
+                    <img 
+                      src={item.product.image} 
+                      alt={item.product.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     />
                   </div>
 
-                  {/* Product Details */}
-                  <div className="flex-1 flex flex-col justify-between py-1">
+                  {/* Product Info */}
+                  <div className="flex-1 flex flex-col justify-between">
                     <div className="flex justify-between items-start gap-4">
-                      <div>
-                        <div className="flex items-center gap-2 text-xs font-bold text-primary mb-1 uppercase tracking-wider">
-                          <Store className="w-3 h-3" />
-                          {item.vendor}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Store className="w-3 h-3 text-primary" />
+                          <span className="text-[10px] font-black text-primary uppercase tracking-widest truncate">
+                            {item.product.shop?.name || "Official Store"}
+                          </span>
                         </div>
-                        <h3 className="text-lg font-bold text-slate-900 group-hover:text-primary transition-colors leading-tight">
-                          {item.title}
+                        <h3 
+                          onClick={() => router.push(`/shop/product/${item.product._id}`)}
+                          className="text-lg font-bold text-slate-900 group-hover:text-primary transition-colors leading-tight cursor-pointer"
+                        >
+                          {item.product.name}
                         </h3>
                         <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2">
                           {item.size && (
@@ -154,7 +131,7 @@ const CartPage = () => {
                         </div>
                       </div>
                       <button 
-                        onClick={() => removeItem(item.id)}
+                        onClick={() => removeFromCart(item._id)}
                         className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
                       >
                         <Trash2 className="w-5 h-5" />
@@ -164,7 +141,7 @@ const CartPage = () => {
                     <div className="flex items-center justify-between mt-6">
                       <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-100">
                         <button 
-                          onClick={() => updateQuantity(item.id, -1)}
+                          onClick={() => updateQuantity(item._id, item.quantity - 1)}
                           className="w-8 h-8 flex items-center justify-center text-slate-500 hover:bg-white hover:text-primary rounded-lg transition-all disabled:opacity-30"
                           disabled={item.quantity <= 1}
                         >
@@ -174,7 +151,7 @@ const CartPage = () => {
                           {item.quantity}
                         </span>
                         <button 
-                          onClick={() => updateQuantity(item.id, 1)}
+                          onClick={() => updateQuantity(item._id, item.quantity + 1)}
                           className="w-8 h-8 flex items-center justify-center text-slate-500 hover:bg-white hover:text-primary rounded-lg transition-all"
                         >
                           <Plus className="w-4 h-4" />
@@ -182,10 +159,10 @@ const CartPage = () => {
                       </div>
                       <div className="text-right">
                         <div className="text-xl font-black text-slate-900">
-                          {formatPrice(item.price * item.quantity)}
+                          {formatPrice(item.product.price * item.quantity)}
                         </div>
                         <div className="text-xs font-bold text-slate-400">
-                          {formatPrice(item.price)} each
+                          {formatPrice(item.product.price)} each
                         </div>
                       </div>
                     </div>
@@ -279,7 +256,10 @@ const CartPage = () => {
                 </div>
               </div>
 
-              <button className="w-full bg-primary text-white py-5 rounded-2xl font-black text-lg flex items-center justify-center gap-3 hover:bg-blue-700 transition-all shadow-xl shadow-primary/20 group">
+              <button 
+                onClick={() => router.push('/checkout')}
+                className="w-full bg-primary text-white py-5 rounded-2xl font-black text-lg flex items-center justify-center gap-3 hover:bg-blue-700 transition-all shadow-xl shadow-primary/20 group"
+              >
                 Checkout Now
                 <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
               </button>

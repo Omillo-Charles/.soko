@@ -23,10 +23,14 @@ import {
   ShoppingCart
 } from "lucide-react";
 import Link from "next/link";
+import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
 
 const ShopProfilePage = () => {
   const { id } = useParams();
   const router = useRouter();
+  const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
   const [shop, setShop] = useState<any>(null);
   const [products, setProducts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -132,8 +136,8 @@ const ShopProfilePage = () => {
           </aside>
         </div>
 
-        {/* Middle Feed */}
-        <main className="flex-1 min-w-0 border-x border-slate-100">
+       {/* Middle Feed - Products */}
+        <main className="flex-1 min-w-0 border-x border-slate-100 pb-24 lg:pb-0">
           {/* Header - Profile Style */}
           <div className="sticky top-0 bg-white/80 backdrop-blur-md z-30 border-b border-slate-100 px-4 py-4 flex items-center gap-4">
             <button onClick={() => router.back()} className="lg:hidden p-2 hover:bg-slate-100 rounded-full">
@@ -258,17 +262,40 @@ const ShopProfilePage = () => {
                             </div>
                             <span className="text-xs font-bold">{product.repostsCount || 0}</span>
                           </button>
-                          <button onClick={(e) => e.stopPropagation()} className="flex items-center gap-2 group hover:text-pink-500 transition-colors">
-                            <div className="p-2 rounded-full group-hover:bg-pink-500/10">
-                              <Heart className="w-[18px] h-[18px]" />
+                          <button 
+                            onClick={async (e) => {
+                              e.stopPropagation();
+                              const action = await toggleWishlist(product._id);
+                              if (action) {
+                                setProducts(prev => prev.map(p => 
+                                  p._id === product._id 
+                                    ? { ...p, likesCount: Math.max(0, (p.likesCount || 0) + (action === 'added' ? 1 : -1)) } 
+                                    : p
+                                ));
+                              }
+                            }} 
+                            className={`flex items-center gap-2 group transition-colors ${
+                              isInWishlist(product._id) ? 'text-pink-500' : 'hover:text-pink-500'
+                            }`}
+                          >
+                            <div className={`p-2 rounded-full transition-colors ${
+                              isInWishlist(product._id) ? 'bg-pink-500/10' : 'group-hover:bg-pink-500/10'
+                            }`}>
+                              <Heart className={`w-[18px] h-[18px] ${isInWishlist(product._id) ? 'fill-current' : ''}`} />
                             </div>
                             <span className="text-xs font-bold">{product.likesCount || 0}</span>
                           </button>
-                          <button onClick={(e) => e.stopPropagation()} className="flex items-center gap-2 group hover:text-primary transition-colors">
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              addToCart(product._id);
+                            }} 
+                            className="flex items-center gap-2 group hover:text-primary transition-colors"
+                          >
                             <div className="p-2 rounded-full group-hover:bg-primary/10">
                               <ShoppingCart className="w-[18px] h-[18px]" />
                             </div>
-                            <span className="text-xs font-bold">Buy</span>
+                            <span className="text-xs font-bold">Add to Cart</span>
                           </button>
                           <button onClick={(e) => e.stopPropagation()} className="p-2 rounded-full hover:bg-primary/10 hover:text-primary transition-colors">
                             <Share2 className="w-[18px] h-[18px]" />

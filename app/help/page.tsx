@@ -39,7 +39,7 @@ const HelpPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white py-10 px-4 md:px-8 selection:bg-primary/10 selection:text-primary">
+    <div className="min-h-screen bg-white pt-10 pb-24 lg:pb-10 px-4 md:px-8 selection:bg-primary/10 selection:text-primary">
       <div className="container mx-auto max-w-4xl">
         
         {/* FAQs Section */}

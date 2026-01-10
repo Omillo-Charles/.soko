@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Geist_Mono } from "next/font/google";
 import Navbar from "@/components/nav";
+import { CartProvider } from "@/context/CartContext";
+import { WishlistProvider } from "@/context/WishlistContext";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 const geistMono = Geist_Mono({
@@ -30,8 +33,13 @@ export default function RootLayout({
         />
       </head>
       <body className={`${geistMono.variable} antialiased`}>
-        <Navbar />
-        {children}
+        <CartProvider>
+          <WishlistProvider>
+            <Toaster position="top-right" richColors />
+            <Navbar />
+            {children}
+          </WishlistProvider>
+        </CartProvider>
       </body>
     </html>
   );

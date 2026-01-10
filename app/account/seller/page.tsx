@@ -236,7 +236,7 @@ const SellerDashboard = () => {
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 p-4 lg:p-10">
+      <main className="flex-1 p-4 lg:p-10 pb-24 lg:pb-10">
         <div className="max-w-6xl mx-auto space-y-8">
           {/* Top Bar */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -305,9 +305,12 @@ const SellerDashboard = () => {
                   </div>
                 </div>
 
-                <button className="mt-8 px-8 py-3 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all">
+                <Link 
+                  href="/account/seller/settings"
+                  className="mt-8 px-8 py-3 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all inline-block"
+                >
                   Edit Shop Profile
-                </button>
+                </Link>
               </div>
 
               <div className="border-t lg:border-t-0 lg:border-l border-slate-50 pt-8 lg:pt-0 lg:pl-8">

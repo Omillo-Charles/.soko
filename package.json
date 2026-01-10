@@ -24,6 +24,7 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-hook-form": "^7.69.0",
+    "sonner": "^2.0.7",
     "zod": "^4.3.4"
   },
   "devDependencies": {

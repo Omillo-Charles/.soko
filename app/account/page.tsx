@@ -134,7 +134,7 @@ const AccountPage = () => {
 
   const menuItems = [
     { icon: <Package className="w-5 h-5" />, label: "My Orders", href: "/account/orders", desc: "Track, return, or buy things again" },
-    { icon: <Heart className="w-5 h-5" />, label: "Wishlist", href: "/account/wishlist", desc: "Your saved items and collections" },
+    { icon: <Heart className="w-5 h-5" />, label: "Wishlist", href: "/wishlist", desc: "Your saved items and collections" },
     { icon: <MapPin className="w-5 h-5" />, label: "Addresses", href: "/account/addresses", desc: "Edit addresses for orders" },
     { icon: <CreditCard className="w-5 h-5" />, label: "Payment Methods", href: "/account/payments", desc: "Manage your saved cards" },
     { icon: <Bell className="w-5 h-5" />, label: "Notifications", href: "/account/notifications", desc: "Set your communication preferences" },
@@ -143,7 +143,7 @@ const AccountPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-20 pt-8 px-4">
+    <div className="min-h-screen bg-slate-50 pb-24 lg:pb-20 pt-8 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Header Section */}
         <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-100 mb-8">

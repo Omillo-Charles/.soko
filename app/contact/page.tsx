@@ -83,7 +83,7 @@ const ContactPage = () => {
   };
 
   return (
-    <main className="flex flex-col">
+    <main className="flex flex-col pb-24 lg:pb-0">
       <section className="bg-white">
         <div className="container mx-auto px-4 md:px-8 pt-6 pb-10">
           <h1 className="text-2xl md:text-3xl font-bold">Contact Us</h1>

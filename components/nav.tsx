@@ -4,9 +4,13 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { ShoppingCart, User, Heart, Menu, Phone, Home, Store } from "lucide-react";
 import SearchBar from "@/components/searchBar";
+import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
 
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { totalItems } = useCart();
+  const { wishlistItems } = useWishlist();
 
   useEffect(() => {
     // Check login status
@@ -60,10 +64,16 @@ const Navbar = () => {
 
             {/* Mobile Icons (Visible only on mobile) */}
             <div className="flex items-center gap-4 md:hidden">
+              <Link href="/wishlist" className="relative">
+                <Heart className="w-6 h-6 text-slate-700" />
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-secondary text-white text-[10px] flex items-center justify-center rounded-full">
+                  {wishlistItems.length}
+                </span>
+              </Link>
               <Link href="/cart" className="relative">
                 <ShoppingCart className="w-6 h-6 text-slate-700" />
                 <span className="absolute -top-1 -right-1 w-4 h-4 bg-secondary text-white text-[10px] flex items-center justify-center rounded-full">
-                  2
+                  {totalItems}
                 </span>
               </Link>
             </div>
@@ -90,9 +100,11 @@ const Navbar = () => {
               <span className="text-xs mt-1 font-medium group-hover:text-primary">
                 Wishlist
               </span>
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-secondary text-white text-[10px] flex items-center justify-center rounded-full">
-                0
-              </span>
+              {wishlistItems.length > 0 && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-secondary text-white text-[10px] flex items-center justify-center rounded-full">
+                  {wishlistItems.length}
+                </span>
+              )}
             </Link>
             <Link
               href="/cart"
@@ -103,7 +115,7 @@ const Navbar = () => {
                 Cart
               </span>
               <span className="absolute -top-1 -right-1 w-4 h-4 bg-secondary text-white text-[10px] flex items-center justify-center rounded-full">
-                2
+                {totalItems}
               </span>
             </Link>
           </div>

@@ -1,50 +1,51 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
-import { ShoppingCart, Star, ChevronRight, Heart } from "lucide-react";
+import { ShoppingCart, Star, ChevronRight, Heart, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
 
 const FeaturedProducts = () => {
-  const products = [
-    {
-      id: 1,
-      title: "Adidas Predator Football Boots",
-      price: 17150,
-      rating: 4.5,
-      vendor: "Adidas Kenya",
-      image: "/products/predator.jpg",
-      description:
-        "Enhanced control with rubber zones, firm-ground studs, and a breathable lightweight fit.",
-    },
-    {
-      id: 2,
-      title: "Premium Sound System",
-      price: 32990,
-      rating: 4.6,
-      vendor: "JBL",
-      image: "/products/system.jpg",
-      description:
-        "Deep bass, crisp highs, Bluetooth/USB/FM connectivity, and room-filling 5.1 surround.",
-    },
-    {
-      id: 3,
-      title: "Inter and AC Milan Jersey",
-      price: 11850,
-      rating: 4.7,
-      vendor: "Adidas Kenya",
-      image: "/products/jersey.jpg",
-      description:
-        "Breathable fabric, classic Nerazzurri stripes, slim athletic fit for match days.",
-    },
-    {
-      id: 4,
-      title: "Dr. Mattress Orthopedic Mattress",
-      price: 26400,
-      rating: 4.8,
-      vendor: "Dr. Mattress",
-      image: "/products/mattress.jpg",
-      description:
-        "Orthopedic support with high-density foam, breathable cover, and pressure relief for deep sleep.",
-    },
-  ];
+  const router = useRouter();
+  const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
+  const [products, setProducts] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFeaturedProducts = async () => {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
+      try {
+        const response = await fetch(`${apiUrl}/products`);
+        const data = await response.json();
+        if (data.success) {
+          // Take the first 4 products as featured
+          setProducts(data.data.slice(0, 4));
+        }
+      } catch (error) {
+        console.error("Error fetching featured products:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchFeaturedProducts();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <section className="bg-muted py-12">
+        <div className="flex justify-center items-center">
+          <Loader2 className="w-8 h-8 text-primary animate-spin" />
+        </div>
+      </section>
+    );
+  }
+
+  if (products.length === 0) return null;
 
   return (
     <section className="bg-muted">
@@ -58,30 +59,57 @@ const FeaturedProducts = () => {
         </div>
         <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-6">
           {products.map((p) => (
-            <div key={p.id} className="bg-white border border-slate-200 rounded-lg overflow-hidden">
-              <div className="relative h-32 md:h-40 bg-slate-100">
+            <div key={p._id} className="bg-white border border-slate-200 rounded-lg overflow-hidden group">
+              <div className="relative h-32 md:h-40 bg-slate-100 cursor-pointer" onClick={() => router.push(`/shop/product/${p._id}`)}>
                 <Image
-                  src={p.image}
-                  alt={p.title}
+                  src={p.image || "/placeholder-product.jpg"}
+                  alt={p.name}
                   fill
                   sizes="(max-width: 768px) 50vw, 25vw"
                   className="object-cover"
-                  priority={p.id === 1}
                 />
-                <div className="absolute top-2 left-2 bg-white/80 hover:bg-white rounded-full p-2 shadow">
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    addToCart(p._id);
+                  }}
+                  className="absolute top-2 left-2 bg-white/80 hover:bg-white rounded-full p-2 shadow transition-all hover:scale-110 active:scale-95 z-10"
+                  title="Add to Cart"
+                >
                   <ShoppingCart className="w-4 h-4 text-slate-700" />
-                </div>
-                <div className="absolute top-2 right-2 bg-white/80 hover:bg-white rounded-full p-2 shadow">
-                  <Heart className="w-4 h-4 text-slate-700" />
-                </div>
+                </button>
+                <button 
+                  onClick={async (e) => {
+                    e.stopPropagation();
+                    const action = await toggleWishlist(p._id);
+                    if (action) {
+                      setProducts(prev => prev.map(item => 
+                        item._id === p._id 
+                          ? { ...item, likesCount: Math.max(0, (item.likesCount || 0) + (action === 'added' ? 1 : -1)) } 
+                          : item
+                      ));
+                    }
+                  }}
+                  className={`absolute top-2 right-2 bg-white/80 hover:bg-white rounded-full p-2 shadow transition-all hover:scale-110 z-10 ${
+                    isInWishlist(p._id) ? 'text-pink-500' : 'text-slate-700'
+                  }`}
+                  title={isInWishlist(p._id) ? "Remove from Wishlist" : "Add to Wishlist"}
+                >
+                  <Heart className={`w-4 h-4 ${isInWishlist(p._id) ? 'fill-current' : ''}`} />
+                </button>
               </div>
-              <div className="p-4">
-                <div className="text-xs text-slate-500">{p.vendor}</div>
-                <div className="mt-1 font-medium">{p.title}</div>
-                <div className="mt-1 text-xs text-slate-500 font-light">{p.description}</div>
+              <div className="p-4 cursor-pointer" onClick={() => router.push(`/shop/product/${p._id}`)}>
+                <div className="flex justify-between items-start">
+                  <div className="text-xs text-slate-500">{p.shop?.name || "Official Store"}</div>
+                  <div className="flex items-center gap-1 text-pink-500">
+                    <Heart className={`w-3 h-3 ${isInWishlist(p._id) ? 'fill-current' : ''}`} />
+                    <span className="text-[10px] font-bold">{p.likesCount || 0}</span>
+                  </div>
+                </div>
+                <div className="mt-1 font-medium truncate group-hover:text-primary transition-colors">{p.name}</div>
+                <div className="mt-1 text-xs text-slate-500 font-light line-clamp-2 h-8">{p.description}</div>
                 <div className="mt-2 flex items-center gap-2">
                   <span className="text-lg font-bold">KES {p.price.toLocaleString()}</span>
-                  <span className="text-slate-400 line-through text-sm">KES {(p.price + 1500).toLocaleString()}</span>
                 </div>
                 <div className="mt-2 flex items-center gap-1 text-amber-500">
                   <Star className="w-4 h-4 fill-amber-500" />
@@ -89,9 +117,8 @@ const FeaturedProducts = () => {
                   <Star className="w-4 h-4 fill-amber-500" />
                   <Star className="w-4 h-4 fill-amber-500" />
                   <Star className="w-4 h-4" />
-                  <span className="ml-2 text-xs text-slate-500">{p.rating} / 5</span>
+                  <span className="ml-2 text-xs text-slate-500">{p.rating || 4.5} / 5</span>
                 </div>
-                
               </div>
             </div>
           ))}

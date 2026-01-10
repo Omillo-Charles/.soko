@@ -24,9 +24,13 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
 
 const ShopPage = () => {
   const router = useRouter();
+  const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
   const [isMobile, setIsMobile] = useState(false);
   const [products, setProducts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -110,7 +114,7 @@ const ShopPage = () => {
         
         {/* Left Sidebar - Categories & Filters */}
         <div className="hidden lg:block w-[280px] shrink-0">
-          <aside className="fixed w-[280px] h-screen overflow-y-auto custom-scrollbar px-6 py-6 space-y-8">
+          <aside className="fixed top-[144px] w-[280px] h-[calc(100vh-144px)] overflow-y-auto custom-scrollbar px-6 py-6 pb-24 space-y-8">
             {/* Search */}
             <div className="relative group">
               <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
@@ -157,7 +161,7 @@ const ShopPage = () => {
         </div>
 
         {/* Middle Feed - Products */}
-        <main className="flex-1 min-w-0 border-x border-slate-100">
+        <main className="flex-1 min-w-0 border-x border-slate-100 pb-24 lg:pb-0">
           {/* Header - Twitter Style */}
           <div className="sticky top-0 bg-white/80 backdrop-blur-md z-30 border-b border-slate-100">
             <div className="px-4 py-4">
@@ -286,9 +290,9 @@ const ShopPage = () => {
                         <div className="flex items-center justify-between max-w-md text-slate-500 -ml-2">
                           <button 
                             onClick={(e) => { e.stopPropagation(); }}
-                            className="flex items-center gap-2 group transition-colors hover:text-primary"
+                            className="flex items-center gap-0 group transition-colors hover:text-primary"
                           >
-                            <div className="p-2 rounded-full group-hover:bg-primary/10 transition-colors">
+                            <div className="p-1.5 rounded-full group-hover:bg-primary/10 transition-colors">
                               <MessageCircle className="w-[18px] h-[18px]" />
                             </div>
                             <span className="text-xs font-bold">{product.comments || 0}</span>
@@ -296,39 +300,56 @@ const ShopPage = () => {
 
                           <button 
                             onClick={(e) => { e.stopPropagation(); }}
-                            className="flex items-center gap-2 group transition-colors hover:text-green-500"
+                            className="flex items-center gap-0 group transition-colors hover:text-green-500"
                           >
-                            <div className="p-2 rounded-full group-hover:bg-green-500/10 transition-colors">
+                            <div className="p-1.5 rounded-full group-hover:bg-green-500/10 transition-colors">
                               <Repeat2 className="w-[18px] h-[18px]" />
                             </div>
                             <span className="text-xs font-bold">{product.reposts || 0}</span>
                           </button>
 
                           <button 
-                            onClick={(e) => { e.stopPropagation(); }}
-                            className="flex items-center gap-2 group transition-colors hover:text-pink-500"
+                            onClick={async (e) => { 
+                              e.stopPropagation();
+                              const action = await toggleWishlist(product.id);
+                              if (action) {
+                                setProducts(prev => prev.map(p => 
+                                  p.id === product.id 
+                                    ? { ...p, likes: Math.max(0, (p.likes || 0) + (action === 'added' ? 1 : -1)) } 
+                                    : p
+                                ));
+                              }
+                            }}
+                            className={`flex items-center gap-0 group transition-colors ${
+                              isInWishlist(product.id) ? 'text-pink-500' : 'hover:text-pink-500'
+                            }`}
                           >
-                            <div className="p-2 rounded-full group-hover:bg-pink-500/10 transition-colors">
-                              <Heart className="w-[18px] h-[18px]" />
+                            <div className={`p-1.5 rounded-full transition-colors ${
+                              isInWishlist(product.id) ? 'bg-pink-500/10' : 'group-hover:bg-pink-500/10'
+                            }`}>
+                              <Heart className={`w-[18px] h-[18px] ${isInWishlist(product.id) ? 'fill-current' : ''}`} />
                             </div>
                             <span className="text-xs font-bold">{product.likes || 0}</span>
                           </button>
 
                           <button 
-                            onClick={(e) => { e.stopPropagation(); }}
-                            className="flex items-center gap-2 group transition-colors hover:text-primary"
+                            onClick={(e) => { 
+                              e.stopPropagation();
+                              addToCart(product.id);
+                            }}
+                            className="flex items-center gap-0 group transition-colors hover:text-primary"
                           >
-                            <div className="p-2 rounded-full group-hover:bg-primary/10 transition-colors">
+                            <div className="p-1.5 rounded-full group-hover:bg-primary/10 transition-colors">
                               <ShoppingCart className="w-[18px] h-[18px]" />
                             </div>
-                            <span className="text-xs font-bold">Buy</span>
+                            <span className="text-xs font-bold">Add to Cart</span>
                           </button>
 
                           <button 
                             onClick={(e) => { e.stopPropagation(); }}
-                            className="flex items-center gap-2 group transition-colors hover:text-primary"
+                            className="flex items-center gap-2 group transition-colors hover:text-slate-900"
                           >
-                            <div className="p-2 rounded-full group-hover:bg-primary/10 transition-colors">
+                            <div className="p-2 rounded-full group-hover:bg-slate-100 transition-colors">
                               <Share2 className="w-[18px] h-[18px]" />
                             </div>
                           </button>
@@ -344,7 +365,7 @@ const ShopPage = () => {
 
         {/* Right Sidebar - Trending/Quick Links */}
         <div className="hidden lg:block w-[320px] shrink-0">
-          <aside className="fixed w-[320px] h-screen overflow-y-auto custom-scrollbar px-6 py-6 space-y-8">
+          <aside className="fixed top-[144px] w-[320px] h-[calc(100vh-144px)] overflow-y-auto custom-scrollbar px-6 py-6 pb-24 space-y-8">
             {/* Popular Shops */}
             <div className="space-y-4">
               <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Popular Shops</h3>
@@ -376,13 +397,24 @@ const ShopPage = () => {
             <div className="space-y-4">
               <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Special Offers</h3>
               <div className="space-y-3 px-2">
-                {specialOffers.map((offer) => (
-                  <div key={offer.title} className="group cursor-pointer relative overflow-hidden rounded-2xl bg-slate-50 p-4 hover:bg-slate-100 transition-all border border-transparent hover:border-slate-200">
+                {specialOffers.map((offer, index) => (
+                  <div 
+                    key={offer.title} 
+                    className={`group cursor-pointer relative overflow-hidden rounded-2xl p-5 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl ${
+                      index === 0 
+                        ? 'bg-primary shadow-blue-500/20' 
+                        : 'bg-secondary shadow-orange-500/20'
+                    }`}
+                  >
                     <div className="relative z-10">
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{offer.title}</p>
-                      <p className="text-lg font-black text-slate-900 leading-tight">{offer.discount}</p>
+                      <p className="text-[10px] font-black text-white/70 uppercase tracking-widest mb-1">{offer.title}</p>
+                      <p className="text-xl font-black text-white leading-tight">{offer.discount}</p>
                     </div>
-                    <div className="absolute right-2 bottom-2 text-4xl grayscale opacity-10 group-hover:scale-110 transition-transform">
+                    
+                    {/* Decorative Background Elements */}
+                    <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-colors"></div>
+                    
+                    <div className="absolute right-3 bottom-3 text-5xl opacity-20 group-hover:scale-110 group-hover:opacity-30 transition-all duration-500 transform -rotate-12">
                       {offer.icon}
                     </div>
                   </div>
