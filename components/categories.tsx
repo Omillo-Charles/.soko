@@ -8,7 +8,7 @@ const items = [
   {
     name: "Home Décor",
     href: "/shop?cat=home-decor",
-    image: "/categories/home decor/decor.jpg",
+    image: "/categories/home%20decor/decor.jpg",
   },
   {
     name: "Kitchenware",
@@ -23,7 +23,7 @@ const items = [
   {
     name: "Baby Products",
     href: "/shop?cat=baby-products",
-    image: "/categories/baby products/baby.jpg",
+    image: "/categories/baby%20products/baby.jpg",
   },
   {
     name: "Toys & Games",
@@ -38,17 +38,17 @@ const items = [
   {
     name: "Computer Accessories",
     href: "/shop?cat=computer-accessories",
-    image: "/categories/computer accessories/computer.jpg",
+    image: "/categories/computer%20accessories/computer.jpg",
   },
   {
     name: "Office Supplies",
     href: "/shop?cat=office-supplies",
-    image: "/categories/office supplies/office.jpg",
+    image: "/categories/office%20supplies/office.jpg",
   },
   {
     name: "Digital Products",
     href: "/shop?cat=digital-products",
-    image: "/categories/digital products/digital.jpg",
+    image: "/categories/digital%20products/digital.jpg",
   },
   {
     name: "Automotive Accessories",
@@ -73,7 +73,7 @@ const items = [
   {
     name: "Event & Party Supplies",
     href: "/shop?cat=event-party-supplies",
-    image: "/categories/events and parties/event.jpg",
+    image: "/categories/events%20and%20parties/event.jpg",
   },
   {
     name: "Clothing & Apparel",
@@ -98,22 +98,22 @@ const items = [
   {
     name: "Phone Accessories",
     href: "/shop?cat=phone-accessories",
-    image: "/categories/phone accessories/phones.jpg",
+    image: "/categories/phone%20accessories/phones.jpg",
   },
   {
     name: "Home Appliances",
     href: "/shop?cat=home-appliances",
-    image: "/categories/home appliances/home.jpg",
+    image: "/categories/home%20appliances/home.jpg",
   },
   {
     name: "Beauty Products",
     href: "/shop?cat=beauty-products",
-    image: "/categories/beauty products/beauty.jpg",
+    image: "/categories/beauty%20products/beauty.jpg",
   },
   {
     name: "Personal Care Items",
     href: "/shop?cat=personal-care",
-    image: "/categories/personal care/personal.jpg",
+    image: "/categories/personal%20care/personal.jpg",
   },
   {
     name: "Watches & Jewelry",
@@ -123,7 +123,7 @@ const items = [
   {
     name: "Groceries & Packaged Foods",
     href: "/shop?cat=groceries-packaged-foods",
-    image: "/categories/groceries and foods/groceries.jpg",
+    image: "/categories/groceries%20and%20foods/groceries.jpg",
   },
   {
     name: "Furniture",

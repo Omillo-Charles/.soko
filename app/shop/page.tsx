@@ -54,7 +54,7 @@ const ShopPage = () => {
             name: s.name,
             handle: `@${s.name.toLowerCase().replace(/\s+/g, "_")}`,
             avatar: s.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${s.name}`,
-            followers: "0", // Currently not in schema
+            followers: s.followersCount || 0,
             verified: s.isVerified || false
           })));
         }

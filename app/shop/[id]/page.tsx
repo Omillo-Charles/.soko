@@ -25,6 +25,7 @@ import {
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
+import { toast } from "sonner";
 
 const ShopProfilePage = () => {
   const { id } = useParams();
@@ -35,6 +36,45 @@ const ShopProfilePage = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [isFollowLoading, setIsFollowLoading] = useState(false);
+  const [popularShops, setPopularShops] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchPopularShops = async () => {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
+      try {
+        const response = await fetch(`${apiUrl}/shops`);
+        const data = await response.json();
+        if (data.success) {
+          setPopularShops(data.data.map((s: any) => ({
+            id: s._id,
+            name: s.name,
+            handle: `@${s.name.toLowerCase().replace(/\s+/g, "_")}`,
+            avatar: s.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${s.name}`,
+            followers: s.followersCount || 0,
+            verified: s.isVerified || false
+          })));
+        }
+      } catch (err) {
+        console.error("Error fetching shops:", err);
+      }
+    };
+    fetchPopularShops();
+  }, []);
+
+  useEffect(() => {
+    // Get current user from localStorage
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      try {
+        setCurrentUser(JSON.parse(userData));
+      } catch (e) {
+        console.error("Error parsing user data", e);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const fetchShopData = async () => {
@@ -45,7 +85,13 @@ const ShopProfilePage = () => {
         const shopData = await shopRes.json();
         
         if (shopData.success) {
-          setShop(shopData.data);
+          const shopInfo = shopData.data;
+          setShop(shopInfo);
+          
+          // Set initial following state
+          if (currentUser && shopInfo.followers) {
+            setIsFollowing(shopInfo.followers.includes(currentUser._id));
+          }
           
           // Fetch shop products
           const productsRes = await fetch(`${apiUrl}/products?shop=${id}`);
@@ -68,7 +114,47 @@ const ShopProfilePage = () => {
     if (id) {
       fetchShopData();
     }
-  }, [id]);
+  }, [id, currentUser]);
+
+  const handleFollowToggle = async () => {
+    if (!currentUser) {
+      toast.error("Please login to follow shops");
+      router.push("/auth?mode=login");
+      return;
+    }
+
+    if (shop.owner === currentUser._id) {
+      toast.error("You cannot follow your own shop");
+      return;
+    }
+
+    setIsFollowLoading(true);
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
+    const token = localStorage.getItem("accessToken");
+
+    try {
+      const response = await fetch(`${apiUrl}/shops/${id}/follow`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+      const data = await response.json();
+
+      if (data.success) {
+        setIsFollowing(data.isFollowing);
+        setShop({ ...shop, followersCount: data.followersCount });
+        toast.success(data.message);
+      } else {
+        toast.error(data.message || "Failed to follow shop");
+      }
+    } catch (err) {
+      console.error("Error toggling follow:", err);
+      toast.error("An error occurred. Please try again.");
+    } finally {
+      setIsFollowLoading(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -104,7 +190,7 @@ const ShopProfilePage = () => {
         
         {/* Left Sidebar */}
         <div className="hidden lg:block w-[280px] shrink-0">
-          <aside className="fixed w-[280px] h-screen overflow-y-auto custom-scrollbar px-6 py-6 space-y-8">
+          <aside className="fixed w-[280px] h-screen overflow-y-auto custom-scrollbar px-6 py-6 pb-24 space-y-8">
             <button 
               onClick={() => router.push('/shop')}
               className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:text-primary hover:bg-primary/5 transition-all group w-full"
@@ -166,9 +252,19 @@ const ShopProfilePage = () => {
                   />
                 </div>
                 <div className="flex gap-2 pb-2">
-                  <button className="px-6 py-2 bg-slate-900 text-white rounded-full text-sm font-black hover:bg-primary transition-all">
-                    Follow
-                  </button>
+                  {currentUser?._id !== shop.owner && (
+                    <button 
+                      onClick={handleFollowToggle}
+                      disabled={isFollowLoading}
+                      className={`px-6 py-2 rounded-full text-sm font-black transition-all ${
+                        isFollowing 
+                          ? 'bg-slate-100 text-slate-900 hover:bg-red-50 hover:text-red-600 hover:border-red-100' 
+                          : 'bg-slate-900 text-white hover:bg-primary'
+                      } ${isFollowLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      {isFollowLoading ? '...' : (isFollowing ? 'Following' : 'Follow')}
+                    </button>
+                  )}
                   <button className="p-2 border border-slate-200 rounded-full hover:bg-slate-50 transition-all">
                     <Share2 className="w-4 h-4 text-slate-600" />
                   </button>
@@ -183,7 +279,13 @@ const ShopProfilePage = () => {
                   <h2 className="text-xl font-black text-slate-900">{shop.name}</h2>
                   {shop.isVerified && <CheckCircle2 className="w-5 h-5 text-primary fill-primary/10" />}
                 </div>
-                <p className="text-sm font-bold text-slate-500">@{shop.name.toLowerCase().replace(/\s+/g, "_")}</p>
+                <div className="flex items-center gap-3">
+                  <p className="text-sm font-bold text-slate-500">@{shop.name.toLowerCase().replace(/\s+/g, "_")}</p>
+                  <div className="w-1 h-1 rounded-full bg-slate-300" />
+                  <p className="text-sm font-bold text-slate-900">
+                    {shop.followersCount || 0} <span className="text-slate-500">Followers</span>
+                  </p>
+                </div>
               </div>
 
               <p className="mt-4 text-[13px] text-slate-600 font-medium leading-relaxed max-w-2xl">
@@ -312,7 +414,7 @@ const ShopProfilePage = () => {
 
         {/* Right Sidebar */}
         <div className="hidden lg:block w-[320px] shrink-0">
-          <aside className="fixed w-[320px] h-screen overflow-y-auto custom-scrollbar px-6 py-6 space-y-8">
+          <aside className="fixed w-[320px] h-screen overflow-y-auto custom-scrollbar px-6 py-6 pb-24 space-y-8">
             {/* Store Stats */}
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-slate-50/50 p-4 rounded-2xl border border-slate-100 text-center">
@@ -360,19 +462,29 @@ const ShopProfilePage = () => {
             <div className="space-y-4">
               <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Popular Stores</h3>
               <div className="space-y-1">
-                {[1, 2, 3].map(i => (
-                  <div key={i} className="p-3 hover:bg-slate-50 transition-all cursor-pointer flex items-center justify-between gap-3 rounded-xl group">
+                {popularShops
+                  .filter(s => s.id !== id) // Filter out the current shop
+                  .slice(0, 5) // Limit to 5 shops
+                  .map((vendor) => (
+                  <div 
+                    key={vendor.id} 
+                    onClick={() => router.push(`/shop/${vendor.id}`)}
+                    className="p-3 hover:bg-slate-50 transition-all cursor-pointer flex items-center justify-between gap-3 rounded-xl group"
+                  >
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-10 h-10 rounded-full bg-slate-100 overflow-hidden border border-slate-100">
-                        <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=Shop${i}`} alt="Shop" className="w-full h-full object-cover" />
+                      <div className="w-10 h-10 rounded-full overflow-hidden bg-slate-100 border border-slate-100 shrink-0">
+                        <img src={vendor.avatar} alt={vendor.name} className="w-full h-full object-cover" />
                       </div>
                       <div className="min-w-0">
-                        <p className="font-bold text-slate-900 text-sm truncate">Similar Shop {i}</p>
-                        <p className="text-slate-400 text-[11px] truncate">@similar_shop_{i}</p>
+                        <div className="flex items-center gap-1">
+                          <p className="font-bold text-slate-900 text-sm truncate">{vendor.name}</p>
+                          {vendor.verified && <CheckCircle2 className="w-3 h-3 text-primary fill-primary/10" />}
+                        </div>
+                        <p className="text-slate-400 text-[11px] truncate">{vendor.handle}</p>
                       </div>
                     </div>
                     <button className="bg-slate-900 text-white text-[11px] font-black px-4 py-1.5 rounded-full hover:bg-primary transition-all shrink-0">
-                      Follow
+                      View
                     </button>
                   </div>
                 ))}
