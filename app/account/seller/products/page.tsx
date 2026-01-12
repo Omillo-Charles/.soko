@@ -49,6 +49,14 @@ const SellerProductsPage = () => {
             "Authorization": `Bearer ${token}`
           }
         });
+
+        if (res.status === 401) {
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("user");
+          router.push("/auth?mode=login");
+          return;
+        }
+
         const data = await res.json();
 
         if (data.success) {

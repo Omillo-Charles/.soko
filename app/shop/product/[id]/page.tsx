@@ -141,26 +141,6 @@ const ProductDetailsPage = () => {
                 alt={product.name}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               />
-              {product.discount > 0 && (
-                <div className="absolute top-8 left-8 bg-red-500 text-white px-4 py-2 rounded-2xl font-black text-sm shadow-xl shadow-red-500/20">
-                  -{product.discount}% OFF
-                </div>
-              )}
-            </div>
-            
-            {/* Thumbnail selector - if multiple images existed */}
-            <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
-              {[product.image, product.image, product.image].map((img, idx) => (
-                <button 
-                  key={idx}
-                  onClick={() => setSelectedImage(idx)}
-                  className={`w-24 h-24 rounded-2xl overflow-hidden border-2 shrink-0 transition-all ${
-                    selectedImage === idx ? 'border-primary' : 'border-transparent bg-white'
-                  }`}
-                >
-                  <img src={img} alt="" className="w-full h-full object-cover" />
-                </button>
-              ))}
             </div>
           </div>
 
@@ -174,12 +154,14 @@ const ProductDetailsPage = () => {
                 >
                   {product.shop?.name || "Official Store"}
                 </Link>
-                <div className="flex items-center gap-1 text-amber-500">
-                  <Star className="w-4 h-4 fill-current" />
-                  <span className="text-sm font-bold">4.8</span>
-                  <span className="text-slate-400 font-medium">(120 reviews)</span>
-                </div>
-                <div className="w-1 h-1 bg-slate-300 rounded-full"></div>
+                {(product.rating > 0 || product.reviewsCount > 0) && (
+                  <div className="flex items-center gap-1 text-amber-500">
+                    <Star className="w-4 h-4 fill-current" />
+                    <span className="text-sm font-bold">{product.rating || 0}</span>
+                    <span className="text-slate-400 font-medium">({product.reviewsCount || 0} reviews)</span>
+                  </div>
+                )}
+                {(product.rating > 0 || product.reviewsCount > 0) && <div className="w-1 h-1 bg-slate-300 rounded-full"></div>}
                 <div className="flex items-center gap-1 text-pink-500">
                   <Heart className="w-4 h-4 fill-current" />
                   <span className="text-sm font-bold">{product.likesCount || 0}</span>
@@ -195,33 +177,11 @@ const ProductDetailsPage = () => {
                 <span className="text-3xl font-black text-primary">
                   {formatPrice(product.price)}
                 </span>
-                {product.oldPrice && (
-                  <span className="text-xl text-slate-300 font-bold line-through">
-                    {formatPrice(product.oldPrice)}
-                  </span>
-                )}
               </div>
 
               <p className="text-slate-500 font-medium leading-relaxed text-lg mb-8">
-                {product.description || "Premium quality product with exceptional features and durable construction. Perfect for daily use and designed to meet all your needs with style and efficiency."}
+                {product.description}
               </p>
-
-              {/* Options - Size/Color (Static for now) */}
-              <div className="space-y-6 mb-8">
-                <div>
-                  <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-4">Select Color</h4>
-                  <div className="flex gap-3">
-                    {['bg-slate-900', 'bg-blue-500', 'bg-red-500'].map((color, idx) => (
-                      <button 
-                        key={idx}
-                        className={`w-10 h-10 rounded-full border-2 ${idx === 0 ? 'border-primary p-0.5' : 'border-transparent'}`}
-                      >
-                        <div className={`w-full h-full rounded-full ${color}`}></div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
 
               {/* Quantity Selector */}
               <div className="flex items-center gap-6 mb-10">
@@ -241,7 +201,7 @@ const ProductDetailsPage = () => {
                   </button>
                 </div>
                 <div className="text-slate-400 font-bold">
-                  Only <span className="text-primary">8 items</span> left!
+                  Stock: <span className="text-primary">{product.stock || 0} items</span> available
                 </div>
               </div>
 
@@ -266,73 +226,24 @@ const ProductDetailsPage = () => {
                 </button>
               </div>
             </div>
-
-            {/* Features/Trust Badges */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-8 border-t border-slate-100">
-              <div className="flex items-center gap-3 p-4 bg-white rounded-3xl border border-slate-100">
-                <div className="w-10 h-10 bg-green-50 rounded-2xl flex items-center justify-center text-green-600">
-                  <ShieldCheck className="w-6 h-6" />
-                </div>
-                <div>
-                  <h5 className="text-xs font-black text-slate-900 uppercase">Authentic</h5>
-                  <p className="text-[10px] text-slate-400 font-bold">100% Genuine</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 p-4 bg-white rounded-3xl border border-slate-100">
-                <div className="w-10 h-10 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600">
-                  <Truck className="w-6 h-6" />
-                </div>
-                <div>
-                  <h5 className="text-xs font-black text-slate-900 uppercase">Fast Delivery</h5>
-                  <p className="text-[10px] text-slate-400 font-bold">Within 24 hours</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 p-4 bg-white rounded-3xl border border-slate-100">
-                <div className="w-10 h-10 bg-purple-50 rounded-2xl flex items-center justify-center text-purple-600">
-                  <RotateCcw className="w-6 h-6" />
-                </div>
-                <div>
-                  <h5 className="text-xs font-black text-slate-900 uppercase">Easy Returns</h5>
-                  <p className="text-[10px] text-slate-400 font-bold">30-day policy</p>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
-        {/* Product Tabs/Description Detail */}
+        {/* Product Details/Content */}
         <div className="mt-20">
           <div className="flex border-b border-slate-100 mb-10 overflow-x-auto scrollbar-hide">
-            {['Description', 'Specifications', 'Reviews (120)'].map((tab, idx) => (
-              <button 
-                key={tab}
-                className={`px-8 py-4 font-black text-sm uppercase tracking-widest whitespace-nowrap border-b-2 transition-all ${
-                  idx === 0 ? 'border-primary text-primary' : 'border-transparent text-slate-400 hover:text-slate-600'
-                }`}
-              >
-                {tab}
-              </button>
-            ))}
+            <button 
+              className="px-8 py-4 font-black text-sm uppercase tracking-widest whitespace-nowrap border-b-2 border-primary text-primary transition-all"
+            >
+              Description
+            </button>
           </div>
           
           <div className="max-w-3xl">
-            <h3 className="text-2xl font-black text-slate-900 mb-6">Product Experience</h3>
-            <p className="text-slate-500 font-medium leading-relaxed text-lg mb-8">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            <h3 className="text-2xl font-black text-slate-900 mb-6">Product Description</h3>
+            <p className="text-slate-500 font-medium leading-relaxed text-lg mb-8 whitespace-pre-wrap">
+              {product.content || product.description}
             </p>
-            <ul className="space-y-4">
-              {[
-                "High-performance materials for long-lasting durability",
-                "Ergonomic design optimized for maximum comfort",
-                "Eco-friendly manufacturing process and sustainable packaging",
-                "Versatile style that complements any outfit or occasion"
-              ].map((item, idx) => (
-                <li key={idx} className="flex items-start gap-3 text-slate-600 font-medium">
-                  <CheckCircle2 className="w-5 h-5 text-green-500 mt-1 shrink-0" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
           </div>
         </div>
       </div>

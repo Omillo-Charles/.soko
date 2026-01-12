@@ -176,18 +176,38 @@ const SellerSettingsPage = () => {
         return;
       }
 
+      // Use a AbortController to handle potential client-side timeouts
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 seconds timeout
+
       const response = await fetch(`${apiUrl}/shops/my-shop/branding`, {
         method: "PUT",
         headers: {
           "Authorization": `Bearer ${token}`
         },
         body: submitData,
+        signal: controller.signal
       });
+
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         const errorText = await response.text();
         console.error("Branding Server Error Response:", errorText);
-        throw new Error(`Server error: ${response.status} ${response.statusText}`);
+        
+        let errorMessage = "Server error occurred";
+        try {
+          const errorJson = JSON.parse(errorText);
+          if (errorJson.error === "Request Timeout") {
+            errorMessage = "The upload timed out. This usually happens with large images or slow internet. Please try again with a smaller file.";
+          } else {
+            errorMessage = errorJson.message || errorJson.error || errorMessage;
+          }
+        } catch (e) {
+          errorMessage = `Server error: ${response.status} ${response.statusText}`;
+        }
+        
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
@@ -199,9 +219,13 @@ const SellerSettingsPage = () => {
       } else {
         alert(data.message || "Failed to update branding");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Update Branding Error:", error);
-      alert("An error occurred. Please try again.");
+      if (error.name === 'AbortError') {
+        alert("The upload took too long and was cancelled. Please try with a smaller image or check your connection.");
+      } else {
+        alert(error.message || "An error occurred. Please try again.");
+      }
     } finally {
       setIsUpdating(false);
     }

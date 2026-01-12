@@ -61,6 +61,11 @@ const SellerDashboard = () => {
             "Authorization": `Bearer ${token}`
           }
         });
+
+        if (shopRes.status === 401) {
+          throw new Error("Unauthorized");
+        }
+
         const shopData = await shopRes.json();
 
         if (shopData.success && shopData.data) {

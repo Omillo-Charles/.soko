@@ -30,25 +30,47 @@ const AccountPage = () => {
 
   useEffect(() => {
     // Protection logic: Check for token and user data
-    const token = localStorage.getItem("accessToken");
-    const userData = localStorage.getItem("user");
+    const verifyUser = async () => {
+      const token = localStorage.getItem("accessToken");
+      const userData = localStorage.getItem("user");
 
-    if (!token || !userData) {
-      router.push("/auth?mode=login");
-      return;
-    }
+      if (!token || !userData) {
+        router.push("/auth?mode=login");
+        return;
+      }
 
-    try {
-      const parsedUser = JSON.parse(userData);
-      setUser(parsedUser);
-      setAccountType(parsedUser.accountType || "buyer");
-    } catch (e) {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("user");
-      router.push("/auth?mode=login");
-    } finally {
-      setIsLoading(false);
-    }
+      try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
+        const response = await fetch(`${apiUrl}/users/me`, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error("Session invalid");
+        }
+
+        const data = await response.json();
+        if (data.success) {
+          setUser(data.data);
+          setAccountType(data.data.accountType || "buyer");
+          // Sync localStorage with fresh data
+          localStorage.setItem("user", JSON.stringify(data.data));
+        } else {
+          throw new Error("Failed to verify user");
+        }
+      } catch (e) {
+        console.error("Auth verification failed:", e);
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("user");
+        router.push("/auth?mode=login");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    verifyUser();
   }, [router]);
 
   const handleLogout = () => {

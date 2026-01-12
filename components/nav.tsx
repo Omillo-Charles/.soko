@@ -184,9 +184,11 @@ const Navbar = () => {
         >
           <div className="relative">
             <ShoppingCart className="w-5 h-5" />
-            <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-secondary text-white text-[9px] flex items-center justify-center rounded-full">
-              2
-            </span>
+            {totalItems > 0 && (
+              <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-secondary text-white text-[9px] flex items-center justify-center rounded-full">
+                {totalItems}
+              </span>
+            )}
           </div>
           <span>Cart</span>
         </Link>
