@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { 
   Search, 
   Filter, 
@@ -26,21 +26,55 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
+import { categories as allCategories } from "@/constants/categories";
 
 const ShopPage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const query = searchParams.get("q") || "";
+  const cat = searchParams.get("cat") || "all";
+  
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const [isMobile, setIsMobile] = useState(false);
   const [products, setProducts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [popularShops, setPopularShops] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchPopularShops = async () => {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
+      try {
+        const response = await fetch(`${apiUrl}/shops`);
+        const data = await response.json();
+        if (data.success) {
+          setPopularShops(data.data.map((s: any) => ({
+            id: s._id,
+            name: s.name,
+            handle: `@${s.name.toLowerCase().replace(/\s+/g, "_")}`,
+            avatar: s.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${s.name}`,
+            followers: "0", // Currently not in schema
+            verified: s.isVerified || false
+          })));
+        }
+      } catch (err) {
+        console.error("Error fetching shops:", err);
+      }
+    };
+    fetchPopularShops();
+  }, []);
 
   useEffect(() => {
     const fetchProducts = async () => {
+      setIsLoading(true);
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
       try {
-        const response = await fetch(`${apiUrl}/products`);
+        const params = new URLSearchParams();
+        if (query) params.set("q", query);
+        if (cat && cat !== "all") params.set("cat", cat);
+        
+        const response = await fetch(`${apiUrl}/products?${params.toString()}`);
         const data = await response.json();
         
         if (data.success) {
@@ -75,7 +109,7 @@ const ShopPage = () => {
     };
 
     fetchProducts();
-  }, []);
+  }, [query, cat]);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -88,25 +122,35 @@ const ShopPage = () => {
     };
   }, []);
 
-  const categories = [
-    { name: "Electronics", count: 1240, icon: "📱" },
-    { name: "Fashion", count: 850, icon: "👕" },
-    { name: "Home & Garden", count: 620, icon: "🏠" },
-    { name: "Beauty", count: 430, icon: "💄" },
-    { name: "Sports", count: 310, icon: "⚽" },
-    { name: "Toys", count: 150, icon: "🧸" },
-  ];
-
-  const trendingVendors = [
-    { name: "Nike Official", handle: "@nike", followers: "2.4M", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Nike" },
-    { name: "Apple Store", handle: "@apple", followers: "5.1M", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Apple" },
-    { name: "Samsung Hub", handle: "@samsung", followers: "1.8M", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Samsung" },
-  ];
+  const categories = allCategories.filter(c => c.value !== 'all');
 
   const specialOffers = [
     { title: "Summer Sale", discount: "50% OFF", color: "bg-orange-500", icon: "🔥" },
     { title: "New Arrivals", discount: "FREE DELIVERY", color: "bg-blue-600", icon: "📦" },
   ];
+
+  const handleCategoryClick = (categoryValue: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (categoryValue === 'all') {
+      params.delete('cat');
+    } else {
+      params.set('cat', categoryValue);
+    }
+    router.push(`/shop?${params.toString()}`);
+  };
+
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const q = formData.get('q') as string;
+    const params = new URLSearchParams(searchParams.toString());
+    if (q) {
+      params.set('q', q);
+    } else {
+      params.delete('q');
+    }
+    router.push(`/shop?${params.toString()}`);
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -116,28 +160,44 @@ const ShopPage = () => {
         <div className="hidden lg:block w-[280px] shrink-0">
           <aside className="fixed top-[144px] w-[280px] h-[calc(100vh-144px)] overflow-y-auto custom-scrollbar px-6 py-6 pb-24 space-y-8">
             {/* Search */}
-            <div className="relative group">
+            <form onSubmit={handleSearch} className="relative group">
               <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
                 <Search className="w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors" />
               </div>
               <input 
+                name="q"
                 type="text" 
+                defaultValue={query}
                 placeholder="Search products..." 
                 className="w-full bg-slate-50 border-none rounded-2xl py-3.5 pl-11 pr-4 text-sm font-bold text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-primary/20 transition-all"
               />
-            </div>
+            </form>
 
             {/* Categories */}
             <div className="space-y-4">
-              <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Categories</h3>
+              <div className="flex items-center justify-between px-2">
+                <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Categories</h3>
+                {cat !== 'all' && (
+                  <button 
+                    onClick={() => handleCategoryClick('all')}
+                    className="text-[10px] font-bold text-primary hover:underline"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
               <div className="space-y-1">
                 {categories.map((category) => (
                   <button 
-                    key={category.name}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:text-primary hover:bg-primary/5 transition-all group"
+                    key={category.value}
+                    onClick={() => handleCategoryClick(category.value)}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all group ${
+                      cat === category.value 
+                        ? 'text-primary bg-primary/10' 
+                        : 'text-slate-600 hover:text-primary hover:bg-primary/5'
+                    }`}
                   >
-                    <span className="text-lg grayscale group-hover:scale-110 transition-transform">{category.icon}</span>
-                    {category.name}
+                    {category.label}
                   </button>
                 ))}
               </div>
@@ -370,23 +430,26 @@ const ShopPage = () => {
             <div className="space-y-4">
               <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Popular Shops</h3>
               <div className="space-y-1">
-                {trendingVendors.map((vendor) => (
+                {popularShops.map((vendor) => (
                   <div 
-                    key={vendor.handle} 
-                    onClick={() => router.push(`/shop/${vendor.handle.replace('@', '')}`)}
+                    key={vendor.id} 
+                    onClick={() => router.push(`/shop/${vendor.id}`)}
                     className="p-3 hover:bg-slate-50 transition-all cursor-pointer flex items-center justify-between gap-3 rounded-xl group"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-10 h-10 rounded-full overflow-hidden bg-slate-100 border border-slate-100">
+                      <div className="w-10 h-10 rounded-full overflow-hidden bg-slate-100 border border-slate-100 shrink-0">
                         <img src={vendor.avatar} alt={vendor.name} className="w-full h-full object-cover" />
                       </div>
                       <div className="min-w-0">
-                        <p className="font-bold text-slate-900 text-sm truncate">{vendor.name}</p>
-                        <p className="text-slate-400 text-[11px] truncate">{vendor.followers} followers</p>
+                        <div className="flex items-center gap-1">
+                          <p className="font-bold text-slate-900 text-sm truncate">{vendor.name}</p>
+                          {vendor.verified && <CheckCircle2 className="w-3 h-3 text-primary fill-primary/10" />}
+                        </div>
+                        <p className="text-slate-400 text-[11px] truncate">{vendor.handle}</p>
                       </div>
                     </div>
                     <button className="bg-slate-900 text-white text-[11px] font-black px-4 py-1.5 rounded-full hover:bg-primary transition-all shrink-0">
-                      Follow
+                      View
                     </button>
                   </div>
                 ))}

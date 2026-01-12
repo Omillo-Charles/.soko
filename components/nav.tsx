@@ -126,10 +126,13 @@ const Navbar = () => {
       <div className="bg-primary text-white hidden md:block">
         <div className="w-full px-4 md:px-8 flex items-center justify-between h-12">
           <div className="flex items-center gap-8 text-sm font-medium">
-            <div className="flex items-center gap-2 cursor-pointer bg-blue-700 h-12 px-4 hover:bg-blue-800 transition-colors">
+            <Link 
+              href="/categories"
+              className="flex items-center gap-2 cursor-pointer bg-blue-700 h-12 px-4 hover:bg-blue-800 transition-colors"
+            >
               <Menu className="w-5 h-5" />
               <span>All Categories</span>
-            </div>
+            </Link>
             <nav className="flex items-center gap-6">
               <Link href="/" className="hover:text-slate-200 transition-colors">
                 Home

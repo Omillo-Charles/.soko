@@ -32,7 +32,7 @@ const items = [
   },
   {
     name: "Sports & Fitness Equipment",
-    href: "/shop?cat=sports-fitness-equipment",
+    href: "/shop?cat=sports-fitness",
     image: "/categories/sports/sports.jpg",
   },
   {
@@ -67,7 +67,7 @@ const items = [
   },
   {
     name: "Craft & DIY Supplies",
-    href: "/shop?cat=craft-diy-supplies",
+    href: "/shop?cat=craft-diy",
     image: "/categories/craft/craft.jpg",
   },
   {
@@ -147,23 +147,31 @@ const Categories = () => {
       <div className="w-full px-4 md:px-8 pt-1 pb-8">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl md:text-2xl font-bold">Shop by Category</h2>
-          <div className="hidden md:flex items-center gap-2">
-            <button
-              type="button"
-              aria-label="Scroll left"
-              onClick={() => scroll("left")}
-              className="p-2 border border-slate-300 rounded hover:bg-slate-50"
+          <div className="flex items-center gap-4">
+            <Link 
+              href="/categories" 
+              className="text-primary text-sm font-bold hover:underline"
             >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <button
-              type="button"
-              aria-label="Scroll right"
-              onClick={() => scroll("right")}
-              className="p-2 border border-slate-300 rounded hover:bg-slate-50"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
+              See all
+            </Link>
+            <div className="hidden md:flex items-center gap-2">
+              <button
+                type="button"
+                aria-label="Scroll left"
+                onClick={() => scroll("left")}
+                className="p-2 border border-slate-300 rounded hover:bg-slate-50"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <button
+                type="button"
+                aria-label="Scroll right"
+                onClick={() => scroll("right")}
+                className="p-2 border border-slate-300 rounded hover:bg-slate-50"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
           </div>
         </div>
 

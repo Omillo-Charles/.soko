@@ -16,33 +16,9 @@ import {
   Trash2
 } from "lucide-react";
 
-const categories = [
-  { label: "Clothing & Apparel", value: "clothing-apparel" },
-  { label: "Footwear", value: "footwear" },
-  { label: "Fashion Accessories", value: "fashion-accessories" },
-  { label: "Electronics", value: "electronics" },
-  { label: "Phone Accessories", value: "phone-accessories" },
-  { label: "Home Appliances", value: "home-appliances" },
-  { label: "Beauty Products", value: "beauty-products" },
-  { label: "Personal Care Items", value: "personal-care" },
-  { label: "Watches & Jewelry", value: "watches-jewelry" },
-  { label: "Groceries & Packaged Foods", value: "groceries-packaged-foods" },
-  { label: "Furniture", value: "furniture" },
-  { label: "Home Décor", value: "home-decor" },
-  { label: "Kitchenware", value: "kitchenware" },
-  { label: "Books & Stationery", value: "books-stationery" },
-  { label: "Baby Products", value: "baby-products" },
-  { label: "Toys & Games", value: "toys-games" },
-  { label: "Sports & Fitness Equipment", value: "sports-fitness" },
-  { label: "Computer Accessories", value: "computer-accessories" },
-  { label: "Office Supplies", value: "office-supplies" },
-  { label: "Digital Products", value: "digital-products" },
-  { label: "Automotive Accessories", value: "automotive-accessories" },
-  { label: "Pet Supplies", value: "pet-supplies" },
-  { label: "Health Products", value: "health-products" },
-  { label: "Craft & DIY Supplies", value: "craft-diy" },
-  { label: "Event & Party Supplies", value: "event-party-supplies" },
-];
+import { categories as allCategories } from "@/constants/categories";
+
+const categories = allCategories.filter(c => c.value !== 'all');
 
 const NewProductPage = () => {
   const router = useRouter();

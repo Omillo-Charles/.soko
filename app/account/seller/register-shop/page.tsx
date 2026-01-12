@@ -15,6 +15,10 @@ import {
   CheckCircle2
 } from "lucide-react";
 
+import { categories as allCategories } from "@/constants/categories";
+
+const categories = allCategories.filter(c => c.value !== 'all');
+
 const RegisterShopPage = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -180,12 +184,11 @@ const RegisterShopPage = () => {
                       className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium appearance-none"
                     >
                       <option value="">Select a category</option>
-                      <option value="electronics">Electronics</option>
-                      <option value="fashion">Fashion</option>
-                      <option value="home">Home & Kitchen</option>
-                      <option value="beauty">Beauty & Health</option>
-                      <option value="sports">Sports & Outdoors</option>
-                      <option value="other">Other</option>
+                      {categories.map((c) => (
+                        <option key={c.value} value={c.value}>
+                          {c.label}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>
