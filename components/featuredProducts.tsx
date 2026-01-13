@@ -98,26 +98,19 @@ const FeaturedProducts = () => {
                   <Heart className={`w-4 h-4 ${isInWishlist(p._id) ? 'fill-current' : ''}`} />
                 </button>
               </div>
-              <div className="p-4 cursor-pointer" onClick={() => router.push(`/shop/product/${p._id}`)}>
-                <div className="flex justify-between items-start">
-                  <div className="text-xs text-slate-500">{p.shop?.name || "Official Store"}</div>
-                  <div className="flex items-center gap-1 text-pink-500">
-                    <Heart className={`w-3 h-3 ${isInWishlist(p._id) ? 'fill-current' : ''}`} />
-                    <span className="text-[10px] font-bold">{p.likesCount || 0}</span>
-                  </div>
+              <div className="p-3">
+                <div className="flex items-center gap-1 mb-1">
+                  {[1, 2, 3, 4, 5].map((s) => (
+                    <Star key={s} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                  ))}
+                  <span className="text-[10px] text-slate-400 ml-1">(4.5)</span>
                 </div>
-                <div className="mt-1 font-medium truncate group-hover:text-primary transition-colors">{p.name}</div>
-                <div className="mt-1 text-xs text-slate-500 font-light line-clamp-2 h-8">{p.description}</div>
-                <div className="mt-2 flex items-center gap-2">
-                  <span className="text-lg font-bold">KES {p.price.toLocaleString()}</span>
-                </div>
-                <div className="mt-2 flex items-center gap-1 text-amber-500">
-                  <Star className="w-4 h-4 fill-amber-500" />
-                  <Star className="w-4 h-4 fill-amber-500" />
-                  <Star className="w-4 h-4 fill-amber-500" />
-                  <Star className="w-4 h-4 fill-amber-500" />
-                  <Star className="w-4 h-4" />
-                  <span className="ml-2 text-xs text-slate-500">{p.rating || 4.5} / 5</span>
+                <h3 className="font-semibold text-slate-900 text-sm md:text-base line-clamp-1 group-hover:text-primary transition-colors cursor-pointer" onClick={() => router.push(`/shop/product/${p._id}`)}>
+                  {p.name}
+                </h3>
+                <div className="mt-2 flex items-center justify-between">
+                  <span className="font-bold text-slate-900">KES {p.price.toLocaleString()}</span>
+                  <span className="text-[10px] text-slate-400 line-through">KES {(p.price * 1.2).toLocaleString()}</span>
                 </div>
               </div>
             </div>

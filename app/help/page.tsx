@@ -1,140 +1,185 @@
 "use client";
 
-import React, { useState } from "react";
-import { 
-  ChevronDown,
-  Mail, 
-  Phone, 
-  CheckCircle2,
+import React from "react";
+import Link from "next/link";
+import {
+  Search,
+  Truck,
+  RotateCcw,
+  Package,
   HelpCircle,
-  MessageSquare
+  BookOpen,
+  Shield,
+  CreditCard,
+  MessageCircle,
+  ChevronRight,
+  ArrowRight,
 } from "lucide-react";
 
-const XIcon = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-    <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932 6.064-6.932zm-1.292 19.494h2.039L6.486 3.24H4.298l13.311 17.407z" />
-  </svg>
-);
-
 const HelpPage = () => {
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
-
-  const faqs = [
-    {
-      question: "How can I track my order in real-time?",
-      answer: "Every order on Duuka comes with high-precision tracking. Visit 'My Orders' in your dashboard, click on the specific order, and you'll see a live map view and status updates from our logistics partners.",
-    },
-    {
-      question: "What makes your refund process different?",
-      answer: "We offer 'Instant Credits' for approved returns. Instead of waiting 5-7 days for bank processing, get your refund as Duuka Credits immediately to use on your next purchase.",
-    },
-    {
-      question: "How do I secure my account with 2FA?",
-      answer: "Security is our priority. Go to Account Settings > Security and toggle on Two-Factor Authentication. We support Authenticator apps and SMS verification.",
-    },
-    {
-      question: "Are my international payments protected?",
-      answer: "Yes, we use military-grade encryption for all transactions. Our partnership with global payment gateways ensures your data never touches our servers directly.",
-    }
-  ];
-
   return (
-    <div className="min-h-screen bg-white pt-10 pb-24 lg:pb-10 px-4 md:px-8 selection:bg-primary/10 selection:text-primary">
-      <div className="container mx-auto max-w-4xl">
-        
-        {/* FAQs Section */}
-        <div className="mb-12">
-          <div className="text-center mb-10">
-            <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
-              Frequently Asked <span className="text-primary">Questions</span>
+    <main className="flex flex-col pb-24 lg:pb-0">
+      <section className="bg-white">
+        <div className="container mx-auto px-4 md:px-8 pt-10 pb-16">
+          {/* Header */}
+          <div className="max-w-2xl">
+            <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">
+              Help Center
             </h1>
-            <p className="text-slate-500 font-medium text-lg">
-              Quick solutions to the most common questions from our community.
+            <p className="mt-3 text-slate-600 text-lg">
+              Find answers, track orders, and manage your shopping experience.
             </p>
           </div>
-          
-          <div className="space-y-4">
-            {faqs.map((faq, index) => (
-              <div 
-                key={index} 
-                className={`group bg-white rounded-3xl border transition-all duration-300 ${openFaq === index ? "border-primary shadow-lg shadow-primary/5" : "border-slate-100 hover:border-slate-200"}`}
-              >
-                <button 
-                  onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                  className="w-full p-6 md:p-8 flex items-center justify-between text-left"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold ${openFaq === index ? "bg-primary text-white" : "bg-slate-100 text-slate-500"}`}>
-                      0{index + 1}
-                    </div>
-                    <span className={`font-bold text-lg ${openFaq === index ? "text-slate-900" : "text-slate-700"}`}>
-                      {faq.question}
-                    </span>
-                  </div>
-                  <div className={`transition-transform duration-300 ${openFaq === index ? "rotate-180" : ""}`}>
-                    <ChevronDown className={`w-5 h-5 ${openFaq === index ? "text-primary" : "text-slate-400"}`} />
-                  </div>
-                </button>
+
+          {/* Top Info Cards - Matching Contact Page Style */}
+          <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Link 
+              href="/track-order"
+              className="flex items-center gap-4 bg-white border border-slate-200 rounded-xl p-6 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all group"
+            >
+              <div className="w-12 h-12 bg-slate-50 rounded-lg flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                <Package className="w-6 h-6" />
+              </div>
+              <div>
+                <div className="font-bold text-slate-900">Track Order</div>
+                <div className="text-sm text-slate-500">Check delivery status</div>
+              </div>
+            </Link>
+
+            <Link 
+              href="/returns"
+              className="flex items-center gap-4 bg-white border border-slate-200 rounded-xl p-6 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all group"
+            >
+              <div className="w-12 h-12 bg-slate-50 rounded-lg flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                <RotateCcw className="w-6 h-6" />
+              </div>
+              <div>
+                <div className="font-bold text-slate-900">Returns</div>
+                <div className="text-sm text-slate-500">Refunds & exchanges</div>
+              </div>
+            </Link>
+
+            <Link 
+              href="/shipping"
+              className="flex items-center gap-4 bg-white border border-slate-200 rounded-xl p-6 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all group"
+            >
+              <div className="w-12 h-12 bg-slate-50 rounded-lg flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                <Truck className="w-6 h-6" />
+              </div>
+              <div>
+                <div className="font-bold text-slate-900">Shipping</div>
+                <div className="text-sm text-slate-500">Rates & delivery times</div>
+              </div>
+            </Link>
+          </div>
+
+          {/* Main Grid - Matching Contact Page Layout */}
+          <div className="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            {/* Left/Middle Column: Browse Topics (Replaces the Form) */}
+            <div className="lg:col-span-2 space-y-8">
+              <div className="bg-white border border-slate-200 rounded-2xl p-6 md:p-8">
+                <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                  <BookOpen className="w-5 h-5 text-primary" />
+                  Browse Help Topics
+                </h2>
                 
-                <div className={`overflow-hidden transition-all duration-500 ease-in-out ${openFaq === index ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"}`}>
-                  <div className="px-8 md:px-20 pb-8 text-slate-600 leading-relaxed font-medium">
-                    <div className="h-px w-full bg-slate-100 mb-6"></div>
-                    {faq.answer}
-                    <div className="mt-6 flex items-center gap-4">
-                      <button className="text-sm font-bold text-primary hover:underline flex items-center gap-1">
-                        Was this helpful? <CheckCircle2 className="w-4 h-4" />
-                      </button>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {[
+                    { title: "Account Settings", desc: "Manage profile and security", icon: Shield },
+                    { title: "Payment Methods", desc: "Cards, M-Pesa, and more", icon: CreditCard },
+                    { title: "Selling on Duuka", desc: "Start your own shop today", icon: ArrowRight },
+                    { title: "Buyer Protection", desc: "How we keep you safe", icon: HelpCircle },
+                  ].map((topic, i) => {
+                    const Icon = topic.icon;
+                    return (
+                      <div 
+                        key={i}
+                        className="p-4 border border-slate-100 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors flex gap-4"
+                      >
+                        <div className="text-slate-400 group-hover:text-primary">
+                          <Icon className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <h3 className="font-bold text-slate-900 text-sm">{topic.title}</h3>
+                          <p className="text-xs text-slate-500 mt-1">{topic.desc}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="mt-10 p-6 bg-slate-50 rounded-2xl relative overflow-hidden group">
+                  <div className="relative z-10">
+                    <h3 className="font-bold text-slate-900 mb-2">Need a custom solution?</h3>
+                    <p className="text-sm text-slate-600 mb-4 max-w-md">
+                      If you can't find what you're looking for, our search tool can help you find specific articles.
+                    </p>
+                    <div className="relative max-w-md">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                      <input 
+                        type="text" 
+                        placeholder="Search help articles..."
+                        className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 transition-all"
+                      />
                     </div>
                   </div>
+                  <HelpCircle className="absolute -right-4 -bottom-4 w-32 h-32 text-slate-200/50 -rotate-12" />
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
 
-        {/* Global Support Channels */}
-        <div className="pt-12 border-t border-slate-100">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-4 tracking-tight">
-              Global <span className="text-secondary">Channels</span>
-            </h2>
-            <p className="text-slate-500 font-medium max-w-2xl mx-auto">
-              Still need help? Reach out to us through any of our official channels.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {[
-              { icon: Phone, title: "Phone Support", detail: "+254 700 000 000", action: "Call Now", color: "text-blue-500", bg: "bg-blue-50" },
-              { icon: Mail, title: "Email Support", detail: "help@duuka.com", action: "Send Email", color: "text-emerald-500", bg: "bg-emerald-50" },
-              { icon: XIcon, title: "Twitter/X Support", detail: "@DuukaHelp", action: "Tweet Us", color: "text-slate-900", bg: "bg-slate-50" },
-              { icon: MessageSquare, title: "Live Chat", detail: "Available 24/7", action: "Start Chat", color: "text-primary", bg: "bg-primary/5" }
-            ].map((channel, i) => (
-              <div key={i} className="group p-8 rounded-[2rem] bg-white border border-slate-100 hover:border-slate-200 transition-all flex items-center gap-6">
-                <div className={`w-14 h-14 shrink-0 rounded-2xl ${channel.bg} flex items-center justify-center ${channel.color} group-hover:scale-110 transition-transform shadow-sm`}>
-                  <channel.icon className="w-6 h-6" />
-                </div>
-                <div className="text-left">
-                  <h4 className="font-black text-slate-900 mb-1">{channel.title}</h4>
-                  <p className="text-sm text-slate-500 font-medium mb-2">{channel.detail}</p>
-                  <button className="text-xs font-black uppercase tracking-widest text-primary hover:tracking-[0.2em] transition-all">
-                    {channel.action}
-                  </button>
-                </div>
+            {/* Right Column: Support Sidebar */}
+            <div className="space-y-6">
+              {/* Quick Links Card */}
+              <div className="bg-white border border-slate-200 rounded-2xl p-6">
+                <h3 className="font-bold text-slate-900 mb-4">Quick Links</h3>
+                <ul className="space-y-3">
+                  {[
+                    "Privacy Policy",
+                    "Terms of Service",
+                    "Buyer Protection",
+                    "Seller Handbook",
+                  ].map((link, i) => (
+                    <li key={i}>
+                      <Link 
+                        href={`/${link.toLowerCase().replace(/\s+/g, '-')}`}
+                        className="flex items-center justify-between text-sm text-slate-600 hover:text-primary transition-colors py-1 group"
+                      >
+                        {link}
+                        <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-primary" />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            ))}
+
+              {/* Direct Support Card */}
+              <div className="bg-primary rounded-2xl p-6 text-white">
+                <h3 className="font-bold text-lg mb-2">Still Stuck?</h3>
+                <p className="text-white/80 text-sm mb-6 leading-relaxed">
+                  Our dedicated support team is ready to help you with any issue you might be facing.
+                </p>
+                <Link 
+                  href="/contact"
+                  className="w-full bg-white text-primary font-bold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-slate-50 transition-all"
+                >
+                  <MessageCircle className="w-5 h-5" />
+                  Contact Us
+                </Link>
+              </div>
+
+              {/* Status Indicator */}
+              <div className="p-4 border border-slate-100 rounded-2xl flex items-center gap-3">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="text-xs font-medium text-slate-600">All systems operational</span>
+              </div>
+            </div>
+
           </div>
         </div>
-
-      </div>
-
-      {/* Simplified Help Trigger */}
-      <div className="fixed bottom-8 right-8 z-50">
-        <button className="flex items-center justify-center w-14 h-14 bg-slate-900 text-white rounded-full shadow-2xl hover:bg-primary transition-all group">
-          <HelpCircle className="w-6 h-6 group-hover:scale-110 transition-transform" />
-        </button>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 };
 

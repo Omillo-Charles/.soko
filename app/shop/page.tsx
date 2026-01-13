@@ -27,6 +27,7 @@ import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { categories as allCategories } from "@/constants/categories";
+import { toast } from "sonner";
 
 const ShopPage = () => {
   const router = useRouter();
@@ -41,6 +42,98 @@ const ShopPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [popularShops, setPopularShops] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<'foryou' | 'following'>('foryou');
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [userShop, setUserShop] = useState<any>(null);
+
+  const [isFollowLoading, setIsFollowLoading] = useState<string | null>(null);
+
+  // Filter products based on active tab and user's shop
+  const displayProducts = React.useMemo(() => {
+    if (activeTab === 'following' && userShop) {
+      return products.filter(p => p.vendor.id !== userShop._id);
+    }
+    return products;
+  }, [products, activeTab, userShop]);
+
+  const handleFollowToggle = async (shopId: string) => {
+    if (!currentUser) {
+      toast.error("Please login to follow shops");
+      router.push("/auth?mode=login");
+      return;
+    }
+
+    setIsFollowLoading(shopId);
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
+    const token = localStorage.getItem("accessToken");
+
+    try {
+      const response = await fetch(`${apiUrl}/shops/${shopId}/follow`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+      const data = await response.json();
+
+      if (data.success) {
+        toast.success(data.message);
+        // Refresh popular shops to update follower counts
+        const shopsResponse = await fetch(`${apiUrl}/shops`);
+        const shopsData = await shopsResponse.json();
+        if (shopsData.success) {
+          setPopularShops(shopsData.data.map((s: any) => ({
+            id: s._id,
+            name: s.name,
+            handle: `@${s.name.toLowerCase().replace(/\s+/g, "_")}`,
+            avatar: s.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${s.name}`,
+            followers: s.followers?.length || 0,
+            verified: s.isVerified || false,
+            followersList: s.followers || []
+          })));
+        }
+      } else {
+        toast.error(data.message || "Failed to follow shop");
+      }
+    } catch (err) {
+      console.error("Error toggling follow:", err);
+      toast.error("An error occurred. Please try again.");
+    } finally {
+      setIsFollowLoading(null);
+    }
+  };
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      try {
+        const user = JSON.parse(userData);
+        setCurrentUser(user);
+        
+        // Fetch user's shop if they are a seller
+        if (user.accountType === 'seller') {
+          const fetchUserShop = async () => {
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
+            const token = localStorage.getItem("accessToken");
+            try {
+              const response = await fetch(`${apiUrl}/shops/my-shop`, {
+                headers: { "Authorization": `Bearer ${token}` }
+              });
+              const data = await response.json();
+              if (data.success) {
+                setUserShop(data.data);
+              }
+            } catch (err) {
+              console.error("Error fetching user shop:", err);
+            }
+          };
+          fetchUserShop();
+        }
+      } catch (e) {
+        console.error("Error parsing user data", e);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const fetchPopularShops = async () => {
@@ -54,8 +147,9 @@ const ShopPage = () => {
             name: s.name,
             handle: `@${s.name.toLowerCase().replace(/\s+/g, "_")}`,
             avatar: s.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${s.name}`,
-            followers: s.followersCount || 0,
-            verified: s.isVerified || false
+            followers: s.followers?.length || 0,
+            verified: s.isVerified || false,
+            followersList: s.followers || []
           })));
         }
       } catch (err) {
@@ -68,13 +162,29 @@ const ShopPage = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       setIsLoading(true);
+      setError(null);
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
+      const token = localStorage.getItem("accessToken");
+
       try {
         const params = new URLSearchParams();
         if (query) params.set("q", query);
         if (cat && cat !== "all") params.set("cat", cat);
         
-        const response = await fetch(`${apiUrl}/products?${params.toString()}`);
+        let endpoint = `${apiUrl}/products`;
+        
+        if (activeTab === 'following') {
+          if (!currentUser) {
+            setProducts([]);
+            setIsLoading(false);
+            return;
+          }
+          params.set("following", "true");
+        }
+        
+        const response = await fetch(`${endpoint}?${params.toString()}`, {
+          headers: token ? { "Authorization": `Bearer ${token}` } : {}
+        });
         const data = await response.json();
         
         if (data.success) {
@@ -98,7 +208,13 @@ const ShopPage = () => {
             comments: p.commentsCount || 0,
             time: p.createdAt ? new Date(p.createdAt).toLocaleDateString() : "Just now"
           }));
+
           setProducts(formattedProducts);
+        } else {
+          setProducts([]);
+          if (activeTab !== 'following') {
+            setError(data.message || "Failed to load products");
+          }
         }
       } catch (err) {
         console.error("Error fetching products:", err);
@@ -109,7 +225,7 @@ const ShopPage = () => {
     };
 
     fetchProducts();
-  }, [query, cat]);
+  }, [query, cat, activeTab, currentUser]);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -229,17 +345,18 @@ const ShopPage = () => {
             </div>
             <div className="flex">
               {[
-                { id: 'foryou', label: 'For You', active: true },
-                { id: 'following', label: 'Following', active: false },
+                { id: 'foryou', label: 'For You' },
+                { id: 'following', label: 'Following' },
               ].map((tab) => (
                 <button 
                   key={tab.id}
+                  onClick={() => setActiveTab(tab.id as 'foryou' | 'following')}
                   className="flex-1 hover:bg-slate-100/50 transition-colors relative h-14 flex items-center justify-center group"
                 >
-                  <span className={`text-sm font-bold ${tab.active ? 'text-slate-900' : 'text-slate-500'}`}>
+                  <span className={`text-sm font-bold ${activeTab === tab.id ? 'text-slate-900' : 'text-slate-500'}`}>
                     {tab.label}
                   </span>
-                  {tab.active && (
+                  {activeTab === tab.id && (
                     <div className="absolute bottom-0 h-1 w-16 bg-primary rounded-full" />
                   )}
                 </button>
@@ -265,23 +382,44 @@ const ShopPage = () => {
                   Try Again
                 </button>
               </div>
-            ) : products.length === 0 ? (
+            ) : displayProducts.length === 0 ? (
               <div className="p-20 flex flex-col items-center justify-center text-slate-400 gap-4 text-center">
                 <ShoppingBag className="w-12 h-12 opacity-20" />
                 <div>
-                  <p className="font-black text-slate-900">No products found</p>
-                  <p className="text-sm">Be the first to post something amazing!</p>
+                  <p className="font-black text-slate-900">
+                    {activeTab === 'following' && !currentUser 
+                      ? "Login to see shops you follow" 
+                      : activeTab === 'following'
+                        ? "No products from shops you follow"
+                        : "No products found"}
+                  </p>
+                  <p className="text-sm">
+                    {activeTab === 'following' && !currentUser
+                      ? "Sign in to your account to view updates from your favorite shops."
+                      : activeTab === 'following'
+                        ? "Follow some shops to see their latest products here."
+                        : "Be the first to post something amazing!"}
+                  </p>
                 </div>
-                <Link 
-                  href="/account/seller/products/new"
-                  className="mt-4 px-8 py-3 bg-primary text-white rounded-full text-sm font-bold shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all"
-                >
-                  Post a Product
-                </Link>
+                {activeTab === 'following' && !currentUser ? (
+                  <Link 
+                    href="/auth?mode=login"
+                    className="mt-4 px-8 py-3 bg-primary text-white rounded-full text-sm font-bold shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all"
+                  >
+                    Login Now
+                  </Link>
+                ) : (
+                  <Link 
+                    href="/account/seller/products/new"
+                    className="mt-4 px-8 py-3 bg-primary text-white rounded-full text-sm font-bold shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all"
+                  >
+                    Post a Product
+                  </Link>
+                )}
               </div>
             ) : (
               <div className="divide-y divide-slate-100 bg-white">
-                {products.map((product) => (
+                {displayProducts.map((product) => (
                   <div 
                     key={product.id} 
                     onClick={() => router.push(`/shop/product/${product.id}`)}
@@ -433,24 +571,37 @@ const ShopPage = () => {
                 {popularShops.map((vendor) => (
                   <div 
                     key={vendor.id} 
-                    onClick={() => router.push(`/shop/${vendor.id}`)}
                     className="p-3 hover:bg-slate-50 transition-all cursor-pointer flex items-center justify-between gap-3 rounded-xl group"
+                    onClick={() => router.push(`/shop/${vendor.id}`)}
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-10 h-10 rounded-full overflow-hidden bg-slate-100 border border-slate-100 shrink-0">
+                      <div className="w-10 h-10 rounded-full overflow-hidden bg-slate-100 shrink-0">
                         <img src={vendor.avatar} alt={vendor.name} className="w-full h-full object-cover" />
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-1">
-                          <p className="font-bold text-slate-900 text-sm truncate">{vendor.name}</p>
+                          <p className="text-sm font-black text-slate-900 truncate">{vendor.name}</p>
                           {vendor.verified && <CheckCircle2 className="w-3 h-3 text-primary fill-primary/10" />}
                         </div>
-                        <p className="text-slate-400 text-[11px] truncate">{vendor.handle}</p>
+                        <p className="text-[11px] font-bold text-slate-400 truncate">{vendor.handle}</p>
                       </div>
                     </div>
-                    <button className="bg-slate-900 text-white text-[11px] font-black px-4 py-1.5 rounded-full hover:bg-primary transition-all shrink-0">
-                      View
-                    </button>
+                    {currentUser?._id !== vendor.id && (
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleFollowToggle(vendor.id);
+                        }}
+                        disabled={isFollowLoading === vendor.id}
+                        className={`px-4 py-1.5 rounded-full text-xs font-black transition-all ${
+                          vendor.followersList?.includes(currentUser?._id)
+                            ? 'bg-slate-100 text-slate-900 hover:bg-red-50 hover:text-red-600'
+                            : 'bg-slate-900 text-white hover:bg-primary'
+                        } ${isFollowLoading === vendor.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      >
+                        {isFollowLoading === vendor.id ? '...' : (vendor.followersList?.includes(currentUser?._id) ? 'Following' : 'Follow')}
+                      </button>
+                    )}
                   </div>
                 ))}
               </div>

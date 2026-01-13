@@ -196,9 +196,9 @@ const Navbar = () => {
           <span>Cart</span>
         </Link>
         <Link
-               href={isLoggedIn ? "/account" : "/auth"}
-               className="flex flex-col items-center gap-1 p-2 hover:text-primary"
-             >
+          href={isLoggedIn ? "/account" : "/auth"}
+          className="flex flex-col items-center gap-1 p-2 hover:text-primary"
+        >
           <User className="w-5 h-5" />
           <span>{isLoggedIn ? "Dashboard" : "Account"}</span>
         </Link>

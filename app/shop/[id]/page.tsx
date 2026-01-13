@@ -7,6 +7,7 @@ import {
   MapPin, 
   Phone, 
   Mail, 
+  Users,
   Info,
   ChevronLeft,
   ShoppingBag,
@@ -40,6 +41,10 @@ const ShopProfilePage = () => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [isFollowLoading, setIsFollowLoading] = useState(false);
   const [popularShops, setPopularShops] = useState<any[]>([]);
+  const [activeSection, setActiveSection] = useState('Products');
+  const [followers, setFollowers] = useState<any[]>([]);
+  const [following, setFollowing] = useState<any[]>([]);
+  const [isListsLoading, setIsListsLoading] = useState(false);
 
   useEffect(() => {
     const fetchPopularShops = async () => {
@@ -100,6 +105,20 @@ const ShopProfilePage = () => {
           if (productsData.success) {
             setProducts(productsData.data);
           }
+
+          // Fetch followers for the sidebar count and initial state
+          const followersRes = await fetch(`${apiUrl}/shops/${id}/followers`);
+          const followersData = await followersRes.json();
+          if (followersData.success) {
+            setFollowers(followersData.data);
+          }
+
+          // Fetch following for the sidebar count and initial state
+          const followingRes = await fetch(`${apiUrl}/shops/${id}/following`);
+          const followingData = await followingRes.json();
+          if (followingData.success) {
+            setFollowing(followingData.data);
+          }
         } else {
           setError("Shop not found");
         }
@@ -115,6 +134,34 @@ const ShopProfilePage = () => {
       fetchShopData();
     }
   }, [id, currentUser]);
+
+  useEffect(() => {
+    const fetchLists = async () => {
+      if (activeSection !== 'Followers' && activeSection !== 'Following') return;
+      
+      setIsListsLoading(true);
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
+      const endpoint = activeSection === 'Followers' ? `/shops/${id}/followers` : `/shops/${id}/following`;
+      
+      try {
+        const response = await fetch(`${apiUrl}${endpoint}`);
+        const data = await response.json();
+        if (data.success) {
+          if (activeSection === 'Followers') {
+            setFollowers(data.data);
+          } else {
+            setFollowing(data.data);
+          }
+        }
+      } catch (err) {
+        console.error(`Error fetching ${activeSection}:`, err);
+      } finally {
+        setIsListsLoading(false);
+      }
+    };
+
+    fetchLists();
+  }, [id, activeSection]);
 
   const handleFollowToggle = async () => {
     if (!currentUser) {
@@ -145,6 +192,13 @@ const ShopProfilePage = () => {
         setIsFollowing(data.isFollowing);
         setShop({ ...shop, followersCount: data.followersCount });
         toast.success(data.message);
+        
+        // Always refresh followers list to update counts across the UI
+        const followersRes = await fetch(`${apiUrl}/shops/${id}/followers`);
+        const followersData = await followersRes.json();
+        if (followersData.success) {
+          setFollowers(followersData.data);
+        }
       } else {
         toast.error(data.message || "Failed to follow shop");
       }
@@ -203,18 +257,30 @@ const ShopProfilePage = () => {
               <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Store Sections</h3>
               <div className="space-y-1">
                 {[
-                  { name: 'Products', icon: <ShoppingBag className="w-5 h-5" />, active: true },
-                  { name: 'Reviews', icon: <Star className="w-5 h-5" />, active: false },
-                  { name: 'About', icon: <Info className="w-5 h-5" />, active: false },
+                  { name: 'Products', icon: <ShoppingBag className="w-5 h-5" />, count: products.length },
+                  { name: 'Reviews', icon: <Star className="w-5 h-5" />, count: 0 },
+                  { name: 'About', icon: <Info className="w-5 h-5" /> },
+                  { name: 'Followers', icon: <Users className="w-5 h-5" />, count: followers.length },
+                  { name: 'Following', icon: <Users className="w-5 h-5" />, count: following.length },
                 ].map((item) => (
                   <button 
                     key={item.name}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all ${
-                      item.active ? 'text-primary bg-primary/5' : 'text-slate-600 hover:text-primary hover:bg-primary/5'
+                    onClick={() => setActiveSection(item.name)}
+                    className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold transition-all ${
+                      activeSection === item.name ? 'text-primary bg-primary/5' : 'text-slate-600 hover:text-primary hover:bg-primary/5'
                     }`}
                   >
-                    {item.icon}
-                    {item.name}
+                    <div className="flex items-center gap-3">
+                      {item.icon}
+                      {item.name}
+                    </div>
+                    {item.count !== undefined && (
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full ${
+                        activeSection === item.name ? 'bg-primary/10 text-primary' : 'bg-slate-100 text-slate-500'
+                      }`}>
+                        {item.count}
+                      </span>
+                    )}
                   </button>
                 ))}
               </div>
@@ -282,9 +348,19 @@ const ShopProfilePage = () => {
                 <div className="flex items-center gap-3">
                   <p className="text-sm font-bold text-slate-500">@{shop.name.toLowerCase().replace(/\s+/g, "_")}</p>
                   <div className="w-1 h-1 rounded-full bg-slate-300" />
-                  <p className="text-sm font-bold text-slate-900">
-                    {shop.followersCount || 0} <span className="text-slate-500">Followers</span>
-                  </p>
+                  <button 
+                    onClick={() => setActiveSection('Followers')}
+                    className="text-sm font-bold text-slate-900 hover:underline"
+                  >
+                    {followers.length} <span className="text-slate-500">Followers</span>
+                  </button>
+                  <div className="w-1 h-1 rounded-full bg-slate-300" />
+                  <button 
+                    onClick={() => setActiveSection('Following')}
+                    className="text-sm font-bold text-slate-900 hover:underline"
+                  >
+                    {following.length} <span className="text-slate-500">Following</span>
+                  </button>
                 </div>
               </div>
 
@@ -294,119 +370,258 @@ const ShopProfilePage = () => {
             </div>
           </div>
 
-          {/* Product Feed */}
+          {/* Main Feed Content */}
           <div className="border-t border-slate-100">
-            {products.length === 0 ? (
-              <div className="p-20 flex flex-col items-center justify-center text-slate-400 gap-4 text-center">
-                <ShoppingBag className="w-12 h-12 opacity-20" />
-                <div>
-                  <p className="font-black text-slate-900">No products found</p>
-                  <p className="text-sm">This shop hasn't posted any products yet.</p>
+            {activeSection === 'Products' ? (
+              products.length === 0 ? (
+                <div className="p-20 flex flex-col items-center justify-center text-slate-400 gap-4 text-center">
+                  <ShoppingBag className="w-12 h-12 opacity-20" />
+                  <div>
+                    <p className="font-black text-slate-900">No products found</p>
+                    <p className="text-sm">This shop hasn't posted any products yet.</p>
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <div className="divide-y divide-slate-100">
-                {products.map((product) => (
-                  <div 
-                    key={product._id} 
-                    onClick={() => router.push(`/shop/product/${product._id}`)}
-                    className="p-4 md:p-6 hover:bg-slate-50/50 transition-colors cursor-pointer"
-                  >
-                    <div className="flex gap-3 md:gap-4">
-                      {/* Profile Image (Small in feed) */}
-                      <div className="shrink-0">
-                        <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-100 bg-slate-50">
-                          <img 
-                            src={shop.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${shop.name}`} 
-                            alt={shop.name} 
-                            className="w-full h-full object-cover" 
-                          />
-                        </div>
-                      </div>
-
-                      {/* Content Area */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1.5 mb-1">
-                          <span className="text-sm font-black text-slate-900 truncate flex items-center gap-1">
-                            {shop.name}
-                            {shop.isVerified && <CheckCircle2 className="w-3.5 h-3.5 text-primary fill-primary/10" />}
-                          </span>
-                          <span className="text-slate-500 text-xs truncate">@{shop.name.toLowerCase().replace(/\s+/g, "_")}</span>
-                        </div>
-
-                        <p className="text-slate-800 text-[13px] leading-relaxed mb-3 whitespace-pre-wrap">
-                          {product.description}
-                        </p>
-
-                        {product.image && (
-                          <div className="rounded-2xl overflow-hidden border border-slate-100 mb-3 bg-slate-50 relative aspect-video group/img">
+              ) : (
+                <div className="divide-y divide-slate-100">
+                  {products.map((product) => (
+                    <div 
+                      key={product._id} 
+                      onClick={() => router.push(`/shop/product/${product._id}`)}
+                      className="p-4 md:p-6 hover:bg-slate-50/50 transition-colors cursor-pointer"
+                    >
+                      <div className="flex gap-3 md:gap-4">
+                        {/* Profile Image (Small in feed) */}
+                        <div className="shrink-0">
+                          <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-100 bg-slate-50">
                             <img 
-                              src={product.image} 
-                              alt={product.name} 
-                              className="w-full h-full object-cover group-hover/img:scale-[1.02] transition-transform duration-500" 
+                              src={shop.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${shop.name}`} 
+                              alt={shop.name} 
+                              className="w-full h-full object-cover" 
                             />
-                            <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl border border-slate-100 shadow-xl">
-                              <span className="text-primary font-black text-sm">KES {product.price?.toLocaleString()}</span>
-                            </div>
                           </div>
-                        )}
+                        </div>
 
-                        <div className="flex items-center justify-between max-w-md text-slate-500 -ml-2">
-                          <button onClick={(e) => e.stopPropagation()} className="flex items-center gap-2 group hover:text-primary transition-colors">
-                            <div className="p-2 rounded-full group-hover:bg-primary/10">
-                              <MessageCircle className="w-[18px] h-[18px]" />
+                        {/* Content Area */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5 mb-1">
+                            <span className="text-sm font-black text-slate-900 truncate flex items-center gap-1">
+                              {shop.name}
+                              {shop.isVerified && <CheckCircle2 className="w-3.5 h-3.5 text-primary fill-primary/10" />}
+                            </span>
+                            <span className="text-slate-500 text-xs truncate">@{shop.name.toLowerCase().replace(/\s+/g, "_")}</span>
+                          </div>
+
+                          <p className="text-slate-800 text-[13px] leading-relaxed mb-3 whitespace-pre-wrap">
+                            {product.description}
+                          </p>
+
+                          {product.image && (
+                            <div className="rounded-2xl overflow-hidden border border-slate-100 mb-3 bg-slate-50 relative aspect-video group/img">
+                              <img 
+                                src={product.image} 
+                                alt={product.name} 
+                                className="w-full h-full object-cover group-hover/img:scale-[1.02] transition-transform duration-500" 
+                              />
+                              <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl border border-slate-100 shadow-xl">
+                                <span className="text-primary font-black text-sm">KES {product.price?.toLocaleString()}</span>
+                              </div>
                             </div>
-                            <span className="text-xs font-bold">{product.commentsCount || 0}</span>
-                          </button>
-                          <button onClick={(e) => e.stopPropagation()} className="flex items-center gap-2 group hover:text-green-500 transition-colors">
-                            <div className="p-2 rounded-full group-hover:bg-green-500/10">
-                              <Repeat2 className="w-[18px] h-[18px]" />
-                            </div>
-                            <span className="text-xs font-bold">{product.repostsCount || 0}</span>
-                          </button>
-                          <button 
-                            onClick={async (e) => {
-                              e.stopPropagation();
-                              const action = await toggleWishlist(product._id);
-                              if (action) {
-                                setProducts(prev => prev.map(p => 
-                                  p._id === product._id 
-                                    ? { ...p, likesCount: Math.max(0, (p.likesCount || 0) + (action === 'added' ? 1 : -1)) } 
-                                    : p
-                                ));
-                              }
-                            }} 
-                            className={`flex items-center gap-2 group transition-colors ${
-                              isInWishlist(product._id) ? 'text-pink-500' : 'hover:text-pink-500'
-                            }`}
-                          >
-                            <div className={`p-2 rounded-full transition-colors ${
-                              isInWishlist(product._id) ? 'bg-pink-500/10' : 'group-hover:bg-pink-500/10'
-                            }`}>
-                              <Heart className={`w-[18px] h-[18px] ${isInWishlist(product._id) ? 'fill-current' : ''}`} />
-                            </div>
-                            <span className="text-xs font-bold">{product.likesCount || 0}</span>
-                          </button>
-                          <button 
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              addToCart(product._id);
-                            }} 
-                            className="flex items-center gap-2 group hover:text-primary transition-colors"
-                          >
-                            <div className="p-2 rounded-full group-hover:bg-primary/10">
-                              <ShoppingCart className="w-[18px] h-[18px]" />
-                            </div>
-                            <span className="text-xs font-bold">Add to Cart</span>
-                          </button>
-                          <button onClick={(e) => e.stopPropagation()} className="p-2 rounded-full hover:bg-primary/10 hover:text-primary transition-colors">
-                            <Share2 className="w-[18px] h-[18px]" />
-                          </button>
+                          )}
+
+                          <div className="flex items-center justify-between max-w-md text-slate-500 -ml-2">
+                            <button onClick={(e) => e.stopPropagation()} className="flex items-center gap-2 group hover:text-primary transition-colors">
+                              <div className="p-2 rounded-full group-hover:bg-primary/10">
+                                <MessageCircle className="w-[18px] h-[18px]" />
+                              </div>
+                              <span className="text-xs font-bold">{product.commentsCount || 0}</span>
+                            </button>
+                            <button onClick={(e) => e.stopPropagation()} className="flex items-center gap-2 group hover:text-green-500 transition-colors">
+                              <div className="p-2 rounded-full group-hover:bg-green-500/10">
+                                <Repeat2 className="w-[18px] h-[18px]" />
+                              </div>
+                              <span className="text-xs font-bold">{product.repostsCount || 0}</span>
+                            </button>
+                            <button 
+                              onClick={async (e) => {
+                                e.stopPropagation();
+                                const action = await toggleWishlist(product._id);
+                                if (action) {
+                                  setProducts(prev => prev.map(p => 
+                                    p._id === product._id 
+                                      ? { ...p, likesCount: Math.max(0, (p.likesCount || 0) + (action === 'added' ? 1 : -1)) } 
+                                      : p
+                                  ));
+                                }
+                              }} 
+                              className={`flex items-center gap-2 group transition-colors ${
+                                isInWishlist(product._id) ? 'text-pink-500' : 'hover:text-pink-500'
+                              }`}
+                            >
+                              <div className={`p-2 rounded-full transition-colors ${
+                                isInWishlist(product._id) ? 'bg-pink-500/10' : 'group-hover:bg-pink-500/10'
+                              }`}>
+                                <Heart className={`w-[18px] h-[18px] ${isInWishlist(product._id) ? 'fill-current' : ''}`} />
+                              </div>
+                              <span className="text-xs font-bold">{product.likesCount || 0}</span>
+                            </button>
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                addToCart(product._id);
+                              }} 
+                              className="flex items-center gap-2 group hover:text-primary transition-colors"
+                            >
+                              <div className="p-2 rounded-full group-hover:bg-primary/10">
+                                <ShoppingCart className="w-[18px] h-[18px]" />
+                              </div>
+                              <span className="text-xs font-bold">Add to Cart</span>
+                            </button>
+                            <button onClick={(e) => e.stopPropagation()} className="p-2 rounded-full hover:bg-primary/10 hover:text-primary transition-colors">
+                              <Share2 className="w-[18px] h-[18px]" />
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
+                  ))}
+                </div>
+              )
+            ) : activeSection === 'Reviews' ? (
+              <div className="p-20 flex flex-col items-center justify-center text-slate-400 gap-4 text-center">
+                <Star className="w-12 h-12 opacity-20" />
+                <div>
+                  <p className="font-black text-slate-900">No reviews yet</p>
+                  <p className="text-sm">Customers haven't left any reviews for this shop yet.</p>
+                </div>
+              </div>
+            ) : activeSection === 'Followers' ? (
+              <div className="divide-y divide-slate-100">
+                {isListsLoading ? (
+                  <div className="p-20 flex flex-col items-center justify-center text-slate-400 gap-4">
+                    <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin"></div>
+                    <p className="font-bold text-sm">Loading followers...</p>
                   </div>
-                ))}
+                ) : followers.length === 0 ? (
+                  <div className="p-20 flex flex-col items-center justify-center text-slate-400 gap-4 text-center">
+                    <Users className="w-12 h-12 opacity-20" />
+                    <div>
+                      <p className="font-black text-slate-900">No followers yet</p>
+                      <p className="text-sm">This shop doesn't have any followers yet.</p>
+                    </div>
+                  </div>
+                ) : (
+                  followers.map((follower) => (
+                    <div key={follower._id} className="p-4 md:p-6 flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-full overflow-hidden bg-slate-100 shrink-0">
+                          <img 
+                            src={follower.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${follower.name}`} 
+                            alt={follower.name} 
+                            className="w-full h-full object-cover" 
+                          />
+                        </div>
+                        <div>
+                          <p className="font-black text-slate-900 text-sm">{follower.name}</p>
+                          <p className="text-xs font-bold text-slate-400">@{follower.name.toLowerCase().replace(/\s+/g, "_")}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            ) : activeSection === 'Following' ? (
+              <div className="divide-y divide-slate-100">
+                {isListsLoading ? (
+                  <div className="p-20 flex flex-col items-center justify-center text-slate-400 gap-4">
+                    <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin"></div>
+                    <p className="font-bold text-sm">Loading following...</p>
+                  </div>
+                ) : following.length === 0 ? (
+                  <div className="p-20 flex flex-col items-center justify-center text-slate-400 gap-4 text-center">
+                    <Users className="w-12 h-12 opacity-20" />
+                    <div>
+                      <p className="font-black text-slate-900">Not following anyone</p>
+                      <p className="text-sm">This shop isn't following anyone yet.</p>
+                    </div>
+                  </div>
+                ) : (
+                  following.map((followedShop) => (
+                    <div 
+                      key={followedShop._id} 
+                      onClick={() => router.push(`/shop/${followedShop._id}`)}
+                      className="p-4 md:p-6 flex items-center justify-between gap-4 hover:bg-slate-50 cursor-pointer transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-full overflow-hidden bg-slate-100 shrink-0">
+                          <img 
+                            src={followedShop.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${followedShop.name}`} 
+                            alt={followedShop.name} 
+                            className="w-full h-full object-cover" 
+                          />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-1">
+                            <p className="font-black text-slate-900 text-sm">{followedShop.name}</p>
+                            {followedShop.isVerified && <CheckCircle2 className="w-3 h-3 text-primary fill-primary/10" />}
+                          </div>
+                          <p className="text-xs font-bold text-slate-400">@{followedShop.name.toLowerCase().replace(/\s+/g, "_")}</p>
+                        </div>
+                      </div>
+                      <button className="px-4 py-1.5 bg-slate-100 text-slate-900 rounded-full text-xs font-black hover:bg-slate-200 transition-all">
+                        View Shop
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
+            ) : (
+              <div className="p-8 md:p-12 space-y-8">
+                <div>
+                  <h3 className="text-lg font-black text-slate-900 mb-4">About {shop.name}</h3>
+                  <p className="text-slate-600 leading-relaxed font-medium">
+                    {shop.description || "No description provided."}
+                  </p>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100">
+                    <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Contact Details</h4>
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3 text-sm font-bold text-slate-700">
+                        <Phone className="w-4 h-4 text-primary" />
+                        {shop.phone}
+                      </div>
+                      <div className="flex items-center gap-3 text-sm font-bold text-slate-700">
+                        <Mail className="w-4 h-4 text-primary" />
+                        {shop.email}
+                      </div>
+                      <div className="flex items-center gap-3 text-sm font-bold text-slate-700">
+                        <MapPin className="w-4 h-4 text-primary" />
+                        {shop.address}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100">
+                    <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Store Stats</h4>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center text-sm font-bold">
+                        <span className="text-slate-500">Member Since</span>
+                        <span className="text-slate-900">{new Date(shop.createdAt).toLocaleDateString()}</span>
+                      </div>
+                      <div className="flex justify-between items-center text-sm font-bold">
+                        <span className="text-slate-500">Total Products</span>
+                        <span className="text-slate-900">{products.length}</span>
+                      </div>
+                      <div className="flex justify-between items-center text-sm font-bold">
+                        <span className="text-slate-500">Verified</span>
+                        <span className={shop.isVerified ? "text-green-600" : "text-slate-400"}>
+                          {shop.isVerified ? "Yes" : "No"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
           </div>
@@ -418,14 +633,14 @@ const ShopProfilePage = () => {
             {/* Store Stats */}
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-slate-50/50 p-4 rounded-2xl border border-slate-100 text-center">
-                <p className="text-lg font-black text-slate-900">4.9</p>
+                <p className="text-lg font-black text-slate-900">0.0</p>
                 <div className="flex justify-center gap-0.5 my-1">
-                  {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-2.5 h-2.5 fill-primary text-primary" />)}
+                  {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-2.5 h-2.5 text-slate-200" />)}
                 </div>
                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Rating</p>
               </div>
               <div className="bg-slate-50/50 p-4 rounded-2xl border border-slate-100 text-center">
-                <p className="text-lg font-black text-slate-900">1.2k</p>
+                <p className="text-lg font-black text-slate-900">{followers.length}</p>
                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-2">Followers</p>
               </div>
             </div>
