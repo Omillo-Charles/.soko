@@ -244,7 +244,7 @@ const ShopProfilePage = () => {
         
         {/* Left Sidebar */}
         <div className="hidden lg:block w-[280px] shrink-0">
-          <aside className="fixed w-[280px] h-screen overflow-y-auto custom-scrollbar px-6 py-6 pb-24 space-y-8">
+          <aside className="fixed top-[160px] w-[280px] h-[calc(100vh-160px)] overflow-y-auto custom-scrollbar px-6 py-6 pb-24 space-y-8">
             <button 
               onClick={() => router.push('/shop')}
               className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:text-primary hover:bg-primary/5 transition-all group w-full"
@@ -629,7 +629,7 @@ const ShopProfilePage = () => {
 
         {/* Right Sidebar */}
         <div className="hidden lg:block w-[320px] shrink-0">
-          <aside className="fixed w-[320px] h-screen overflow-y-auto custom-scrollbar px-6 py-6 pb-24 space-y-8">
+          <aside className="fixed top-[160px] w-[320px] h-[calc(100vh-160px)] overflow-y-auto custom-scrollbar px-6 py-6 pb-24 space-y-8">
             {/* Store Stats */}
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-slate-50/50 p-4 rounded-2xl border border-slate-100 text-center">

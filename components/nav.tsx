@@ -2,12 +2,15 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ShoppingCart, User, Heart, Menu, Phone, Home, Store } from "lucide-react";
 import SearchBar from "@/components/searchBar";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 
 const Navbar = () => {
+  const pathname = usePathname();
+  const isHomepage = pathname === "/";
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { totalItems } = useCart();
   const { wishlistItems } = useWishlist();
@@ -21,7 +24,7 @@ const Navbar = () => {
   return (
     <>
       {/* Spacer to prevent content from hiding behind the fixed navbar */}
-      <div className="h-[80px] md:h-[144px]"></div>
+      <div className="h-[64px] md:h-[160px]"></div>
       
       <header 
         className="w-full flex flex-col shadow-sm fixed top-0 left-0 right-0 z-50 bg-white"

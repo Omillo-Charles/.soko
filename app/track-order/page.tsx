@@ -47,7 +47,7 @@ const TrackOrderPage = () => {
     <main className="min-h-screen bg-slate-50/50 pb-24 lg:pb-12">
       {/* Header */}
       <section className="bg-white border-b border-slate-100">
-        <div className="container mx-auto px-4 md:px-8 py-12">
+        <div className="container mx-auto px-4 md:px-8 py-8">
           <Link 
             href="/shop"
             className="inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-primary transition-colors mb-6 group"

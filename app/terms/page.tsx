@@ -52,7 +52,7 @@ const TermsPage = () => {
   return (
     <main className="flex flex-col pb-24 lg:pb-0 bg-slate-50/30">
       <section className="bg-white border-b border-slate-100">
-        <div className="container mx-auto px-4 md:px-8 py-12 md:py-16">
+        <div className="container mx-auto px-4 md:px-8 py-8 md:py-10">
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/5 text-primary rounded-full text-xs font-bold mb-4">
               <Scale className="w-3.5 h-3.5" />

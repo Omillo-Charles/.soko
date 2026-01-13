@@ -274,7 +274,7 @@ const ShopPage = () => {
         
         {/* Left Sidebar - Categories & Filters */}
         <div className="hidden lg:block w-[280px] shrink-0">
-          <aside className="fixed top-[144px] w-[280px] h-[calc(100vh-144px)] overflow-y-auto custom-scrollbar px-6 py-6 pb-24 space-y-8">
+          <aside className="fixed top-[160px] w-[280px] h-[calc(100vh-160px)] overflow-y-auto custom-scrollbar px-6 py-6 pb-24 space-y-8">
             {/* Search */}
             <form onSubmit={handleSearch} className="relative group">
               <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
@@ -563,7 +563,7 @@ const ShopPage = () => {
 
         {/* Right Sidebar - Trending/Quick Links */}
         <div className="hidden lg:block w-[320px] shrink-0">
-          <aside className="fixed top-[144px] w-[320px] h-[calc(100vh-144px)] overflow-y-auto custom-scrollbar px-6 py-6 pb-24 space-y-8">
+          <aside className="fixed top-[160px] w-[320px] h-[calc(100vh-160px)] overflow-y-auto custom-scrollbar px-6 py-6 pb-24 space-y-8">
             {/* Popular Shops */}
             <div className="space-y-4">
               <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Popular Shops</h3>
