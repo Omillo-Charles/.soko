@@ -83,50 +83,90 @@ const ShopProfilePage = () => {
 
   useEffect(() => {
     const fetchShopData = async () => {
+      if (!id || id === "undefined") {
+        setError("Invalid shop ID");
+        setIsLoading(false);
+        return;
+      }
+
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
+      const token = localStorage.getItem("accessToken");
+      const headers: any = {};
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+
       try {
         // Fetch shop details
-        const shopRes = await fetch(`${apiUrl}/shops/${id}`);
+        const shopRes = await fetch(`${apiUrl}/shops/${id}`, { headers });
+        
+        if (shopRes.status === 401) {
+          // If we get a 401, the token might be expired. 
+          // We don't logout here, but we fetch without the token to see if it's a public shop.
+          const publicRes = await fetch(`${apiUrl}/shops/${id}`);
+          const publicData = await publicRes.json();
+          if (publicData.success) {
+            processShopData(publicData.data);
+            return;
+          }
+        }
+
         const shopData = await shopRes.json();
         
         if (shopData.success) {
-          const shopInfo = shopData.data;
-          setShop(shopInfo);
-          
-          // Set initial following state
-          if (currentUser && shopInfo.followers) {
-            setIsFollowing(shopInfo.followers.includes(currentUser._id));
-          }
-          
-          // Fetch shop products
-          const productsRes = await fetch(`${apiUrl}/products?shop=${id}`);
-          const productsData = await productsRes.json();
-          
-          if (productsData.success) {
-            setProducts(productsData.data);
-          }
-
-          // Fetch followers for the sidebar count and initial state
-          const followersRes = await fetch(`${apiUrl}/shops/${id}/followers`);
-          const followersData = await followersRes.json();
-          if (followersData.success) {
-            setFollowers(followersData.data);
-          }
-
-          // Fetch following for the sidebar count and initial state
-          const followingRes = await fetch(`${apiUrl}/shops/${id}/following`);
-          const followingData = await followingRes.json();
-          if (followingData.success) {
-            setFollowing(followingData.data);
-          }
+          processShopData(shopData.data);
         } else {
-          setError("Shop not found");
+          setError(shopData.message || "Shop not found");
         }
       } catch (err) {
         console.error("Error fetching shop data:", err);
         setError("Failed to load shop profile");
       } finally {
         setIsLoading(false);
+      }
+    };
+
+    const processShopData = async (shopInfo: any) => {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
+      const token = localStorage.getItem("accessToken");
+      const headers: any = {};
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+
+      setShop(shopInfo);
+      
+      // Set initial following state
+      if (currentUser && shopInfo.followers) {
+        const isFollowingShop = Array.isArray(shopInfo.followers) 
+          ? shopInfo.followers.some((f: any) => (f._id || f) === currentUser._id)
+          : false;
+        setIsFollowing(isFollowingShop);
+      }
+      
+      try {
+        // Fetch shop products
+        const productsRes = await fetch(`${apiUrl}/products?shop=${id}`, { headers });
+        const productsData = await productsRes.json();
+        if (productsData.success) {
+          setProducts(productsData.data);
+        }
+
+        // Fetch followers
+        const followersRes = await fetch(`${apiUrl}/shops/${id}/followers`, { headers });
+        const followersData = await followersRes.json();
+        if (followersData.success) {
+          setFollowers(followersData.data);
+        }
+
+        // Fetch following
+        const followingRes = await fetch(`${apiUrl}/shops/${id}/following`, { headers });
+        const followingData = await followingRes.json();
+        if (followingData.success) {
+          setFollowing(followingData.data);
+        }
+      } catch (err) {
+        console.error("Error fetching additional shop data:", err);
       }
     };
 

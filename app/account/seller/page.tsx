@@ -162,7 +162,7 @@ const SellerDashboard = () => {
 
   const quickActions = [
     { label: "Add Product", icon: <Plus className="w-5 h-5" />, href: "/account/seller/products/new", color: "bg-primary text-white" },
-    { label: "View Store", icon: <Store className="w-5 h-5" />, href: `/shop/${user?._id}`, color: "bg-white text-slate-700 border border-slate-200" },
+    { label: "View Store", icon: <Store className="w-5 h-5" />, href: shop?._id ? `/shop/${shop._id}` : `/shop/my-shop`, color: "bg-white text-slate-700 border border-slate-200" },
     { label: "Settings", icon: <Settings className="w-5 h-5" />, href: "/account/seller/settings", color: "bg-white text-slate-700 border border-slate-200" },
   ];
 
@@ -253,7 +253,7 @@ const SellerDashboard = () => {
               {quickActions.map((action, idx) => (
                 <Link 
                   key={idx}
-                  href={action.href === `/shop/${user?._id}` ? `/shop/${shop?._id}` : action.href}
+                  href={action.href}
                   className={`px-4 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 transition-all shadow-sm hover:shadow-md ${action.color}`}
                 >
                   {action.icon}
