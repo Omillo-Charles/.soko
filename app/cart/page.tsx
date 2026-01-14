@@ -86,7 +86,7 @@ const CartPage = () => {
         <div className="grid lg:grid-cols-3 gap-10">
           {/* Cart Items List */}
           <div className="lg:col-span-2 space-y-6">
-            {cartItems.map((item) => (
+            {cartItems.map((item: any) => (
               <div key={item._id} className="group bg-white rounded-[2.5rem] p-6 md:p-8 border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-primary/5 transition-all duration-500">
                 <div className="flex flex-col md:flex-row gap-8">
                   {/* Product Image */}

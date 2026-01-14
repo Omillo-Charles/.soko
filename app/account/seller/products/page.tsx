@@ -187,7 +187,7 @@ const SellerProductsPage = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-4">
-            {filteredProducts.map((product) => (
+            {filteredProducts.map((product: any) => (
               <div 
                 key={product._id}
                 className="bg-white rounded-[2rem] border border-slate-100 p-4 md:p-6 flex flex-col md:flex-row items-center gap-6 group hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300"

@@ -29,6 +29,10 @@ import { useWishlist } from "@/context/WishlistContext";
 import { categories as allCategories } from "@/constants/categories";
 import { toast } from "sonner";
 
+import { useProducts } from "@/hooks/useProducts";
+import { usePopularShops, useFollowShop } from "@/hooks/useShop";
+import { useUser } from "@/hooks/useUser";
+
 const ShopPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -38,23 +42,31 @@ const ShopPage = () => {
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const [isMobile, setIsMobile] = useState(false);
-  const [products, setProducts] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [popularShops, setPopularShops] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<'foryou' | 'following'>('foryou');
-  const [currentUser, setCurrentUser] = useState<any>(null);
-  const [userShop, setUserShop] = useState<any>(null);
+  const { user: currentUser } = useUser();
+  const { data: popularShopsData, isLoading: isShopsLoading } = usePopularShops();
+  const followMutation = useFollowShop();
 
-  const [isFollowLoading, setIsFollowLoading] = useState<string | null>(null);
+  const { data: productsData, isLoading: isProductsLoading, error: productsError } = useProducts({
+    q: query,
+    cat: cat !== 'all' ? cat : undefined,
+    following: activeTab === 'following' ? 'true' : undefined
+  });
 
-  // Filter products based on active tab and user's shop
-  const displayProducts = React.useMemo(() => {
-    if (activeTab === 'following' && userShop) {
-      return products.filter(p => p.vendor.id !== userShop._id);
-    }
-    return products;
-  }, [products, activeTab, userShop]);
+  const products = productsData || [];
+
+  const popularShops = React.useMemo(() => {
+    return (popularShopsData || []).map((s: any) => ({
+      id: s._id || s.id || `shop-${Math.random()}`,
+      name: s.name || "Unknown Shop",
+      handle: `@${(s.name || "shop").toLowerCase().replace(/\s+/g, "_")}`,
+      avatar: s.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${s.name || "shop"}`,
+      followers: s.followersCount || s.followers?.length || 0,
+      verified: s.isVerified || false,
+      followersList: s.followers || [],
+      products: s.productsCount || s.products?.length || 0
+    }));
+  }, [popularShopsData]);
 
   const handleFollowToggle = async (shopId: string) => {
     if (!currentUser) {
@@ -63,169 +75,41 @@ const ShopPage = () => {
       return;
     }
 
-    setIsFollowLoading(shopId);
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
-    const token = localStorage.getItem("accessToken");
-
     try {
-      const response = await fetch(`${apiUrl}/shops/${shopId}/follow`, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      });
-      const data = await response.json();
-
-      if (data.success) {
-        toast.success(data.message);
-        // Refresh popular shops to update follower counts
-        const shopsResponse = await fetch(`${apiUrl}/shops`);
-        const shopsData = await shopsResponse.json();
-        if (shopsData.success) {
-          setPopularShops(shopsData.data.map((s: any) => ({
-            id: s._id,
-            name: s.name,
-            handle: `@${s.name.toLowerCase().replace(/\s+/g, "_")}`,
-            avatar: s.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${s.name}`,
-            followers: s.followers?.length || 0,
-            verified: s.isVerified || false,
-            followersList: s.followers || []
-          })));
-        }
-      } else {
-        toast.error(data.message || "Failed to follow shop");
-      }
-    } catch (err) {
-      console.error("Error toggling follow:", err);
-      toast.error("An error occurred. Please try again.");
-    } finally {
-      setIsFollowLoading(null);
+      await followMutation.mutateAsync(shopId);
+      toast.success("Updated follow status");
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Failed to toggle follow");
     }
   };
 
-  useEffect(() => {
-    const userData = localStorage.getItem("user");
-    if (userData) {
-      try {
-        const user = JSON.parse(userData);
-        setCurrentUser(user);
-        
-        // Fetch user's shop if they are a seller
-        if (user.accountType === 'seller') {
-          const fetchUserShop = async () => {
-            const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
-            const token = localStorage.getItem("accessToken");
-            try {
-              const response = await fetch(`${apiUrl}/shops/my-shop`, {
-                headers: { "Authorization": `Bearer ${token}` }
-              });
-              const data = await response.json();
-              if (data.success) {
-                setUserShop(data.data);
-              }
-            } catch (err) {
-              console.error("Error fetching user shop:", err);
-            }
-          };
-          fetchUserShop();
-        }
-      } catch (e) {
-        console.error("Error parsing user data", e);
-      }
+  const displayProducts = React.useMemo(() => {
+    const formatted = products.map((p: any) => ({
+      id: p._id || p.id || `product-${Math.random()}`,
+      vendor: {
+        id: p.shop?._id || p.shop?.id || `vendor-${Math.random()}`,
+        name: p.shop?.name || "Unknown Shop",
+        handle: `@${p.shop?.name?.toLowerCase().replace(/\s+/g, "_") || "shop"}`,
+        avatar: p.shop?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.shop?.name || "shop"}`,
+        verified: p.shop?.isVerified || false
+      },
+      content: p.description || p.content || "",
+      image: p.image,
+      price: p.price?.toLocaleString() || "0",
+      rating: p.rating || 0,
+      reviews: p.reviewsCount || 0,
+      likes: p.likesCount || 0,
+      reposts: p.repostsCount || 0,
+      comments: p.commentsCount || 0,
+      time: p.createdAt ? new Date(p.createdAt).toLocaleDateString() : "Just now"
+    }));
+
+    if (activeTab === 'following' && currentUser) {
+      // Filter is already handled by the API when following=true is passed
+      return formatted;
     }
-  }, []);
-
-  useEffect(() => {
-    const fetchPopularShops = async () => {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
-      try {
-        const response = await fetch(`${apiUrl}/shops`);
-        const data = await response.json();
-        if (data.success) {
-          setPopularShops(data.data.map((s: any) => ({
-            id: s._id,
-            name: s.name,
-            handle: `@${s.name.toLowerCase().replace(/\s+/g, "_")}`,
-            avatar: s.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${s.name}`,
-            followers: s.followers?.length || 0,
-            verified: s.isVerified || false,
-            followersList: s.followers || []
-          })));
-        }
-      } catch (err) {
-        console.error("Error fetching shops:", err);
-      }
-    };
-    fetchPopularShops();
-  }, []);
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setIsLoading(true);
-      setError(null);
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
-      const token = localStorage.getItem("accessToken");
-
-      try {
-        const params = new URLSearchParams();
-        if (query) params.set("q", query);
-        if (cat && cat !== "all") params.set("cat", cat);
-        
-        let endpoint = `${apiUrl}/products`;
-        
-        if (activeTab === 'following') {
-          if (!currentUser) {
-            setProducts([]);
-            setIsLoading(false);
-            return;
-          }
-          params.set("following", "true");
-        }
-        
-        const response = await fetch(`${endpoint}?${params.toString()}`, {
-          headers: token ? { "Authorization": `Bearer ${token}` } : {}
-        });
-        const data = await response.json();
-        
-        if (data.success) {
-          // Map API data to the UI structure
-          const formattedProducts = data.data.map((p: any) => ({
-            id: p._id,
-            vendor: {
-              id: p.shop?._id || p.shop?.id || "",
-              name: p.shop?.name || "Unknown Shop",
-              handle: `@${p.shop?.name?.toLowerCase().replace(/\s+/g, "_") || "shop"}`,
-              avatar: p.shop?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.shop?.name || "shop"}`,
-              verified: p.shop?.isVerified || false
-            },
-            content: p.description || p.content || "",
-            image: p.image,
-            price: p.price?.toLocaleString(),
-            rating: p.rating || 0,
-            reviews: p.reviewsCount || 0,
-            likes: p.likesCount || 0,
-            reposts: p.repostsCount || 0,
-            comments: p.commentsCount || 0,
-            time: p.createdAt ? new Date(p.createdAt).toLocaleDateString() : "Just now"
-          }));
-
-          setProducts(formattedProducts);
-        } else {
-          setProducts([]);
-          if (activeTab !== 'following') {
-            setError(data.message || "Failed to load products");
-          }
-        }
-      } catch (err) {
-        console.error("Error fetching products:", err);
-        setError("Failed to load products");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, [query, cat, activeTab, currentUser]);
+    return formatted;
+  }, [products, activeTab, currentUser]);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -237,6 +121,9 @@ const ShopPage = () => {
       window.removeEventListener("resize", checkMobile);
     };
   }, []);
+
+  const isLoading = isProductsLoading;
+  const error = productsError ? (productsError as any).response?.data?.message || "Failed to load products" : null;
 
   const categories = allCategories.filter(c => c.value !== 'all');
 
@@ -419,7 +306,7 @@ const ShopPage = () => {
               </div>
             ) : (
               <div className="divide-y divide-slate-100 bg-white">
-                {displayProducts.map((product) => (
+                {displayProducts.map((product: any) => (
                   <div 
                     key={product.id} 
                     onClick={() => router.push(`/shop/product/${product.id}`)}
@@ -509,14 +396,7 @@ const ShopPage = () => {
                           <button 
                             onClick={async (e) => { 
                               e.stopPropagation();
-                              const action = await toggleWishlist(product.id);
-                              if (action) {
-                                setProducts(prev => prev.map(p => 
-                                  p.id === product.id 
-                                    ? { ...p, likes: Math.max(0, (p.likes || 0) + (action === 'added' ? 1 : -1)) } 
-                                    : p
-                                ));
-                              }
+                              await toggleWishlist(product.id);
                             }}
                             className={`flex items-center gap-0 group transition-colors ${
                               isInWishlist(product.id) ? 'text-pink-500' : 'hover:text-pink-500'
@@ -568,7 +448,7 @@ const ShopPage = () => {
             <div className="space-y-4">
               <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Popular Shops</h3>
               <div className="space-y-1">
-                {popularShops.map((vendor) => (
+                {popularShops.map((vendor: any) => (
                   <div 
                     key={vendor.id} 
                     className="p-3 hover:bg-slate-50 transition-all cursor-pointer flex items-center justify-between gap-3 rounded-xl group"
@@ -583,23 +463,26 @@ const ShopPage = () => {
                           <p className="text-sm font-black text-slate-900 truncate">{vendor.name}</p>
                           {vendor.verified && <CheckCircle2 className="w-3 h-3 text-primary fill-primary/10" />}
                         </div>
-                        <p className="text-[11px] font-bold text-slate-400 truncate">{vendor.handle}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="text-[11px] font-bold text-slate-400 truncate">{vendor.handle}</p>
+                          <span className="text-slate-300">·</span>
+                          <p className="text-[11px] font-bold text-slate-400">{vendor.followers} followers</p>
+                          <span className="text-slate-300">·</span>
+                          <p className="text-[11px] font-bold text-slate-400">{vendor.products} products</p>
+                        </div>
                       </div>
                     </div>
                     {currentUser?._id !== vendor.id && (
                       <button 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleFollowToggle(vendor.id);
-                        }}
-                        disabled={isFollowLoading === vendor.id}
-                        className={`px-4 py-1.5 rounded-full text-xs font-black transition-all ${
-                          vendor.followersList?.includes(currentUser?._id)
-                            ? 'bg-slate-100 text-slate-900 hover:bg-red-50 hover:text-red-600'
-                            : 'bg-slate-900 text-white hover:bg-primary'
-                        } ${isFollowLoading === vendor.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        onClick={(e) => { e.stopPropagation(); handleFollowToggle(vendor.id); }}
+                        disabled={followMutation.isPending && followMutation.variables === vendor.id}
+                        className={`bg-slate-900 text-white text-[11px] font-black px-4 py-1.5 rounded-full hover:bg-primary transition-all shrink-0 ${
+                          vendor.followersList?.includes(currentUser?._id) 
+                            ? 'bg-slate-100 text-slate-900 hover:bg-red-50 hover:text-red-600 hover:border-red-100' 
+                            : ''
+                        } ${followMutation.isPending && followMutation.variables === vendor.id ? 'opacity-50 cursor-not-allowed' : ''}`}
                       >
-                        {isFollowLoading === vendor.id ? '...' : (vendor.followersList?.includes(currentUser?._id) ? 'Following' : 'Follow')}
+                        {followMutation.isPending && followMutation.variables === vendor.id ? '...' : (vendor.followersList?.includes(currentUser?._id) ? 'Following' : 'Follow')}
                       </button>
                     )}
                   </div>

@@ -18,52 +18,30 @@ import {
 import Link from "next/link";
 import { toast } from "sonner";
 
+import { usePopularShops, useFollowShop } from "@/hooks/useShop";
+import { useUser } from "@/hooks/useUser";
+
 const BrandsPage = () => {
   const router = useRouter();
-  const [shops, setShops] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [currentUser, setCurrentUser] = useState<any>(null);
-  const [isFollowLoading, setIsFollowLoading] = useState<string | null>(null);
+  const { user: currentUser } = useUser();
+  const { data: shops = [], isLoading } = usePopularShops();
+  const followMutation = useFollowShop();
 
-  useEffect(() => {
-    const userData = localStorage.getItem("user");
-    if (userData) {
-      try {
-        setCurrentUser(JSON.parse(userData));
-      } catch (e) {
-        console.error("Error parsing user data", e);
-      }
-    }
-  }, []);
-
-  const fetchShops = async () => {
-    setIsLoading(true);
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
-    try {
-      const response = await fetch(`${apiUrl}/shops`);
-      const data = await response.json();
-      if (data.success) {
-        setShops(data.data);
-      }
-    } catch (err) {
-      console.error("Error fetching shops:", err);
-      toast.error("Failed to load brands");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchShops();
-  }, []);
+  const normalizedShops = useMemo(() => {
+    return (shops || []).map((shop: any) => ({
+      ...shop,
+      productsCount: shop.productsCount || shop.products?.length || 0,
+      followersCount: shop.followersCount || shop.followers?.length || 0
+    }));
+  }, [shops]);
 
   const filteredShops = useMemo(() => {
-    return shops.filter(shop => 
+    return normalizedShops.filter((shop: any) => 
       shop.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       shop.description?.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  }, [shops, searchQuery]);
+  }, [normalizedShops, searchQuery]);
 
   const handleFollowToggle = async (e: React.MouseEvent, shopId: string) => {
     e.stopPropagation();
@@ -73,31 +51,11 @@ const BrandsPage = () => {
       return;
     }
 
-    setIsFollowLoading(shopId);
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
-    const token = localStorage.getItem("accessToken");
-
     try {
-      const response = await fetch(`${apiUrl}/shops/${shopId}/follow`, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      });
-      const data = await response.json();
-
-      if (data.success) {
-        toast.success(data.message);
-        // Refresh shops to update follower counts
-        fetchShops();
-      } else {
-        toast.error(data.message || "Failed to follow shop");
-      }
-    } catch (err) {
-      console.error("Error toggling follow:", err);
-      toast.error("An error occurred. Please try again.");
-    } finally {
-      setIsFollowLoading(null);
+      await followMutation.mutateAsync(shopId);
+      toast.success("Updated follow status");
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Failed to toggle follow");
     }
   };
 
@@ -174,7 +132,7 @@ const BrandsPage = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredShops.map((shop) => (
+            {filteredShops.map((shop: any) => (
               <div 
                 key={shop._id}
                 onClick={() => router.push(`/shop/${shop._id}`)}
@@ -191,7 +149,7 @@ const BrandsPage = () => {
 
                 <div className="p-6 pt-0 flex-1 flex flex-col">
                   {/* Avatar & Header */}
-                  <div className="flex items-end gap-4 -mt-10 mb-4 px-2">
+                  <div className="relative z-10 flex items-end gap-4 -mt-10 mb-4 px-2">
                     <div className="w-20 h-20 rounded-3xl border-4 border-white overflow-hidden bg-slate-100 shadow-xl group-hover:scale-105 transition-transform duration-500">
                       <img 
                         src={shop.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${shop.name}`} 
@@ -223,7 +181,7 @@ const BrandsPage = () => {
                       </div>
                       <div>
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-tight leading-none mb-1">Followers</p>
-                        <p className="text-xs font-black text-slate-900">{shop.followers?.length || 0}</p>
+                        <p className="text-xs font-black text-slate-900">{shop.followersCount || shop.followers?.length || 0}</p>
                       </div>
                     </div>
                     <div className="bg-slate-50/50 p-3 rounded-2xl border border-slate-50 flex items-center gap-3">
@@ -232,7 +190,7 @@ const BrandsPage = () => {
                       </div>
                       <div>
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-tight leading-none mb-1">Products</p>
-                        <p className="text-xs font-black text-slate-900">{shop.productsCount || 0}</p>
+                        <p className="text-xs font-black text-slate-900">{shop.productsCount || shop.products?.length || 0}</p>
                       </div>
                     </div>
                   </div>
@@ -241,14 +199,14 @@ const BrandsPage = () => {
                   <div className="mt-auto flex items-center gap-3">
                     <button 
                       onClick={(e) => handleFollowToggle(e, shop._id)}
-                      disabled={isFollowLoading === shop._id || shop.owner === currentUser?._id}
+                      disabled={followMutation.isPending && followMutation.variables === shop._id || shop.owner === currentUser?._id}
                       className={`flex-1 h-11 rounded-xl text-xs font-black transition-all ${
                         currentUser && shop.followers?.includes(currentUser._id)
                           ? 'bg-slate-100 text-slate-900 hover:bg-red-50 hover:text-red-600 hover:border-red-100'
                           : 'bg-slate-900 text-white hover:bg-primary shadow-lg shadow-slate-900/10'
                       } disabled:opacity-50 disabled:cursor-not-allowed`}
                     >
-                      {isFollowLoading === shop._id ? '...' : (
+                      {followMutation.isPending && followMutation.variables === shop._id ? '...' : (
                         currentUser && shop.followers?.includes(currentUser._id) ? 'Following' : 'Follow'
                       )}
                     </button>

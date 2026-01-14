@@ -1,7 +1,9 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useMemo } from 'react';
 import { toast } from 'sonner';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import api from '@/lib/api';
 
 interface Product {
   _id: string;
@@ -35,39 +37,65 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const queryClient = useQueryClient();
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
+  const { data: cartData, isLoading } = useQuery({
+    queryKey: ['cart'],
+    queryFn: async () => {
+      const response = await api.get('/carts');
+      return response.data.data;
+    },
+    enabled: typeof window !== 'undefined' && !!localStorage.getItem('accessToken'),
+  });
 
-  const fetchCart = async () => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-      setCartItems([]);
-      setIsLoading(false);
-      return;
+  const cartItems = cartData?.items || [];
+
+  const addMutation = useMutation({
+    mutationFn: async (payload: { productId: string, quantity: number, size?: string, color?: string }) => {
+      const response = await api.post('/carts/add', payload);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cart'] });
+      toast.success("Item added to cart");
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Failed to add item to cart");
     }
+  });
 
-    try {
-      const response = await fetch(`${apiUrl}/carts`, {
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      });
-      const data = await response.json();
-      if (data.success) {
-        setCartItems(data.data.items);
-      }
-    } catch (error) {
-      console.error("Error fetching cart:", error);
-    } finally {
-      setIsLoading(false);
+  const removeMutation = useMutation({
+    mutationFn: async (itemId: string) => {
+      const response = await api.delete(`/carts/item/${itemId}`);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cart'] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Failed to remove item");
     }
-  };
+  });
 
-  useEffect(() => {
-    fetchCart();
-  }, []);
+  const updateMutation = useMutation({
+    mutationFn: async ({ itemId, quantity }: { itemId: string, quantity: number }) => {
+      const response = await api.put(`/carts/item/${itemId}`, { quantity });
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cart'] });
+    },
+  });
+
+  const clearMutation = useMutation({
+    mutationFn: async () => {
+      const response = await api.delete('/carts/clear');
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cart'] });
+    },
+  });
 
   const addToCart = async (productId: string, quantity = 1, size?: string, color?: string) => {
     const token = localStorage.getItem("accessToken");
@@ -75,97 +103,31 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       toast.error("Please login to add items to cart");
       return;
     }
-
-    try {
-      const response = await fetch(`${apiUrl}/carts/add`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({ productId, quantity, size, color })
-      });
-      const data = await response.json();
-      if (data.success) {
-        setCartItems(data.data.items);
-        toast.success("Item added to cart");
-      } else {
-        toast.error(data.message || data.error || "Failed to add item to cart");
-      }
-    } catch (error) {
-      console.error("Error adding to cart:", error);
-      toast.error("An error occurred. Please try again.");
-    }
+    await addMutation.mutateAsync({ productId, quantity, size, color });
   };
 
   const removeFromCart = async (itemId: string) => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) return;
-
-    try {
-      const response = await fetch(`${apiUrl}/carts/item/${itemId}`, {
-        method: "DELETE",
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      });
-      const data = await response.json();
-      if (data.success) {
-        setCartItems(data.data.items);
-      }
-    } catch (error) {
-      console.error("Error removing from cart:", error);
-    }
+    await removeMutation.mutateAsync(itemId);
   };
 
   const updateQuantity = async (itemId: string, quantity: number) => {
     if (quantity < 1) return;
-    const token = localStorage.getItem("accessToken");
-    if (!token) return;
-
-    try {
-      const response = await fetch(`${apiUrl}/carts/item/${itemId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({ quantity })
-      });
-      const data = await response.json();
-      if (data.success) {
-        setCartItems(data.data.items);
-      }
-    } catch (error) {
-      console.error("Error updating quantity:", error);
-    }
+    await updateMutation.mutateAsync({ itemId, quantity });
   };
 
   const clearCart = async () => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) return;
-
-    try {
-      const response = await fetch(`${apiUrl}/carts/clear`, {
-        method: "DELETE",
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      });
-      const data = await response.json();
-      if (data.success) {
-        setCartItems([]);
-      }
-    } catch (error) {
-      console.error("Error clearing cart:", error);
-    }
+    await clearMutation.mutateAsync();
   };
 
-  const subtotal = cartItems.reduce((acc, item) => {
-    return acc + (item.product.price * item.quantity);
-  }, 0);
+  const subtotal = useMemo(() => {
+    return cartItems.reduce((acc: number, item: CartItem) => {
+      return acc + (item.product.price * item.quantity);
+    }, 0);
+  }, [cartItems]);
 
-  const totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+  const totalItems = useMemo(() => {
+    return cartItems.reduce((acc: number, item: CartItem) => acc + item.quantity, 0);
+  }, [cartItems]);
 
   return (
     <CartContext.Provider value={{ 

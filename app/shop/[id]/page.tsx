@@ -27,181 +27,51 @@ import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { toast } from "sonner";
+import { useShop, useShopProducts, usePopularShops, useFollowShop, useShopLists } from "@/hooks/useShop";
+import { useUser } from "@/hooks/useUser";
 
 const ShopProfilePage = () => {
-  const { id } = useParams();
+  const params = useParams();
+  const id = params.id as string;
   const router = useRouter();
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
-  const [shop, setShop] = useState<any>(null);
-  const [products, setProducts] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [currentUser, setCurrentUser] = useState<any>(null);
-  const [isFollowing, setIsFollowing] = useState(false);
-  const [isFollowLoading, setIsFollowLoading] = useState(false);
-  const [popularShops, setPopularShops] = useState<any[]>([]);
+  const { user: currentUser } = useUser();
+  
   const [activeSection, setActiveSection] = useState('Products');
-  const [followers, setFollowers] = useState<any[]>([]);
-  const [following, setFollowing] = useState<any[]>([]);
-  const [isListsLoading, setIsListsLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchPopularShops = async () => {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
-      try {
-        const response = await fetch(`${apiUrl}/shops`);
-        const data = await response.json();
-        if (data.success) {
-          setPopularShops(data.data.map((s: any) => ({
-            id: s._id,
-            name: s.name,
-            handle: `@${s.name.toLowerCase().replace(/\s+/g, "_")}`,
-            avatar: s.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${s.name}`,
-            followers: s.followersCount || 0,
-            verified: s.isVerified || false
-          })));
-        }
-      } catch (err) {
-        console.error("Error fetching shops:", err);
-      }
-    };
-    fetchPopularShops();
-  }, []);
+  const { data: shop, isLoading: isShopLoading, error: shopError } = useShop(id);
+  const { data: productsData = [], isLoading: isProductsLoading } = useShopProducts(id);
+  const { data: popularShopsData = [] } = usePopularShops();
+  const { data: listData = [], isLoading: isListsLoading } = useShopLists(id, activeSection as 'Followers' | 'Following');
+  const followMutation = useFollowShop();
 
-  useEffect(() => {
-    // Get current user from localStorage
-    const userData = localStorage.getItem("user");
-    if (userData) {
-      try {
-        setCurrentUser(JSON.parse(userData));
-      } catch (e) {
-        console.error("Error parsing user data", e);
-      }
-    }
-  }, []);
+  const products = React.useMemo(() => {
+    return (productsData || []).map((p: any) => ({
+      ...p,
+      _id: String(p._id || p.id || `product-${Math.random()}`),
+      name: String(p.name || "Untitled Product"),
+      price: Number(p.price || 0),
+      description: String(p.description || ""),
+      image: p.image || p.images?.[0] || null,
+      likesCount: Number(p.likesCount || p.likes?.length || 0),
+      commentsCount: Number(p.commentsCount || p.comments?.length || 0),
+      repostsCount: Number(p.repostsCount || 0)
+    }));
+  }, [productsData]);
 
-  useEffect(() => {
-    const fetchShopData = async () => {
-      if (!id || id === "undefined") {
-        setError("Invalid shop ID");
-        setIsLoading(false);
-        return;
-      }
-
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
-      const token = localStorage.getItem("accessToken");
-      const headers: any = {};
-      if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
-      }
-
-      try {
-        // Fetch shop details
-        const shopRes = await fetch(`${apiUrl}/shops/${id}`, { headers });
-        
-        if (shopRes.status === 401) {
-          // If we get a 401, the token might be expired. 
-          // We don't logout here, but we fetch without the token to see if it's a public shop.
-          const publicRes = await fetch(`${apiUrl}/shops/${id}`);
-          const publicData = await publicRes.json();
-          if (publicData.success) {
-            processShopData(publicData.data);
-            return;
-          }
-        }
-
-        const shopData = await shopRes.json();
-        
-        if (shopData.success) {
-          processShopData(shopData.data);
-        } else {
-          setError(shopData.message || "Shop not found");
-        }
-      } catch (err) {
-        console.error("Error fetching shop data:", err);
-        setError("Failed to load shop profile");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    const processShopData = async (shopInfo: any) => {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
-      const token = localStorage.getItem("accessToken");
-      const headers: any = {};
-      if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
-      }
-
-      setShop(shopInfo);
-      
-      // Set initial following state
-      if (currentUser && shopInfo.followers) {
-        const isFollowingShop = Array.isArray(shopInfo.followers) 
-          ? shopInfo.followers.some((f: any) => (f._id || f) === currentUser._id)
-          : false;
-        setIsFollowing(isFollowingShop);
-      }
-      
-      try {
-        // Fetch shop products
-        const productsRes = await fetch(`${apiUrl}/products?shop=${id}`, { headers });
-        const productsData = await productsRes.json();
-        if (productsData.success) {
-          setProducts(productsData.data);
-        }
-
-        // Fetch followers
-        const followersRes = await fetch(`${apiUrl}/shops/${id}/followers`, { headers });
-        const followersData = await followersRes.json();
-        if (followersData.success) {
-          setFollowers(followersData.data);
-        }
-
-        // Fetch following
-        const followingRes = await fetch(`${apiUrl}/shops/${id}/following`, { headers });
-        const followingData = await followingRes.json();
-        if (followingData.success) {
-          setFollowing(followingData.data);
-        }
-      } catch (err) {
-        console.error("Error fetching additional shop data:", err);
-      }
-    };
-
-    if (id) {
-      fetchShopData();
-    }
-  }, [id, currentUser]);
-
-  useEffect(() => {
-    const fetchLists = async () => {
-      if (activeSection !== 'Followers' && activeSection !== 'Following') return;
-      
-      setIsListsLoading(true);
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
-      const endpoint = activeSection === 'Followers' ? `/shops/${id}/followers` : `/shops/${id}/following`;
-      
-      try {
-        const response = await fetch(`${apiUrl}${endpoint}`);
-        const data = await response.json();
-        if (data.success) {
-          if (activeSection === 'Followers') {
-            setFollowers(data.data);
-          } else {
-            setFollowing(data.data);
-          }
-        }
-      } catch (err) {
-        console.error(`Error fetching ${activeSection}:`, err);
-      } finally {
-        setIsListsLoading(false);
-      }
-    };
-
-    fetchLists();
-  }, [id, activeSection]);
+  const isFollowing = shop?.followers?.some((f: any) => String(f._id || f) === String(currentUser?._id));
+  
+  const popularShops = React.useMemo(() => {
+    return (popularShopsData || []).map((s: any) => ({
+      id: String(s._id || s.id || `shop-${Math.random()}`),
+      name: String(s.name || "Unknown Shop"),
+      handle: `@${String(s.name || "shop").toLowerCase().replace(/\s+/g, "_")}`,
+      avatar: s.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${s.name || "shop"}`,
+      followers: Number(s.followersCount || s.followers?.length || 0),
+      verified: Boolean(s.isVerified || false)
+    }));
+  }, [popularShopsData]);
 
   const handleFollowToggle = async () => {
     if (!currentUser) {
@@ -210,45 +80,25 @@ const ShopProfilePage = () => {
       return;
     }
 
-    if (shop.owner === currentUser._id) {
+    if (shop?.owner === currentUser?._id) {
       toast.error("You cannot follow your own shop");
       return;
     }
 
-    setIsFollowLoading(true);
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
-    const token = localStorage.getItem("accessToken");
-
     try {
-      const response = await fetch(`${apiUrl}/shops/${id}/follow`, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      });
-      const data = await response.json();
-
-      if (data.success) {
-        setIsFollowing(data.isFollowing);
-        setShop({ ...shop, followersCount: data.followersCount });
-        toast.success(data.message);
-        
-        // Always refresh followers list to update counts across the UI
-        const followersRes = await fetch(`${apiUrl}/shops/${id}/followers`);
-        const followersData = await followersRes.json();
-        if (followersData.success) {
-          setFollowers(followersData.data);
-        }
-      } else {
-        toast.error(data.message || "Failed to follow shop");
-      }
-    } catch (err) {
-      console.error("Error toggling follow:", err);
-      toast.error("An error occurred. Please try again.");
-    } finally {
-      setIsFollowLoading(false);
+      await followMutation.mutateAsync(id);
+      toast.success(isFollowing ? "Unfollowed shop" : "Following shop");
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Failed to toggle follow");
     }
   };
+
+  const isLoading = isShopLoading;
+  const error = shopError ? (shopError as any).response?.data?.message || "Failed to load shop" : null;
+
+  // Use the actual products length if productsCount is missing
+  const productsCount = shop?.productsCount || shop?.products?.length || products.length || 0;
+
 
   if (isLoading) {
     return (
@@ -300,8 +150,8 @@ const ShopProfilePage = () => {
                   { name: 'Products', icon: <ShoppingBag className="w-5 h-5" />, count: products.length },
                   { name: 'Reviews', icon: <Star className="w-5 h-5" />, count: 0 },
                   { name: 'About', icon: <Info className="w-5 h-5" /> },
-                  { name: 'Followers', icon: <Users className="w-5 h-5" />, count: followers.length },
-                  { name: 'Following', icon: <Users className="w-5 h-5" />, count: following.length },
+                  { name: 'Followers', icon: <Users className="w-5 h-5" />, count: shop?.followersCount ?? shop?.followers?.length },
+                  { name: 'Following', icon: <Users className="w-5 h-5" />, count: shop?.followingCount ?? shop?.following?.length },
                 ].map((item) => (
                   <button 
                     key={item.name}
@@ -361,14 +211,14 @@ const ShopProfilePage = () => {
                   {currentUser?._id !== shop.owner && (
                     <button 
                       onClick={handleFollowToggle}
-                      disabled={isFollowLoading}
+                      disabled={followMutation.isPending}
                       className={`px-6 py-2 rounded-full text-sm font-black transition-all ${
                         isFollowing 
                           ? 'bg-slate-100 text-slate-900 hover:bg-red-50 hover:text-red-600 hover:border-red-100' 
                           : 'bg-slate-900 text-white hover:bg-primary'
-                      } ${isFollowLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      } ${followMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
-                      {isFollowLoading ? '...' : (isFollowing ? 'Following' : 'Follow')}
+                      {followMutation.isPending ? '...' : (isFollowing ? 'Following' : 'Follow')}
                     </button>
                   )}
                   <button className="p-2 border border-slate-200 rounded-full hover:bg-slate-50 transition-all">
@@ -392,14 +242,21 @@ const ShopProfilePage = () => {
                     onClick={() => setActiveSection('Followers')}
                     className="text-sm font-bold text-slate-900 hover:underline"
                   >
-                    {followers.length} <span className="text-slate-500">Followers</span>
+                    {shop?.followersCount ?? shop?.followers?.length ?? 0} <span className="text-slate-500">Followers</span>
                   </button>
                   <div className="w-1 h-1 rounded-full bg-slate-300" />
                   <button 
                     onClick={() => setActiveSection('Following')}
                     className="text-sm font-bold text-slate-900 hover:underline"
                   >
-                    {following.length} <span className="text-slate-500">Following</span>
+                    {shop?.followingCount ?? shop?.following?.length ?? 0} <span className="text-slate-500">Following</span>
+                  </button>
+                  <div className="w-1 h-1 rounded-full bg-slate-300" />
+                  <button 
+                    onClick={() => setActiveSection('Products')}
+                    className="text-sm font-bold text-slate-900 hover:underline"
+                  >
+                    {productsCount} <span className="text-slate-500">Products</span>
                   </button>
                 </div>
               </div>
@@ -423,7 +280,7 @@ const ShopProfilePage = () => {
                 </div>
               ) : (
                 <div className="divide-y divide-slate-100">
-                  {products.map((product) => (
+                  {products.map((product: any) => (
                     <div 
                       key={product._id} 
                       onClick={() => router.push(`/shop/product/${product._id}`)}
@@ -484,14 +341,7 @@ const ShopProfilePage = () => {
                             <button 
                               onClick={async (e) => {
                                 e.stopPropagation();
-                                const action = await toggleWishlist(product._id);
-                                if (action) {
-                                  setProducts(prev => prev.map(p => 
-                                    p._id === product._id 
-                                      ? { ...p, likesCount: Math.max(0, (p.likesCount || 0) + (action === 'added' ? 1 : -1)) } 
-                                      : p
-                                  ));
-                                }
+                                await toggleWishlist(product._id);
                               }} 
                               className={`flex items-center gap-2 group transition-colors ${
                                 isInWishlist(product._id) ? 'text-pink-500' : 'hover:text-pink-500'
@@ -541,7 +391,7 @@ const ShopProfilePage = () => {
                     <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin"></div>
                     <p className="font-bold text-sm">Loading followers...</p>
                   </div>
-                ) : followers.length === 0 ? (
+                ) : listData.length === 0 ? (
                   <div className="p-20 flex flex-col items-center justify-center text-slate-400 gap-4 text-center">
                     <Users className="w-12 h-12 opacity-20" />
                     <div>
@@ -550,19 +400,19 @@ const ShopProfilePage = () => {
                     </div>
                   </div>
                 ) : (
-                  followers.map((follower) => (
-                    <div key={follower._id} className="p-4 md:p-6 flex items-center justify-between gap-4">
+                  (listData || []).map((follower: any) => (
+                    <div key={follower._id || follower.id || Math.random()} className="p-4 md:p-6 flex items-center justify-between gap-4">
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded-full overflow-hidden bg-slate-100 shrink-0">
                           <img 
-                            src={follower.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${follower.name}`} 
-                            alt={follower.name} 
+                            src={follower.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${follower.name || 'user'}`} 
+                            alt={follower.name || 'User'} 
                             className="w-full h-full object-cover" 
                           />
                         </div>
                         <div>
-                          <p className="font-black text-slate-900 text-sm">{follower.name}</p>
-                          <p className="text-xs font-bold text-slate-400">@{follower.name.toLowerCase().replace(/\s+/g, "_")}</p>
+                          <p className="font-black text-slate-900 text-sm">{follower.name || 'Unknown User'}</p>
+                          <p className="text-xs font-bold text-slate-400">@{ (follower.name || 'user').toLowerCase().replace(/\s+/g, "_")}</p>
                         </div>
                       </div>
                     </div>
@@ -576,7 +426,7 @@ const ShopProfilePage = () => {
                     <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin"></div>
                     <p className="font-bold text-sm">Loading following...</p>
                   </div>
-                ) : following.length === 0 ? (
+                ) : (listData || []).length === 0 ? (
                   <div className="p-20 flex flex-col items-center justify-center text-slate-400 gap-4 text-center">
                     <Users className="w-12 h-12 opacity-20" />
                     <div>
@@ -585,26 +435,26 @@ const ShopProfilePage = () => {
                     </div>
                   </div>
                 ) : (
-                  following.map((followedShop) => (
+                  (listData || []).map((followedShop: any) => (
                     <div 
-                      key={followedShop._id} 
-                      onClick={() => router.push(`/shop/${followedShop._id}`)}
+                      key={followedShop._id || followedShop.id || Math.random()} 
+                      onClick={() => (followedShop._id || followedShop.id) && router.push(`/shop/${followedShop._id || followedShop.id}`)}
                       className="p-4 md:p-6 flex items-center justify-between gap-4 hover:bg-slate-50 cursor-pointer transition-colors"
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded-full overflow-hidden bg-slate-100 shrink-0">
                           <img 
-                            src={followedShop.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${followedShop.name}`} 
-                            alt={followedShop.name} 
+                            src={followedShop.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${followedShop.name || 'shop'}`} 
+                            alt={followedShop.name || 'Shop'} 
                             className="w-full h-full object-cover" 
                           />
                         </div>
                         <div>
                           <div className="flex items-center gap-1">
-                            <p className="font-black text-slate-900 text-sm">{followedShop.name}</p>
+                            <p className="font-black text-slate-900 text-sm">{followedShop.name || 'Unknown Shop'}</p>
                             {followedShop.isVerified && <CheckCircle2 className="w-3 h-3 text-primary fill-primary/10" />}
                           </div>
-                          <p className="text-xs font-bold text-slate-400">@{followedShop.name.toLowerCase().replace(/\s+/g, "_")}</p>
+                          <p className="text-xs font-bold text-slate-400">@{ (followedShop.name || 'shop').toLowerCase().replace(/\s+/g, "_")}</p>
                         </div>
                       </div>
                       <button className="px-4 py-1.5 bg-slate-100 text-slate-900 rounded-full text-xs font-black hover:bg-slate-200 transition-all">
@@ -680,7 +530,7 @@ const ShopProfilePage = () => {
                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Rating</p>
               </div>
               <div className="bg-slate-50/50 p-4 rounded-2xl border border-slate-100 text-center">
-                <p className="text-lg font-black text-slate-900">{followers.length}</p>
+                <p className="text-lg font-black text-slate-900">{shop?.followersCount ?? shop?.followers?.length ?? 0}</p>
                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-2">Followers</p>
               </div>
             </div>
@@ -718,9 +568,9 @@ const ShopProfilePage = () => {
               <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Popular Stores</h3>
               <div className="space-y-1">
                 {popularShops
-                  .filter(s => s.id !== id) // Filter out the current shop
+                  .filter((s: any) => s.id !== id) // Filter out the current shop
                   .slice(0, 5) // Limit to 5 shops
-                  .map((vendor) => (
+                  .map((vendor: any) => (
                   <div 
                     key={vendor.id} 
                     onClick={() => router.push(`/shop/${vendor.id}`)}
@@ -735,7 +585,11 @@ const ShopProfilePage = () => {
                           <p className="font-bold text-slate-900 text-sm truncate">{vendor.name}</p>
                           {vendor.verified && <CheckCircle2 className="w-3 h-3 text-primary fill-primary/10" />}
                         </div>
-                        <p className="text-slate-400 text-[11px] truncate">{vendor.handle}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="text-slate-400 text-[11px] truncate">{vendor.handle}</p>
+                          <span className="text-slate-300">·</span>
+                          <p className="text-slate-400 text-[11px] font-bold">{vendor.followers} followers</p>
+                        </div>
                       </div>
                     </div>
                     <button className="bg-slate-900 text-white text-[11px] font-black px-4 py-1.5 rounded-full hover:bg-primary transition-all shrink-0">

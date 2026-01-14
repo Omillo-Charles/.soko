@@ -3,6 +3,7 @@ import { Geist_Mono } from "next/font/google";
 import Navbar from "@/components/nav";
 import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
+import QueryProvider from "@/components/QueryProvider";
 import { Toaster } from "sonner";
 import "./globals.css";
 
@@ -33,13 +34,15 @@ export default function RootLayout({
         />
       </head>
       <body className={`${geistMono.variable} antialiased`}>
-        <CartProvider>
-          <WishlistProvider>
-            <Toaster position="top-right" richColors />
-            <Navbar />
-            {children}
-          </WishlistProvider>
-        </CartProvider>
+        <QueryProvider>
+          <CartProvider>
+            <WishlistProvider>
+              <Toaster position="top-right" richColors />
+              <Navbar />
+              {children}
+            </WishlistProvider>
+          </CartProvider>
+        </QueryProvider>
       </body>
     </html>
   );

@@ -21,84 +21,36 @@ import {
   MapPin
 } from "lucide-react";
 
+import { useUser } from "@/hooks/useUser";
+import { useMyShop } from "@/hooks/useShop";
+import { useMyProducts } from "@/hooks/useProducts";
+
 const SellerDashboard = () => {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
-  const [shop, setShop] = useState<any>(null);
-  const [products, setProducts] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [accountType, setAccountType] = useState<"buyer" | "seller">("seller");
+  const { user, isLoading: isUserLoading } = useUser();
+  const { data: shop, isLoading: isShopLoading, error: shopError } = useMyShop();
+  const { data: products = [], isLoading: isProductsLoading } = useMyProducts();
 
+  const [accountType, setAccountType] = useState<"buyer" | "seller">("seller");
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    // Protection logic
-    const checkAuthAndShop = async () => {
-      const token = localStorage.getItem("accessToken");
-      const userData = localStorage.getItem("user");
+    if (!isUserLoading && !user) {
+      router.push("/auth?mode=login");
+      return;
+    }
 
-      if (!token || !userData) {
-        router.push("/auth?mode=login");
-        return;
-      }
+    if (user && user.accountType !== "seller") {
+      router.push("/account");
+      return;
+    }
 
-      try {
-        const parsedUser = JSON.parse(userData);
-        
-        // If user is not a seller, redirect back to buyer account page
-        if (parsedUser.accountType !== "seller") {
-          router.push("/account");
-          return;
-        }
+    if (!isShopLoading && !shop && !shopError) {
+      router.push("/account/seller/register-shop");
+    }
+  }, [user, isUserLoading, shop, isShopLoading, shopError, router]);
 
-        setUser(parsedUser);
-        setAccountType(parsedUser.accountType);
-
-        // Fetch Shop Details
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
-        const shopRes = await fetch(`${apiUrl}/shops/my-shop`, {
-          headers: {
-            "Authorization": `Bearer ${token}`
-          }
-        });
-
-        if (shopRes.status === 401) {
-          throw new Error("Unauthorized");
-        }
-
-        const shopData = await shopRes.json();
-
-        if (shopData.success && shopData.data) {
-          setShop(shopData.data);
-        } else {
-          // No shop found, redirect to registration
-          router.push("/account/seller/register-shop");
-          return;
-        }
-
-        // Fetch Products
-        const productsRes = await fetch(`${apiUrl}/products/my-products`, {
-          headers: {
-            "Authorization": `Bearer ${token}`
-          }
-        });
-        const productsData = await productsRes.json();
-        if (productsData.success) {
-          setProducts(productsData.data);
-        }
-
-      } catch (e) {
-        console.error("Seller Page Auth/Shop Error:", e);
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("user");
-        router.push("/auth?mode=login");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkAuthAndShop();
-  }, [router]);
+  const isLoading = isUserLoading || isShopLoading || isProductsLoading;
 
   useEffect(() => {
     const checkMobile = () => {
@@ -169,7 +121,7 @@ const SellerDashboard = () => {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col lg:flex-row">
       {/* Mobile Header */}
-      <div className="lg:hidden bg-white px-4 py-4 border-b border-slate-100 flex items-center justify-between">
+      <div className="lg:hidden bg-white px-4 py-3 border-b border-slate-100 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
             <Store className="w-5 h-5 text-white" />
@@ -184,9 +136,9 @@ const SellerDashboard = () => {
       {/* Sidebar - Desktop */}
       <div className="hidden lg:block w-72 shrink-0 border-r border-slate-100">
         <aside 
-          className="fixed w-72 h-screen bg-white flex flex-col overflow-y-auto custom-scrollbar"
+          className="fixed top-[144px] w-72 h-[calc(100vh-144px)] bg-white flex flex-col overflow-y-auto custom-scrollbar"
         >
-          <div className="p-8 border-b border-slate-50">
+          <div className="p-6 border-b border-slate-50">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
               <Store className="w-6 h-6 text-white" />
@@ -241,13 +193,13 @@ const SellerDashboard = () => {
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 p-4 lg:p-10 pb-24 lg:pb-10">
-        <div className="max-w-6xl mx-auto space-y-8">
+      <main className="flex-1 p-3 lg:p-8 pb-24 lg:pb-8">
+        <div className="max-w-6xl mx-auto space-y-6">
           {/* Top Bar */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h2 className="text-3xl font-black text-slate-900 tracking-tight">{shop?.name || "Store Overview"}</h2>
-              <p className="text-slate-500 font-medium">Welcome back, {user?.name}! Your shop is looking great.</p>
+              <h2 className="text-2xl font-black text-slate-900 tracking-tight">{shop?.name || "Store Overview"}</h2>
+              <p className="text-slate-500 font-medium text-sm">Welcome back, {user?.name}! Your shop is looking great.</p>
             </div>
             <div className="flex items-center gap-3">
               {quickActions.map((action, idx) => (
@@ -264,7 +216,7 @@ const SellerDashboard = () => {
           </div>
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {stats.map((stat, idx) => (
               <div key={idx} className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-md transition-all">
                 <div className="flex items-center justify-between mb-4">
@@ -398,7 +350,7 @@ const SellerDashboard = () => {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {products.slice(0, 5).map((product) => (
+                    {products.slice(0, 5).map((product: any) => (
                       <div key={product._id} className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 group hover:bg-white hover:shadow-md transition-all">
                         <div className="w-16 h-16 rounded-xl overflow-hidden bg-white shrink-0">
                           <img src={product.image} alt={product.name} className="w-full h-full object-cover" />

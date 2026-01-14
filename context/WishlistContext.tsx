@@ -1,7 +1,9 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext } from 'react';
 import { toast } from 'sonner';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import api from '@/lib/api';
 
 interface Product {
   _id: string;
@@ -25,39 +27,50 @@ interface WishlistContextType {
 const WishlistContext = createContext<WishlistContextType | undefined>(undefined);
 
 export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [wishlistItems, setWishlistItems] = useState<Product[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const queryClient = useQueryClient();
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
+  const { data: wishlistData, isLoading } = useQuery({
+    queryKey: ['wishlist'],
+    queryFn: async () => {
+      const response = await api.get('/wishlist');
+      return response.data.data;
+    },
+    enabled: typeof window !== 'undefined' && !!localStorage.getItem('accessToken'),
+  });
 
-  const fetchWishlist = async () => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-      setWishlistItems([]);
-      setIsLoading(false);
-      return;
-    }
+  const wishlistItems = wishlistData?.products || [];
 
-    try {
-      const response = await fetch(`${apiUrl}/wishlist`, {
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      });
-      const data = await response.json();
-      if (data.success) {
-        setWishlistItems(data.data.products || []);
+  const toggleMutation = useMutation({
+    mutationFn: async (productId: string) => {
+      const response = await api.post('/wishlist/toggle', { productId });
+      return response.data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['wishlist'] });
+      if (data.action === 'added') {
+        toast.success("Added to wishlist");
+      } else {
+        toast.success("Removed from wishlist");
       }
-    } catch (error) {
-      console.error("Error fetching wishlist:", error);
-    } finally {
-      setIsLoading(false);
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Failed to update wishlist");
     }
-  };
+  });
 
-  useEffect(() => {
-    fetchWishlist();
-  }, []);
+  const removeMutation = useMutation({
+    mutationFn: async (productId: string) => {
+      const response = await api.delete(`/wishlist/${productId}`);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wishlist'] });
+      toast.success("Removed from wishlist");
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Failed to remove item");
+    }
+  });
 
   const toggleWishlist = async (productId: string): Promise<'added' | 'removed' | null> => {
     const token = localStorage.getItem("accessToken");
@@ -67,58 +80,19 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
 
     try {
-      const response = await fetch(`${apiUrl}/wishlist/toggle`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({ productId })
-      });
-      const data = await response.json();
-      if (data.success) {
-        setWishlistItems(data.data.products || []);
-        if (data.action === 'added') {
-          toast.success("Added to wishlist");
-        } else {
-          toast.success("Removed from wishlist");
-        }
-        return data.action;
-      } else {
-        toast.error(data.message || data.error || "Failed to update wishlist");
-        return null;
-      }
+      const result = await toggleMutation.mutateAsync(productId);
+      return result.action;
     } catch (error) {
-      console.error("Error toggling wishlist:", error);
-      toast.error("An error occurred. Please try again.");
       return null;
     }
   };
 
   const removeFromWishlist = async (productId: string) => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) return;
-
-    try {
-      const response = await fetch(`${apiUrl}/wishlist/${productId}`, {
-        method: "DELETE",
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      });
-      const data = await response.json();
-      if (data.success) {
-        setWishlistItems(data.data.products || []);
-        toast.success("Removed from wishlist");
-      }
-    } catch (error) {
-      console.error("Error removing from wishlist:", error);
-      toast.error("Failed to remove item");
-    }
+    await removeMutation.mutateAsync(productId);
   };
 
   const isInWishlist = (productId: string) => {
-    return wishlistItems.some(item => item._id === productId);
+    return wishlistItems.some((item: Product) => item._id === productId);
   };
 
   return (

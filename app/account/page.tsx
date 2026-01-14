@@ -21,92 +21,40 @@ import {
   LogIn
 } from "lucide-react";
 
+import { useUser } from "@/hooks/useUser";
+import { toast } from "sonner";
+
 const AccountPage = () => {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { user, isLoading, logout, updateAccountType, isUpdatingAccountType } = useUser();
 
   const [accountType, setAccountType] = useState<"buyer" | "seller">("buyer");
 
   useEffect(() => {
-    // Protection logic: Check for token and user data
-    const verifyUser = async () => {
-      const token = localStorage.getItem("accessToken");
-      const userData = localStorage.getItem("user");
-
-      if (!token || !userData) {
-        router.push("/auth?mode=login");
-        return;
-      }
-
-      try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
-        const response = await fetch(`${apiUrl}/users/me`, {
-          headers: {
-            "Authorization": `Bearer ${token}`
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error("Session invalid");
-        }
-
-        const data = await response.json();
-        if (data.success) {
-          setUser(data.data);
-          setAccountType(data.data.accountType || "buyer");
-          // Sync localStorage with fresh data
-          localStorage.setItem("user", JSON.stringify(data.data));
-        } else {
-          throw new Error("Failed to verify user");
-        }
-      } catch (e) {
-        console.error("Auth verification failed:", e);
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("user");
-        router.push("/auth?mode=login");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    verifyUser();
-  }, [router]);
+    if (!isLoading && !user) {
+      router.push("/auth?mode=login");
+    }
+    if (user) {
+      setAccountType(user.accountType || "buyer");
+    }
+  }, [user, isLoading, router]);
 
   const handleLogout = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("user");
+    logout();
     router.push("/auth?mode=login");
   };
 
   const toggleAccountType = async (targetType?: "buyer" | "seller") => {
     const newType = targetType || (accountType === "buyer" ? "seller" : "buyer");
     
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
-    const token = localStorage.getItem("accessToken");
-
     try {
-      const response = await fetch(`${apiUrl}/users/update-account-type`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({ accountType: newType }),
-      });
-
-      if (!response.ok) throw new Error("Failed to switch account type");
-
-      const data = await response.json();
-      
-      // Update local storage and state
-      localStorage.setItem("user", JSON.stringify(data.data));
-      setUser(data.data);
+      await updateAccountType(newType);
       setAccountType(newType);
+      toast.success(`Switched to ${newType} account`);
       return true;
     } catch (error) {
       console.error("Error switching account:", error);
-      alert("Failed to switch account type. Please try again.");
+      toast.error("Failed to switch account type");
       return false;
     }
   };

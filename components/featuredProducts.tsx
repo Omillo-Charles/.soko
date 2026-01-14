@@ -7,33 +7,15 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
+import { useFeaturedProducts } from "@/hooks/useProducts";
 
 const FeaturedProducts = () => {
   const router = useRouter();
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
-  const [products, setProducts] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  
+  const { data: products = [], isLoading } = useFeaturedProducts(4);
 
-  useEffect(() => {
-    const fetchFeaturedProducts = async () => {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
-      try {
-        const response = await fetch(`${apiUrl}/products`);
-        const data = await response.json();
-        if (data.success) {
-          // Take the first 4 products as featured
-          setProducts(data.data.slice(0, 4));
-        }
-      } catch (error) {
-        console.error("Error fetching featured products:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchFeaturedProducts();
-  }, []);
 
   if (isLoading) {
     return (
@@ -58,12 +40,12 @@ const FeaturedProducts = () => {
           </Link>
         </div>
         <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-6">
-          {products.map((p) => (
-            <div key={p._id} className="bg-white border border-slate-200 rounded-lg overflow-hidden group">
-              <div className="relative h-32 md:h-40 bg-slate-100 cursor-pointer" onClick={() => router.push(`/shop/product/${p._id}`)}>
+          {(products || []).map((p: any) => (
+            <div key={p._id || Math.random()} className="bg-white border border-slate-200 rounded-lg overflow-hidden group">
+              <div className="relative h-32 md:h-40 bg-slate-100 cursor-pointer" onClick={() => p._id && router.push(`/shop/product/${p._id}`)}>
                 <Image
                   src={p.image || "/placeholder-product.jpg"}
-                  alt={p.name}
+                  alt={p.name || "Product"}
                   fill
                   sizes="(max-width: 768px) 50vw, 25vw"
                   className="object-cover"
@@ -71,7 +53,7 @@ const FeaturedProducts = () => {
                 <button 
                   onClick={(e) => {
                     e.stopPropagation();
-                    addToCart(p._id);
+                    p._id && addToCart(p._id);
                   }}
                   className="absolute top-2 left-2 bg-white/80 hover:bg-white rounded-full p-2 shadow transition-all hover:scale-110 active:scale-95 z-10"
                   title="Add to Cart"
@@ -81,21 +63,14 @@ const FeaturedProducts = () => {
                 <button 
                   onClick={async (e) => {
                     e.stopPropagation();
-                    const action = await toggleWishlist(p._id);
-                    if (action) {
-                      setProducts(prev => prev.map(item => 
-                        item._id === p._id 
-                          ? { ...item, likesCount: Math.max(0, (item.likesCount || 0) + (action === 'added' ? 1 : -1)) } 
-                          : item
-                      ));
-                    }
+                    p._id && await toggleWishlist(p._id);
                   }}
                   className={`absolute top-2 right-2 bg-white/80 hover:bg-white rounded-full p-2 shadow transition-all hover:scale-110 z-10 ${
-                    isInWishlist(p._id) ? 'text-pink-500' : 'text-slate-700'
+                    p._id && isInWishlist(p._id) ? 'text-pink-500' : 'text-slate-700'
                   }`}
-                  title={isInWishlist(p._id) ? "Remove from Wishlist" : "Add to Wishlist"}
+                  title={p._id && isInWishlist(p._id) ? "Remove from Wishlist" : "Add to Wishlist"}
                 >
-                  <Heart className={`w-4 h-4 ${isInWishlist(p._id) ? 'fill-current' : ''}`} />
+                  <Heart className={`w-4 h-4 ${p._id && isInWishlist(p._id) ? 'fill-current' : ''}`} />
                 </button>
               </div>
               <div className="p-3">
@@ -103,14 +78,14 @@ const FeaturedProducts = () => {
                   {[1, 2, 3, 4, 5].map((s) => (
                     <Star key={s} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
                   ))}
-                  <span className="text-[10px] text-slate-400 ml-1">(4.5)</span>
+                  <span className="text-[10px] text-slate-400 ml-1">({p.rating || "4.5"})</span>
                 </div>
-                <h3 className="font-semibold text-slate-900 text-sm md:text-base line-clamp-1 group-hover:text-primary transition-colors cursor-pointer" onClick={() => router.push(`/shop/product/${p._id}`)}>
-                  {p.name}
+                <h3 className="font-semibold text-slate-900 text-sm md:text-base line-clamp-1 group-hover:text-primary transition-colors cursor-pointer" onClick={() => p._id && router.push(`/shop/product/${p._id}`)}>
+                  {p.name || "Untitled Product"}
                 </h3>
                 <div className="mt-2 flex items-center justify-between">
-                  <span className="font-bold text-slate-900">KES {p.price.toLocaleString()}</span>
-                  <span className="text-[10px] text-slate-400 line-through">KES {(p.price * 1.2).toLocaleString()}</span>
+                  <span className="font-bold text-slate-900">KES {(p.price || 0).toLocaleString()}</span>
+                  <span className="text-[10px] text-slate-400 line-through">KES {((p.price || 0) * 1.2).toLocaleString()}</span>
                 </div>
               </div>
             </div>

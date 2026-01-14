@@ -75,7 +75,7 @@ const WishlistPage = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {wishlistItems.map((product) => (
+          {wishlistItems.map((product: any) => (
             <div key={product._id} className="group bg-white rounded-[2.5rem] p-6 border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-primary/5 transition-all duration-500">
               <div className="flex gap-6">
                 {/* Product Image */}
