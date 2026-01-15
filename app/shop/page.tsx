@@ -145,8 +145,14 @@ const ShopPage = () => {
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const q = formData.get('q') as string;
+    const q = (formData.get('q') as string).trim();
     const params = new URLSearchParams(searchParams.toString());
+    
+    // When searching, we want to search across all categories by default 
+    // unless the user explicitly wants to stay in the current category.
+    // The user said "searching the results across the categories", so I'll clear cat.
+    params.delete('cat'); 
+    
     if (q) {
       params.set('q', q);
     } else {
@@ -163,18 +169,25 @@ const ShopPage = () => {
         <div className="hidden lg:block w-[280px] shrink-0">
           <aside className="fixed top-[160px] w-[280px] h-[calc(100vh-160px)] overflow-y-auto custom-scrollbar px-6 py-6 pb-24 space-y-8">
             {/* Search */}
-            <form onSubmit={handleSearch} className="relative group">
-              <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                <Search className="w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors" />
+            <div className="relative group">
+              <form onSubmit={handleSearch} className="relative">
+                <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                  <Search className="w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors" />
+                </div>
+                <input 
+                  name="q"
+                  type="text" 
+                  defaultValue={query}
+                  placeholder="Search products..." 
+                  className="w-full bg-slate-50 border-none rounded-2xl py-3.5 pl-11 pr-4 text-sm font-bold text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-primary/20 transition-all"
+                />
+              </form>
+              <div className="mt-2 px-2">
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">
+                  Press Enter to search all categories
+                </p>
               </div>
-              <input 
-                name="q"
-                type="text" 
-                defaultValue={query}
-                placeholder="Search products..." 
-                className="w-full bg-slate-50 border-none rounded-2xl py-3.5 pl-11 pr-4 text-sm font-bold text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-primary/20 transition-all"
-              />
-            </form>
+            </div>
 
             {/* Categories */}
             <div className="space-y-4">
@@ -270,35 +283,48 @@ const ShopPage = () => {
                 </button>
               </div>
             ) : displayProducts.length === 0 ? (
-              <div className="p-20 flex flex-col items-center justify-center text-slate-400 gap-4 text-center">
-                <ShoppingBag className="w-12 h-12 opacity-20" />
-                <div>
-                  <p className="font-black text-slate-900">
+              <div className="p-20 flex flex-col items-center justify-center text-slate-400 gap-6 text-center animate-in fade-in duration-700">
+                <div className="w-20 h-20 bg-slate-50 rounded-[2rem] flex items-center justify-center mb-2">
+                  <ShoppingBag className="w-10 h-10 text-slate-200" />
+                </div>
+                <div className="space-y-2 max-w-xs">
+                  <p className="font-black text-slate-900 text-lg uppercase tracking-tight">
                     {activeTab === 'following' && !currentUser 
-                      ? "Login to see shops you follow" 
-                      : activeTab === 'following'
-                        ? "No products from shops you follow"
-                        : "No products found"}
+                      ? "Login Required" 
+                      : query 
+                        ? "No product found"
+                        : "No products yet"}
                   </p>
-                  <p className="text-sm">
+                  <p className="text-sm font-medium text-slate-500 leading-relaxed">
                     {activeTab === 'following' && !currentUser
                       ? "Sign in to your account to view updates from your favorite shops."
-                      : activeTab === 'following'
-                        ? "Follow some shops to see their latest products here."
-                        : "Be the first to post something amazing!"}
+                      : query
+                        ? `We couldn't find any matches for "${query}" across our categories.`
+                        : "Be the first to post something amazing in this category!"}
                   </p>
                 </div>
                 {activeTab === 'following' && !currentUser ? (
                   <Link 
                     href="/auth?mode=login"
-                    className="mt-4 px-8 py-3 bg-primary text-white rounded-full text-sm font-bold shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all"
+                    className="mt-2 px-8 py-3.5 bg-slate-900 text-white rounded-2xl text-sm font-bold shadow-xl shadow-slate-900/10 hover:bg-primary transition-all"
                   >
                     Login Now
                   </Link>
+                ) : query ? (
+                  <button 
+                    onClick={() => {
+                      const params = new URLSearchParams(searchParams.toString());
+                      params.delete('q');
+                      router.push(`/shop?${params.toString()}`);
+                    }}
+                    className="mt-2 px-8 py-3.5 bg-slate-100 text-slate-600 rounded-2xl text-sm font-bold hover:bg-slate-200 transition-all"
+                  >
+                    Clear Search
+                  </button>
                 ) : (
                   <Link 
                     href="/account/seller/products/new"
-                    className="mt-4 px-8 py-3 bg-primary text-white rounded-full text-sm font-bold shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all"
+                    className="mt-2 px-8 py-3.5 bg-primary text-white rounded-2xl text-sm font-bold shadow-xl shadow-primary/20 hover:bg-blue-700 transition-all"
                   >
                     Post a Product
                   </Link>

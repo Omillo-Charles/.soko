@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ShoppingCart, User, Heart, Menu, Phone, Home, Store } from "lucide-react";
+import { ShoppingCart, User, Heart, Menu, Phone, Home, Store, Tag } from "lucide-react";
 import SearchBar from "@/components/searchBar";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
@@ -147,6 +147,12 @@ const Navbar = () => {
                 Shop
               </Link>
               <Link
+                href="/deals"
+                className="hover:text-slate-200 transition-colors"
+              >
+                Deals
+              </Link>
+              <Link
                 href="/blog"
                 className="hover:text-slate-200 transition-colors"
               >
@@ -183,6 +189,13 @@ const Navbar = () => {
         >
           <Store className="w-5 h-5" />
           <span>Shop</span>
+        </Link>
+        <Link
+          href="/deals"
+          className="flex flex-col items-center gap-1 p-2 hover:text-primary"
+        >
+          <Tag className="w-5 h-5" />
+          <span>Deals</span>
         </Link>
         <Link
           href="/cart"
