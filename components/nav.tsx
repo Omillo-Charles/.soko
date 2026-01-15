@@ -153,12 +153,6 @@ const Navbar = () => {
                 Deals
               </Link>
               <Link
-                href="/blog"
-                className="hover:text-slate-200 transition-colors"
-              >
-                Blog
-              </Link>
-              <Link
                 href="/contact"
                 className="hover:text-slate-200 transition-colors"
               >

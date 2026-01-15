@@ -480,21 +480,20 @@ const ShopPage = () => {
                     className="p-3 hover:bg-slate-50 transition-all cursor-pointer flex items-center justify-between gap-3 rounded-xl group"
                     onClick={() => router.push(`/shop/${vendor.id}`)}
                   >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-10 h-10 rounded-full overflow-hidden bg-slate-100 shrink-0">
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                      <div className="w-10 h-10 rounded-full overflow-hidden bg-slate-100 shrink-0 border border-slate-100">
                         <img src={vendor.avatar} alt={vendor.name} className="w-full h-full object-cover" />
                       </div>
-                      <div className="min-w-0">
+                      <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-1">
                           <p className="text-sm font-black text-slate-900 truncate">{vendor.name}</p>
                           {vendor.verified && <CheckCircle2 className="w-3 h-3 text-primary fill-primary/10" />}
                         </div>
-                        <div className="flex items-center gap-2">
-                          <p className="text-[11px] font-bold text-slate-400 truncate">{vendor.handle}</p>
-                          <span className="text-slate-300">·</span>
-                          <p className="text-[11px] font-bold text-slate-400">{vendor.followers} followers</p>
-                          <span className="text-slate-300">·</span>
-                          <p className="text-[11px] font-bold text-slate-400">{vendor.products} products</p>
+                        <p className="text-[11px] font-bold text-slate-400 truncate">{vendor.handle}</p>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <p className="text-[10px] font-bold text-slate-500">{vendor.followers} followers</p>
+                          <span className="text-slate-300 text-[8px]">·</span>
+                          <p className="text-[10px] font-bold text-slate-500">{vendor.products} products</p>
                         </div>
                       </div>
                     </div>
