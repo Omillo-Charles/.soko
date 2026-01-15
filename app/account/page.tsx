@@ -26,18 +26,19 @@ import { toast } from "sonner";
 
 const AccountPage = () => {
   const router = useRouter();
-  const { user, isLoading, logout, updateAccountType, isUpdatingAccountType } = useUser();
+  const { user, isLoading: userLoading, logout, updateAccountType, isUpdatingAccountType } = useUser();
 
   const [accountType, setAccountType] = useState<"buyer" | "seller">("buyer");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (!isLoading && !user) {
+    if (!userLoading && !user) {
       router.push("/auth?mode=login");
     }
     if (user) {
       setAccountType(user.accountType || "buyer");
     }
-  }, [user, isLoading, router]);
+  }, [user, userLoading, router]);
 
   const handleLogout = () => {
     logout();
@@ -94,7 +95,7 @@ const AccountPage = () => {
     }
   };
 
-  if (isLoading) {
+  if (userLoading || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
