@@ -83,6 +83,9 @@ const FeaturedProducts = () => {
                 <h3 className="font-semibold text-slate-900 text-sm md:text-base line-clamp-1 group-hover:text-primary transition-colors cursor-pointer" onClick={() => p._id && router.push(`/shop/product/${p._id}`)}>
                   {p.name || "Untitled Product"}
                 </h3>
+                <p className="text-xs text-slate-500 line-clamp-2 mt-1 min-h-[32px]">
+                  {p.description || "No description available for this featured product."}
+                </p>
                 <div className="mt-2 flex items-center justify-between">
                   <span className="font-bold text-slate-900">KES {(p.price || 0).toLocaleString()}</span>
                   <span className="text-[10px] text-slate-400 line-through">KES {((p.price || 0) * 1.2).toLocaleString()}</span>
