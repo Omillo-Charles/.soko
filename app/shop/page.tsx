@@ -47,6 +47,25 @@ const ShopPage = () => {
   const { data: popularShopsData, isLoading: isShopsLoading } = usePopularShops();
   const followMutation = useFollowShop();
 
+  const [showFab, setShowFab] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      // Show if scrolling up or at the top
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setShowFab(false);
+      } else {
+        setShowFab(true);
+      }
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
+
   const { data: productsData, isLoading: isProductsLoading, error: productsError } = useProducts({
     q: query,
     cat: cat !== 'all' ? cat : undefined,
@@ -577,6 +596,23 @@ const ShopPage = () => {
           </aside>
         </div>
       </div>
+
+      {/* Floating Action Button for Sellers */}
+      {currentUser?.accountType === 'seller' && (
+        <Link
+          href="/account/seller/products/new"
+          className={`fixed bottom-24 right-6 md:bottom-8 md:right-8 z-40 transition-all duration-300 transform ${
+            showFab ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0 pointer-events-none'
+          }`}
+        >
+          <div className="bg-primary text-white p-4 rounded-full shadow-2xl shadow-primary/40 hover:scale-110 active:scale-95 transition-all group flex items-center gap-2">
+            <Plus className="w-6 h-6" />
+            <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-500 font-black text-sm whitespace-nowrap">
+              POST PRODUCT
+            </span>
+          </div>
+        </Link>
+      )}
     </div>
   );
 };

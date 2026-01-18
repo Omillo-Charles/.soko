@@ -150,198 +150,180 @@ const NewProductPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 pt-12 pb-24 lg:pb-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        <button 
-          onClick={() => router.back()}
-          className="flex items-center gap-2 text-slate-500 hover:text-slate-900 font-bold mb-8 transition-colors"
-        >
-          <ChevronLeft className="w-5 h-5" />
-          Back to Dashboard
+    <div className="min-h-screen bg-white md:bg-slate-50 flex justify-center selection:bg-primary/10">
+      {/* Top Navigation / Modal Header */}
+      <div className="fixed top-0 left-0 right-0 h-14 bg-white/80 backdrop-blur-md border-b border-slate-100 flex items-center justify-between px-4 z-50">
+        <button onClick={() => router.back()} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
+          <ChevronLeft className="w-5 h-5 text-slate-600" />
         </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={(e) => handleSubmit(e as any)}
+            disabled={isLoading || !formData.name || !imageFile}
+            className="bg-primary text-white px-5 py-1.5 rounded-full font-bold text-sm disabled:opacity-50 transition-all hover:bg-primary/90"
+          >
+            {isLoading ? "Posting..." : "Post"}
+          </button>
+        </div>
+      </div>
 
-        <div className="bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
-          <div className="bg-primary p-10 text-white relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl"></div>
-            <div className="relative z-10">
-              <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-4 backdrop-blur-sm">
-                <Plus className="w-8 h-8 text-white" />
-              </div>
-              <h1 className="text-3xl font-black tracking-tight">Post New Product</h1>
-              <p className="text-blue-100 font-medium mt-2">Share your products with the Duuka community.</p>
+      <div className="w-full max-w-2xl bg-white min-h-screen pt-14 flex flex-col">
+        <form onSubmit={handleSubmit} className="flex-1 flex flex-col p-4 md:p-6">
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 text-red-500 rounded-xl text-sm font-medium flex items-center gap-2">
+              <Info className="w-4 h-4" />
+              {error}
             </div>
-          </div>
+          )}
 
-          <form onSubmit={handleSubmit} className="p-10 space-y-8">
-            {error && (
-              <div className="p-4 bg-red-50 border border-red-100 text-red-600 rounded-2xl text-sm font-bold flex items-center gap-3">
-                <div className="w-8 h-8 bg-red-100 rounded-xl flex items-center justify-center shrink-0">
-                  <Info className="w-4 h-4" />
-                </div>
-                {error}
+          <div className="flex gap-4">
+            {/* Avatar */}
+            <div className="flex-shrink-0">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-100 overflow-hidden border border-slate-50">
+                {shop?.logo ? (
+                  <img src={shop.logo} alt={shop.name} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-slate-400">
+                    <ShoppingBag className="w-5 h-5 md:w-6 md:h-6" />
+                  </div>
+                )}
               </div>
-            )}
+            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Product Info */}
-              <div className="space-y-6 md:col-span-2">
-                <h2 className="text-lg font-black text-slate-900 flex items-center gap-2 border-b border-slate-50 pb-2">
-                  <Info className="w-5 h-5 text-primary" />
-                  Product Information
-                </h2>
-                
-                <div className="space-y-2">
-                  <label className="text-sm font-bold text-slate-700 ml-1">Product Name</label>
+            {/* Content Area */}
+            <div className="flex-1 space-y-6">
+              <div className="space-y-4">
+                <div className="space-y-2 group">
+                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1 transition-colors group-focus-within:text-primary">Product Name</label>
                   <input
                     type="text"
                     name="name"
                     required
+                    autoFocus
                     value={formData.name}
                     onChange={handleInputChange}
-                    placeholder="e.g. Vintage Leather Jacket"
-                    className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
+                    placeholder="e.g. Vintage Leather Camera Bag"
+                    className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-bold text-slate-900 placeholder:text-slate-400"
                   />
                 </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-slate-700 ml-1">Category</label>
-                    <div className="relative">
-                      <select
-                        name="category"
-                        required
-                        value={formData.category}
-                        onChange={handleInputChange}
-                        className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium appearance-none"
-                      >
-                        <option value="">Select Category</option>
-                        {categories.map(cat => (
-                          <option key={cat.value} value={cat.value}>{cat.label}</option>
-                        ))}
-                      </select>
-                      <Layers className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none" />
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-slate-700 ml-1">Stock Quantity</label>
-                    <input
-                      type="number"
-                      name="stock"
-                      required
-                      min="1"
-                      value={formData.stock}
-                      onChange={handleInputChange}
-                      placeholder="1"
-                      className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-bold text-slate-700 ml-1">Price (KES)</label>
-                  <div className="relative group">
-                    <span className="absolute left-5 top-1/2 -translate-y-1/2 font-bold text-slate-400 group-focus-within:text-primary transition-colors">KES</span>
-                    <input
-                      type="number"
-                      name="price"
-                      required
-                      min="0"
-                      value={formData.price}
-                      onChange={handleInputChange}
-                      placeholder="0.00"
-                      className="w-full pl-16 pr-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-bold text-slate-700 ml-1">Product Description</label>
+                
+                <div className="space-y-2 group">
+                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1 transition-colors group-focus-within:text-primary">Description</label>
                   <textarea
                     name="description"
                     required
                     value={formData.description}
                     onChange={handleInputChange}
-                    placeholder="Describe your product in detail..."
-                    rows={5}
-                    className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium resize-none"
+                    placeholder="Describe your product's magic, materials, and unique features..."
+                    rows={4}
+                    className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-bold text-slate-700 placeholder:text-slate-400 resize-none min-h-[140px] leading-relaxed"
                   />
                 </div>
               </div>
 
-              {/* Media */}
-              <div className="space-y-6 md:col-span-2 pt-4 border-t border-slate-50">
-                <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
-                  <ImageIcon className="w-5 h-5 text-primary" />
-                  Product Image
-                </h2>
-                
-                <div className="space-y-4">
-                  <div className="relative group cursor-pointer">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                      required={!imageFile}
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                    />
-                    <div className="w-full border-2 border-dashed border-slate-200 rounded-[2rem] p-8 flex flex-col items-center justify-center bg-slate-50 group-hover:bg-slate-100 group-hover:border-primary/50 transition-all">
-                      <div className="w-16 h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                        <Plus className="w-8 h-8 text-primary" />
-                      </div>
-                      <p className="text-slate-900 font-black">Click to upload product image</p>
-                      <p className="text-slate-400 text-sm mt-1">PNG, JPG or WebP (Max. 5MB)</p>
-                    </div>
-                  </div>
+              {/* Image Preview */}
+              {imagePreview && (
+                <div className="relative rounded-3xl overflow-hidden border border-slate-200 shadow-2xl shadow-slate-200/50 group animate-in fade-in zoom-in duration-500">
+                  <img src={imagePreview} alt="Preview" className="w-full max-h-[450px] object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <button 
+                    type="button"
+                    onClick={() => { setImageFile(null); setImagePreview(null); }}
+                    className="absolute top-4 right-4 w-10 h-10 bg-white hover:bg-white text-red-600 rounded-full flex items-center justify-center transition-all duration-300 shadow-xl hover:scale-110 active:scale-90 z-10"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
+                </div>
+              )}
 
-                  {imagePreview && (
-                    <div className="mt-4 rounded-3xl overflow-hidden border-2 border-slate-100 bg-slate-50 aspect-video relative group">
-                      <img 
-                        src={imagePreview} 
-                        alt="Preview" 
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <button 
-                          type="button"
-                          onClick={() => {
-                            setImageFile(null);
-                            setImagePreview(null);
-                          }}
-                          className="bg-red-500 text-white p-3 rounded-2xl flex items-center gap-2 font-bold hover:bg-red-600 transition-colors"
-                        >
-                          <Trash2 className="w-5 h-5" />
-                          Remove Image
-                        </button>
-                      </div>
-                    </div>
-                  )}
+              {/* Metadata Fields (Styled as catchy interactive pills) */}
+              <div className="flex flex-wrap gap-3 pt-4 border-t border-slate-100">
+                <div className="flex items-center gap-2.5 bg-slate-50 hover:bg-white hover:shadow-lg hover:shadow-primary/5 hover:border-primary/30 transition-all duration-300 px-4 py-2.5 rounded-2xl border border-slate-200 group">
+                  <div className="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center group-hover:bg-primary/10 transition-colors border border-slate-100">
+                    <DollarSign className="w-4 h-4 text-primary" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Price</span>
+                    <input
+                      type="number"
+                      name="price"
+                      required
+                      value={formData.price}
+                      onChange={handleInputChange}
+                      placeholder="0.00"
+                      className="bg-transparent border-none focus:ring-0 p-0 text-sm font-black text-slate-900 placeholder:text-slate-400 w-24"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2.5 bg-slate-50 hover:bg-white hover:shadow-lg hover:shadow-primary/5 hover:border-primary/30 transition-all duration-300 px-4 py-2.5 rounded-2xl border border-slate-200 relative group">
+                  <div className="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center group-hover:bg-primary/10 transition-colors border border-slate-100">
+                    <Layers className="w-4 h-4 text-primary" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Category</span>
+                    <select
+                      name="category"
+                      required
+                      value={formData.category}
+                      onChange={handleInputChange}
+                      className="bg-transparent border-none focus:ring-0 p-0 text-sm font-black text-slate-900 appearance-none pr-6 cursor-pointer"
+                    >
+                      <option value="">Select</option>
+                      {categories.map(cat => (
+                        <option key={cat.value} value={cat.value}>{cat.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2.5 bg-slate-50 hover:bg-white hover:shadow-lg hover:shadow-primary/5 hover:border-primary/30 transition-all duration-300 px-4 py-2.5 rounded-2xl border border-slate-200 group">
+                  <div className="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center group-hover:bg-primary/10 transition-colors border border-slate-100">
+                    <Tag className="w-4 h-4 text-primary" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Stock</span>
+                    <input
+                      type="number"
+                      name="stock"
+                      required
+                      value={formData.stock}
+                      onChange={handleInputChange}
+                      placeholder="1"
+                      className="bg-transparent border-none focus:ring-0 p-0 text-sm font-black text-slate-900 placeholder:text-slate-400 w-16"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Icons Bar */}
+              <div className="flex items-center justify-between pt-4 border-t border-slate-50 mt-4">
+                <div className="flex items-center gap-1">
+                  <label className="p-2 text-primary hover:bg-primary/10 rounded-full transition-colors cursor-pointer">
+                    <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+                    <ImageIcon className="w-5 h-5" />
+                  </label>
+                  <button type="button" className="p-2 text-primary hover:bg-primary/10 rounded-full transition-colors opacity-50 cursor-not-allowed">
+                    <Plus className="w-5 h-5" />
+                  </button>
+                  <button type="button" className="p-2 text-primary hover:bg-primary/10 rounded-full transition-colors opacity-50 cursor-not-allowed">
+                    <CheckCircle2 className="w-5 h-5" />
+                  </button>
+                </div>
+                
+                <div className="hidden md:block">
+                   <button
+                    type="submit"
+                    disabled={isLoading || !formData.name || !imageFile}
+                    className="bg-primary text-white px-6 py-2 rounded-full font-bold text-sm disabled:opacity-50 transition-all hover:bg-primary/90 shadow-sm"
+                  >
+                    {isLoading ? "Posting..." : "Post"}
+                  </button>
                 </div>
               </div>
             </div>
-
-            <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-6">
-              <div className="flex items-center gap-3 text-slate-500">
-                <CheckCircle2 className="w-5 h-5 text-emerald-500" />
-                <span className="text-sm font-medium">Your product will be live instantly on the shop feed.</span>
-              </div>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full sm:w-auto px-10 py-4 bg-primary text-white rounded-[1.5rem] font-bold flex items-center justify-center gap-3 hover:bg-blue-700 transition-all shadow-xl shadow-primary/20 disabled:opacity-70 disabled:cursor-not-allowed group"
-              >
-                {isLoading ? (
-                  <div className="w-6 h-6 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
-                ) : (
-                  <>
-                    Post Product
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </>
-                )}
-              </button>
-            </div>
-          </form>
-        </div>
+          </div>
+        </form>
       </div>
     </div>
   );
