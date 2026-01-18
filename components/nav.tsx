@@ -11,9 +11,6 @@ import { useWishlist } from "@/context/WishlistContext";
 const Navbar = () => {
   const pathname = usePathname();
   const isHomepage = pathname === "/";
-  const isStudioPage = pathname.startsWith("/account/seller/products/new") || 
-                       pathname.startsWith("/account/seller/products/edit/") ||
-                       pathname.startsWith("/account/seller/register-shop");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { totalItems } = useCart();
   const { wishlistItems } = useWishlist();
@@ -23,8 +20,6 @@ const Navbar = () => {
     const token = localStorage.getItem("accessToken");
     setIsLoggedIn(!!token);
   }, []);
-
-  if (isStudioPage) return null;
 
   return (
     <>

@@ -47,8 +47,13 @@ const ShopPage = () => {
   const { data: popularShopsData, isLoading: isShopsLoading } = usePopularShops();
   const followMutation = useFollowShop();
 
+  const [isMounted, setIsMounted] = useState(false);
   const [showFab, setShowFab] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -308,21 +313,21 @@ const ShopPage = () => {
                 </div>
                 <div className="space-y-2 max-w-xs">
                   <p className="font-black text-slate-900 text-lg uppercase tracking-tight">
-                    {activeTab === 'following' && !currentUser 
+                    {isMounted && activeTab === 'following' && !currentUser 
                       ? "Login Required" 
                       : query 
                         ? "No product found"
                         : "No products yet"}
                   </p>
                   <p className="text-sm font-medium text-slate-500 leading-relaxed">
-                    {activeTab === 'following' && !currentUser
+                    {isMounted && activeTab === 'following' && !currentUser
                       ? "Sign in to your account to view updates from your favorite shops."
                       : query
                         ? `We couldn't find any matches for "${query}" across our categories.`
                         : "Be the first to post something amazing in this category!"}
                   </p>
                 </div>
-                {activeTab === 'following' && !currentUser ? (
+                {isMounted && activeTab === 'following' && !currentUser ? (
                   <Link 
                     href="/auth?mode=login"
                     className="mt-2 px-8 py-3.5 bg-slate-900 text-white rounded-2xl text-sm font-bold shadow-xl shadow-slate-900/10 hover:bg-primary transition-all"
@@ -516,7 +521,7 @@ const ShopPage = () => {
                         </div>
                       </div>
                     </div>
-                    {currentUser?._id !== vendor.id && (
+                    {isMounted && currentUser?._id !== vendor.id && (
                       <button 
                         onClick={(e) => { e.stopPropagation(); handleFollowToggle(vendor.id); }}
                         disabled={followMutation.isPending && followMutation.variables === vendor.id}
@@ -598,7 +603,7 @@ const ShopPage = () => {
       </div>
 
       {/* Floating Action Button for Sellers */}
-      {currentUser?.accountType === 'seller' && (
+      {isMounted && currentUser?.accountType === 'seller' && (
         <Link
           href="/account/seller/products/new"
           className={`fixed bottom-24 right-6 md:bottom-8 md:right-8 z-40 transition-all duration-300 transform ${

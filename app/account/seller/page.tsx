@@ -193,7 +193,7 @@ const SellerDashboard = () => {
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 p-3 lg:p-8 pb-24 lg:pb-8">
+      <main className="flex-1 p-3 lg:p-8 pb-32 lg:pb-8">
         <div className="max-w-6xl mx-auto space-y-6">
           {/* Top Bar */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">

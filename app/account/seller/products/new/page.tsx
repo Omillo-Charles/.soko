@@ -13,7 +13,8 @@ import {
   Layers,
   CheckCircle2,
   Plus,
-  Trash2
+  Trash2,
+  Store
 } from "lucide-react";
 
 import { categories as allCategories } from "@/constants/categories";
@@ -150,180 +151,250 @@ const NewProductPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white md:bg-slate-50 flex justify-center selection:bg-primary/10">
-      {/* Top Navigation / Modal Header */}
-      <div className="fixed top-0 left-0 right-0 h-14 bg-white/80 backdrop-blur-md border-b border-slate-100 flex items-center justify-between px-4 z-50">
-        <button onClick={() => router.back()} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
-          <ChevronLeft className="w-5 h-5 text-slate-600" />
-        </button>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={(e) => handleSubmit(e as any)}
-            disabled={isLoading || !formData.name || !imageFile}
-            className="bg-primary text-white px-5 py-1.5 rounded-full font-bold text-sm disabled:opacity-50 transition-all hover:bg-primary/90"
-          >
-            {isLoading ? "Posting..." : "Post"}
-          </button>
-        </div>
-      </div>
-
-      <div className="w-full max-w-2xl bg-white min-h-screen pt-14 flex flex-col">
-        <form onSubmit={handleSubmit} className="flex-1 flex flex-col p-4 md:p-6">
-          {error && (
-            <div className="mb-4 p-3 bg-red-50 text-red-500 rounded-xl text-sm font-medium flex items-center gap-2">
-              <Info className="w-4 h-4" />
-              {error}
+    <div className="min-h-screen bg-slate-50 flex flex-col selection:bg-primary/10">
+      <div className="max-w-[1400px] mx-auto w-full px-4 md:px-8 pt-8 pb-32 md:py-12">
+        <div className="flex flex-col lg:flex-row gap-12 items-start">
+          
+          {/* Left Column: Form */}
+          <div className="w-full lg:w-3/5 space-y-8 animate-in fade-in slide-in-from-left-4 duration-700">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h1 className="text-3xl font-black text-slate-900 tracking-tight">Create Listing</h1>
+                <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mt-1">Drafting in {shop?.name || 'Shop'}</p>
+              </div>
+              <button 
+                onClick={() => router.back()} 
+                className="p-3 hover:bg-white hover:shadow-xl hover:shadow-slate-200/50 rounded-2xl transition-all active:scale-95 group border border-transparent hover:border-slate-100"
+              >
+                <ChevronLeft className="w-5 h-5 text-slate-600 group-hover:text-primary transition-colors" />
+              </button>
             </div>
-          )}
 
-          <div className="flex gap-4">
-            {/* Avatar */}
-            <div className="flex-shrink-0">
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-100 overflow-hidden border border-slate-50">
-                {shop?.logo ? (
-                  <img src={shop.logo} alt={shop.name} className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-slate-400">
-                    <ShoppingBag className="w-5 h-5 md:w-6 md:h-6" />
+            <form onSubmit={handleSubmit} className="space-y-8">
+              {error && (
+                <div className="p-4 bg-red-50 border border-red-100 text-red-500 rounded-3xl text-xs font-bold flex items-center gap-3 animate-shake">
+                  <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm">
+                    <Info className="w-4 h-4" />
                   </div>
-                )}
-              </div>
-            </div>
-
-            {/* Content Area */}
-            <div className="flex-1 space-y-6">
-              <div className="space-y-4">
-                <div className="space-y-2 group">
-                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1 transition-colors group-focus-within:text-primary">Product Name</label>
-                  <input
-                    type="text"
-                    name="name"
-                    required
-                    autoFocus
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    placeholder="e.g. Vintage Leather Camera Bag"
-                    className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-bold text-slate-900 placeholder:text-slate-400"
-                  />
-                </div>
-                
-                <div className="space-y-2 group">
-                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1 transition-colors group-focus-within:text-primary">Description</label>
-                  <textarea
-                    name="description"
-                    required
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    placeholder="Describe your product's magic, materials, and unique features..."
-                    rows={4}
-                    className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-bold text-slate-700 placeholder:text-slate-400 resize-none min-h-[140px] leading-relaxed"
-                  />
-                </div>
-              </div>
-
-              {/* Image Preview */}
-              {imagePreview && (
-                <div className="relative rounded-3xl overflow-hidden border border-slate-200 shadow-2xl shadow-slate-200/50 group animate-in fade-in zoom-in duration-500">
-                  <img src={imagePreview} alt="Preview" className="w-full max-h-[450px] object-cover transition-transform duration-700 group-hover:scale-105" />
-                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <button 
-                    type="button"
-                    onClick={() => { setImageFile(null); setImagePreview(null); }}
-                    className="absolute top-4 right-4 w-10 h-10 bg-white hover:bg-white text-red-600 rounded-full flex items-center justify-center transition-all duration-300 shadow-xl hover:scale-110 active:scale-90 z-10"
-                  >
-                    <Trash2 className="w-5 h-5" />
-                  </button>
+                  {error}
                 </div>
               )}
 
-              {/* Metadata Fields (Styled as catchy interactive pills) */}
-              <div className="flex flex-wrap gap-3 pt-4 border-t border-slate-100">
-                <div className="flex items-center gap-2.5 bg-slate-50 hover:bg-white hover:shadow-lg hover:shadow-primary/5 hover:border-primary/30 transition-all duration-300 px-4 py-2.5 rounded-2xl border border-slate-200 group">
-                  <div className="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center group-hover:bg-primary/10 transition-colors border border-slate-100">
-                    <DollarSign className="w-4 h-4 text-primary" />
+              <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/40 overflow-hidden">
+                <div className="p-8 md:p-10 space-y-8">
+                  {/* Image Upload Area */}
+                  <div className="space-y-4">
+                    <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Product Media</label>
+                    {imagePreview ? (
+                      <div className="relative group rounded-[2rem] overflow-hidden border-2 border-slate-100 bg-slate-50 aspect-video">
+                        <img src={imagePreview} alt="Preview" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center backdrop-blur-sm">
+                          <div className="flex gap-3">
+                            <label className="w-12 h-12 bg-white hover:bg-primary hover:text-white text-slate-900 rounded-2xl flex items-center justify-center transition-all cursor-pointer shadow-xl hover:scale-110">
+                              <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+                              <ImageIcon className="w-5 h-5" />
+                            </label>
+                            <button 
+                              type="button"
+                              onClick={() => { setImageFile(null); setImagePreview(null); }}
+                              className="w-12 h-12 bg-white hover:bg-red-500 hover:text-white text-red-500 rounded-2xl flex items-center justify-center transition-all shadow-xl hover:scale-110"
+                            >
+                              <Trash2 className="w-5 h-5" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <label className="flex flex-col items-center justify-center w-full aspect-video border-2 border-dashed border-slate-200 rounded-[2rem] bg-slate-50 hover:bg-white hover:border-primary/30 transition-all cursor-pointer group">
+                        <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+                        <div className="w-16 h-16 bg-white rounded-3xl shadow-sm border border-slate-100 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:shadow-xl transition-all duration-500">
+                          <ImageIcon className="w-6 h-6 text-slate-400 group-hover:text-primary transition-colors" />
+                        </div>
+                        <span className="text-xs font-black text-slate-900 uppercase tracking-widest">Click to upload photo</span>
+                        <span className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-tighter">High quality JPG, PNG or WebP</span>
+                      </label>
+                    )}
                   </div>
-                  <div className="flex flex-col">
-                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Price</span>
-                    <input
-                      type="number"
-                      name="price"
-                      required
-                      value={formData.price}
-                      onChange={handleInputChange}
-                      placeholder="0.00"
-                      className="bg-transparent border-none focus:ring-0 p-0 text-sm font-black text-slate-900 placeholder:text-slate-400 w-24"
-                    />
-                  </div>
-                </div>
 
-                <div className="flex items-center gap-2.5 bg-slate-50 hover:bg-white hover:shadow-lg hover:shadow-primary/5 hover:border-primary/30 transition-all duration-300 px-4 py-2.5 rounded-2xl border border-slate-200 relative group">
-                  <div className="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center group-hover:bg-primary/10 transition-colors border border-slate-100">
-                    <Layers className="w-4 h-4 text-primary" />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Category</span>
-                    <select
-                      name="category"
-                      required
-                      value={formData.category}
-                      onChange={handleInputChange}
-                      className="bg-transparent border-none focus:ring-0 p-0 text-sm font-black text-slate-900 appearance-none pr-6 cursor-pointer"
-                    >
-                      <option value="">Select</option>
-                      {categories.map(cat => (
-                        <option key={cat.value} value={cat.value}>{cat.label}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
+                  {/* Text Fields */}
+                  <div className="space-y-6">
+                    <div className="space-y-3">
+                      <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Product Details</label>
+                      <input
+                        type="text"
+                        name="name"
+                        required
+                        autoFocus
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        placeholder="Give your item a catchy name..."
+                        className="w-full px-6 py-5 bg-slate-50 border border-slate-100 rounded-3xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 focus:bg-white transition-all font-bold text-slate-900 placeholder:text-slate-300 text-lg"
+                      />
+                      <textarea
+                        name="description"
+                        required
+                        value={formData.description}
+                        onChange={handleInputChange}
+                        placeholder="Describe the magic behind this product..."
+                        rows={4}
+                        className="w-full px-6 py-5 bg-slate-50 border border-slate-100 rounded-3xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 focus:bg-white transition-all font-bold text-slate-700 placeholder:text-slate-300 resize-none min-h-[160px] leading-relaxed"
+                      />
+                    </div>
 
-                <div className="flex items-center gap-2.5 bg-slate-50 hover:bg-white hover:shadow-lg hover:shadow-primary/5 hover:border-primary/30 transition-all duration-300 px-4 py-2.5 rounded-2xl border border-slate-200 group">
-                  <div className="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center group-hover:bg-primary/10 transition-colors border border-slate-100">
-                    <Tag className="w-4 h-4 text-primary" />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Stock</span>
-                    <input
-                      type="number"
-                      name="stock"
-                      required
-                      value={formData.stock}
-                      onChange={handleInputChange}
-                      placeholder="1"
-                      className="bg-transparent border-none focus:ring-0 p-0 text-sm font-black text-slate-900 placeholder:text-slate-400 w-16"
-                    />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Category</label>
+                        <div className="relative group">
+                          <select
+                            name="category"
+                            required
+                            value={formData.category}
+                            onChange={handleInputChange}
+                            className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 focus:bg-white transition-all font-bold text-slate-900 appearance-none cursor-pointer"
+                          >
+                            <option value="">Select category</option>
+                            {categories.map(cat => (
+                              <option key={cat.value} value={cat.value}>{cat.label}</option>
+                            ))}
+                          </select>
+                          <Layers className="absolute right-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none group-hover:text-primary transition-colors" />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Price (KES)</label>
+                          <input
+                            type="number"
+                            name="price"
+                            required
+                            value={formData.price}
+                            onChange={handleInputChange}
+                            placeholder="0.00"
+                            className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 focus:bg-white transition-all font-bold text-slate-900 placeholder:text-slate-300"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Stock</label>
+                          <input
+                            type="number"
+                            name="stock"
+                            required
+                            value={formData.stock}
+                            onChange={handleInputChange}
+                            placeholder="1"
+                            className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 focus:bg-white transition-all font-bold text-slate-900 placeholder:text-slate-300"
+                          />
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Action Icons Bar */}
-              <div className="flex items-center justify-between pt-4 border-t border-slate-50 mt-4">
-                <div className="flex items-center gap-1">
-                  <label className="p-2 text-primary hover:bg-primary/10 rounded-full transition-colors cursor-pointer">
-                    <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
-                    <ImageIcon className="w-5 h-5" />
-                  </label>
-                  <button type="button" className="p-2 text-primary hover:bg-primary/10 rounded-full transition-colors opacity-50 cursor-not-allowed">
-                    <Plus className="w-5 h-5" />
-                  </button>
-                  <button type="button" className="p-2 text-primary hover:bg-primary/10 rounded-full transition-colors opacity-50 cursor-not-allowed">
-                    <CheckCircle2 className="w-5 h-5" />
-                  </button>
+              <div className="flex items-center justify-between gap-6">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className={`w-5 h-5 ${formData.name && formData.description && formData.price && formData.category && imageFile ? 'text-emerald-500' : 'text-slate-200'}`} />
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Ready to publish</span>
                 </div>
-                
-                <div className="hidden md:block">
-                   <button
-                    type="submit"
-                    disabled={isLoading || !formData.name || !imageFile}
-                    className="bg-primary text-white px-6 py-2 rounded-full font-bold text-sm disabled:opacity-50 transition-all hover:bg-primary/90 shadow-sm"
-                  >
-                    {isLoading ? "Posting..." : "Post"}
-                  </button>
+                <button
+                  onClick={(e) => handleSubmit(e as any)}
+                  disabled={isLoading || !formData.name || !imageFile}
+                  className="bg-primary text-white px-10 py-4 rounded-[2rem] font-black text-sm uppercase tracking-widest disabled:opacity-50 transition-all hover:bg-primary/90 hover:shadow-2xl hover:shadow-primary/30 active:scale-95 flex items-center gap-3"
+                >
+                  {isLoading ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <span>Publishing...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="w-5 h-5" />
+                      <span>Post Listing</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+
+          {/* Right Column: Live Preview */}
+          <div className="hidden lg:block lg:w-2/5 sticky top-32 animate-in fade-in slide-in-from-right-4 duration-700">
+            <div className="space-y-6">
+              <div className="flex items-center justify-between px-2">
+                <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Live Preview</h3>
+                <span className="flex items-center gap-2 text-[10px] font-bold text-emerald-500 uppercase tracking-widest">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  Real-time
+                </span>
+              </div>
+
+              {/* Glassmorphism Preview Card Container */}
+              <div className="bg-white/40 backdrop-blur-xl border border-white rounded-[3rem] p-8 shadow-2xl shadow-slate-200/50">
+                <div className="bg-white rounded-[2rem] border border-slate-100 overflow-hidden group shadow-lg">
+                  {/* Mock Product Card */}
+                  <div className="aspect-square bg-slate-50 relative overflow-hidden">
+                    {imagePreview ? (
+                      <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center text-slate-200 gap-3">
+                        <ImageIcon className="w-12 h-12" />
+                        <span className="text-[10px] font-black uppercase tracking-widest">No Image</span>
+                      </div>
+                    )}
+                    <div className="absolute top-4 left-4">
+                      <div className="bg-white/90 backdrop-blur-md px-3 py-1 rounded-full shadow-sm">
+                        <span className="text-[9px] font-black text-slate-900 uppercase tracking-widest">
+                          {formData.category || 'Category'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-5 space-y-3">
+                    <div className="space-y-1">
+                      <h4 className="font-black text-slate-900 text-lg truncate leading-tight">
+                        {formData.name || 'Your Product Name'}
+                      </h4>
+                      <div className="flex items-center gap-2">
+                        <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
+                          <Store className="w-3 h-3 text-primary" />
+                        </div>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">
+                          {shop?.name || 'Your Store'}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="pt-2 border-t border-slate-50 flex items-center justify-between">
+                      <div className="flex flex-col">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Price</span>
+                        <span className="font-black text-primary text-xl tracking-tight">
+                          KES {formData.price || '0'}
+                        </span>
+                      </div>
+                      <div className="w-10 h-10 rounded-2xl bg-slate-900 text-white flex items-center justify-center shadow-lg shadow-slate-900/10">
+                        <Plus className="w-5 h-5" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-8 p-6 bg-primary/5 rounded-[2rem] border border-primary/10 space-y-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-xl bg-white flex items-center justify-center shadow-sm">
+                      <Info className="w-4 h-4 text-primary" />
+                    </div>
+                    <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest">Pro Tip</span>
+                  </div>
+                  <p className="text-xs font-bold text-slate-500 leading-relaxed">
+                    Products with clear, high-resolution photos and detailed descriptions sell 3x faster on Duuka.
+                  </p>
                 </div>
               </div>
             </div>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );
