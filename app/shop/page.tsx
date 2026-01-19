@@ -596,7 +596,7 @@ const ShopPage = () => {
               {['Terms', 'Privacy', 'Help', 'Cookies', 'About'].map(link => (
                 <button key={link} className="text-[11px] font-bold text-slate-400 hover:text-primary transition-colors">{link}</button>
               ))}
-              <p className="text-[11px] font-bold text-slate-300 w-full mt-2">© 2026 Duuka Marketplace</p>
+              <p className="text-[11px] font-bold text-slate-300 w-full mt-2">© 2026 <span className="text-secondary">.</span>Soko Marketplace</p>
             </div>
           </aside>
         </div>

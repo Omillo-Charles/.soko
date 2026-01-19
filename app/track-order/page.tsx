@@ -78,7 +78,7 @@ const TrackOrderPage = () => {
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                     <input 
                       type="text" 
-                      placeholder="Enter Order ID (e.g. DK-8291-00X)"
+                      placeholder="Enter Order ID (e.g. SK-8291-00X)"
                       value={orderId}
                       onChange={(e) => setOrderId(e.target.value)}
                       className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-bold text-slate-900"
@@ -195,7 +195,7 @@ const TrackOrderPage = () => {
                   <h3 className="font-bold text-slate-900 mb-2">Need Help?</h3>
                   <p className="text-sm text-slate-500 leading-relaxed">
                     If you're having trouble tracking your package, please contact 
-                    our 24/7 support team at support@duuka.com.
+                    our 24/7 support team at support@dotsoko.com.
                   </p>
                 </div>
               </div>
@@ -209,7 +209,7 @@ const TrackOrderPage = () => {
                 <h3 className="text-xl font-black mb-4">Download Our App</h3>
                 <p className="text-white/80 text-sm leading-relaxed mb-6">
                   Get real-time push notifications about your order status and track 
-                  your package on the go with the Duuka mobile app.
+                  your package on the go with the <span className="text-secondary">.</span>Soko mobile app.
                 </p>
                 <div className="space-y-3">
                   <button className="w-full py-3 bg-white text-slate-900 rounded-xl font-bold text-sm hover:bg-slate-100 transition-colors">

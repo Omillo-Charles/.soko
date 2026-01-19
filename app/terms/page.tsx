@@ -11,7 +11,7 @@ const TermsPage = () => {
       title: "1. Acceptance of Terms",
       icon: <ShieldCheck className="w-5 h-5" />,
       content: [
-        "By accessing or using Duuka, you agree to be bound by these Terms of Service.",
+        <>By accessing or using <span className="text-secondary">.</span>Soko, you agree to be bound by these Terms of Service.</>,
         "If you do not agree to these terms, you may not use our platform or services.",
         "We reserve the right to modify these terms at any time, with updates effective upon posting.",
         "Continued use of the platform constitutes acceptance of any updated terms."
@@ -21,7 +21,7 @@ const TermsPage = () => {
       title: "2. Marketplace Platform",
       icon: <ShoppingBag className="w-5 h-5" />,
       content: [
-        "Duuka provides a marketplace where sellers can list products and buyers can purchase them.",
+        <><span className="text-secondary">.</span>Soko provides a marketplace where sellers can list products and buyers can purchase them.</>,
         "We are not the seller of items listed by third-party vendors on the platform.",
         "Transactions are directly between the buyer and the seller.",
         "We facilitate payment processing but are not responsible for product quality or delivery by sellers."
@@ -62,7 +62,7 @@ const TermsPage = () => {
               Terms of Service
             </h1>
             <p className="mt-4 text-slate-600 text-lg leading-relaxed">
-              These terms govern your use of the Duuka marketplace. Please read them 
+              These terms govern your use of the <span className="text-secondary">.</span>Soko marketplace. Please read them 
               carefully to understand your rights and obligations as a user of our platform.
             </p>
             <div className="mt-6 flex items-center gap-4 text-sm text-slate-400">
@@ -111,7 +111,7 @@ const TermsPage = () => {
                 <p className="text-slate-300 leading-relaxed mb-6">
                   Users are strictly prohibited from engaging in fraudulent activities, harassment, 
                   intellectual property infringement, or any behavior that compromises the security 
-                  and integrity of the Duuka marketplace.
+                  and integrity of the <span className="text-secondary">.</span>Soko marketplace.
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {['No Spam', 'No Fraud', 'No Harassment', 'No Counterfeits'].map((tag) => (
@@ -135,13 +135,13 @@ const TermsPage = () => {
                   our compliance team is here to assist you.
                 </p>
                 <a 
-                  href="mailto:legal@duuka.com"
+                  href="mailto:legal@dotsoko.com"
                   className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors group"
                 >
                   <Mail className="w-5 h-5 text-primary" />
                   <div>
                     <div className="text-xs text-slate-400">Legal Department</div>
-                    <div className="text-sm font-bold text-slate-900">legal@duuka.com</div>
+                    <div className="text-sm font-bold text-slate-900">legal@dotsoko.com</div>
                   </div>
                 </a>
               </div>

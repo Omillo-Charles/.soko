@@ -40,7 +40,7 @@ const Footer = () => {
             {/* Column 1: Brand Info */}
             <div>
                 <Link href="/" className="text-3xl font-bold text-white tracking-tight block mb-6">
-                  Duuka<span className="text-secondary">.</span>
+                  <span className="text-secondary">.</span>Soko
                 </Link>
                 <p className="text-slate-400 mb-6 leading-relaxed">
                     The ultimate multivendor marketplace for all your shopping needs. Quality products, verified sellers, and fast delivery.
@@ -48,7 +48,7 @@ const Footer = () => {
                 <div className="space-y-3">
                     <div className="flex items-center gap-3">
                         <Mail className="w-5 h-5 text-primary shrink-0" />
-                        <a href="mailto:support@duuka.com" className="hover:text-white transition-colors">support@duuka.com</a>
+                        <a href="mailto:support@dotsoko.com" className="hover:text-white transition-colors">support@dotsoko.com</a>
                     </div>
                     <div className="flex items-center gap-3">
                         <Phone className="w-5 h-5 text-primary shrink-0" />
@@ -104,7 +104,7 @@ const Footer = () => {
 
         {/* Footer Bottom */}
         <div className="border-t border-slate-700 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
-            <p>&copy; {new Date().getFullYear()} Duuka. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} <span className="text-secondary">.</span>Soko Marketplace. All rights reserved.</p>
             <div className="flex gap-6">
                 <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
                 <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>

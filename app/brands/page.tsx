@@ -69,7 +69,7 @@ const BrandsPage = () => {
               Discover <span className="text-primary">Brands</span>
             </h1>
             <p className="text-lg text-slate-600 font-medium leading-relaxed mb-8">
-              Explore the best stores on Duuka. From fashion to electronics, find verified vendors and follow your favorite brands for the latest updates.
+              Explore the best stores on <span className="text-secondary">.</span>Soko From fashion to electronics, find verified vendors and follow your favorite brands for the latest updates.
             </p>
             
             {/* Search Bar */}

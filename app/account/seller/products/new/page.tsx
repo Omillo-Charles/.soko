@@ -388,7 +388,7 @@ const NewProductPage = () => {
                     <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest">Pro Tip</span>
                   </div>
                   <p className="text-xs font-bold text-slate-500 leading-relaxed">
-                    Products with clear, high-resolution photos and detailed descriptions sell 3x faster on Duuka.
+                    Products with clear, high-resolution photos and detailed descriptions sell 3x faster on <span className="text-secondary">.</span>Soko
                   </p>
                 </div>
               </div>

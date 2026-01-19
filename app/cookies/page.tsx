@@ -22,7 +22,7 @@ const CookiePolicyPage = () => {
       icon: <Eye className="w-5 h-5" />,
       content: [
         "Essential Cookies: Required for basic site functionality like secure login and cart management.",
-        "Analytical Cookies: Help us understand how visitors interact with Duuka to improve performance.",
+        <>Analytical Cookies: Help us understand how visitors interact with <span className="text-secondary">.</span>Soko to improve performance.</>,
         "Preference Cookies: Remember your language, currency, and display settings.",
         "Marketing Cookies: Used to deliver relevant advertisements and track campaign effectiveness."
       ]
@@ -62,7 +62,7 @@ const CookiePolicyPage = () => {
               Cookie Policy
             </h1>
             <p className="mt-4 text-slate-600 text-lg leading-relaxed">
-              This policy explains how Duuka uses cookies and similar technologies to 
+              This policy explains how <span className="text-secondary">.</span>Soko uses cookies and similar technologies to 
               recognize you when you visit our marketplace. It explains what these 
               technologies are and why we use them.
             </p>
@@ -136,13 +136,13 @@ const CookiePolicyPage = () => {
                   Our technical privacy team is ready to help.
                 </p>
                 <a 
-                  href="mailto:privacy@duuka.com"
+                  href="mailto:privacy@dotsoko.com"
                   className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors group"
                 >
                   <Mail className="w-5 h-5 text-primary" />
                   <div>
                     <div className="text-xs text-slate-400">Technical Support</div>
-                    <div className="text-sm font-bold text-slate-900">privacy@duuka.com</div>
+                    <div className="text-sm font-bold text-slate-900">privacy@dotsoko.com</div>
                   </div>
                 </a>
               </div>

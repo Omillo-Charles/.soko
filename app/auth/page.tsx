@@ -591,7 +591,7 @@ const AuthContent = () => {
 
           <div className="relative z-10">
             <Link href="/" className="text-3xl font-bold tracking-tight">
-              Duuka<span className="text-secondary">.</span>
+              <span className="text-secondary">.</span>Soko
             </Link>
 
             <div className="mt-12 space-y-6">

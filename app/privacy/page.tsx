@@ -62,7 +62,7 @@ const PrivacyPage = () => {
               Privacy Policy
             </h1>
             <p className="mt-4 text-slate-600 text-lg leading-relaxed">
-              At Duuka, we take your privacy seriously. This policy explains how we collect, 
+              At <span className="text-secondary">.</span>Soko, we take your privacy seriously. This policy explains how we collect, 
               use, and protect your personal information when you use our marketplace.
             </p>
             <div className="mt-6 flex items-center gap-4 text-sm text-slate-400">
@@ -127,13 +127,13 @@ const PrivacyPage = () => {
                   please don't hesitate to contact our privacy team.
                 </p>
                 <a 
-                  href="mailto:privacy@duuka.com"
+                  href="mailto:privacy@dotsoko.com"
                   className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors group"
                 >
                   <Mail className="w-5 h-5 text-primary" />
                   <div>
                     <div className="text-xs text-slate-400">Email our DPO</div>
-                    <div className="text-sm font-bold text-slate-900">privacy@duuka.com</div>
+                    <div className="text-sm font-bold text-slate-900">privacy@dotsoko.com</div>
                   </div>
                 </a>
               </div>

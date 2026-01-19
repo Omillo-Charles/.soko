@@ -88,7 +88,7 @@ const HelpPage = () => {
                   {[
                     { title: "Account Settings", desc: "Manage profile and security", icon: Shield },
                     { title: "Payment Methods", desc: "Cards, M-Pesa, and more", icon: CreditCard },
-                    { title: "Selling on Duuka", desc: "Start your own shop today", icon: ArrowRight },
+                    { title: <>Selling on <span className="text-secondary">.</span>Soko</>, desc: "Start your own shop today", icon: ArrowRight },
                     { title: "Buyer Protection", desc: "How we keep you safe", icon: HelpCircle },
                   ].map((topic, i) => {
                     const Icon = topic.icon;

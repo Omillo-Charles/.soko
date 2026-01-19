@@ -21,7 +21,7 @@ const ReturnsPage = () => {
       title: "The Return Process",
       icon: <RefreshCcw className="w-5 h-5" />,
       content: [
-        "Initiate your return through your 'Order History' in your Duuka account.",
+        <>Initiate your return through your 'Order History' in your <span className="text-secondary">.</span>Soko account.</>,
         "Select the reason for return and upload photos if the item is damaged.",
         "Wait for the seller's approval (usually within 24-48 hours).",
         "Once approved, you'll receive a return shipping label or instructions."
@@ -33,7 +33,7 @@ const ReturnsPage = () => {
       content: [
         "Refunds are processed back to your original payment method.",
         "Processing time usually takes 5-10 business days after the item is received.",
-        "You may opt for Duuka Store Credit for faster reimbursement.",
+        <>You may opt for <span className="text-secondary">.</span>Soko Store Credit for faster reimbursement.</>,
         "Shipping costs are non-refundable unless the item was faulty."
       ]
     },
@@ -109,7 +109,7 @@ const ReturnsPage = () => {
                   <h3 className="text-2xl font-bold">Buyer Protection</h3>
                 </div>
                 <p className="text-slate-300 leading-relaxed mb-6">
-                  Every purchase on Duuka is covered by our Buyer Protection program. If your 
+                  Every purchase on <span className="text-secondary">.</span>Soko is covered by our Buyer Protection program. If your 
                   item doesn't arrive or is significantly different from the description, 
                   we guarantee a full refund.
                 </p>
@@ -131,13 +131,13 @@ const ReturnsPage = () => {
                   Need help with a specific order?
                 </p>
                 <a 
-                  href="mailto:support@duuka.com"
+                  href="mailto:support@dotsoko.com"
                   className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors group"
                 >
                   <Mail className="w-5 h-5 text-primary" />
                   <div>
                     <div className="text-xs text-slate-400">Customer Support</div>
-                    <div className="text-sm font-bold text-slate-900">support@duuka.com</div>
+                    <div className="text-sm font-bold text-slate-900">support@dotsoko.com</div>
                   </div>
                 </a>
               </div>

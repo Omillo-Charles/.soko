@@ -106,10 +106,10 @@ const ContactPage = () => {
               <div>
                 <div className="font-semibold">Email</div>
                 <a
-                  href="mailto:support@duuka.com"
+                  href="mailto:support@dotsoko.com"
                   className="text-sm text-slate-600"
                 >
-                  support@duuka.com
+                  support@dotsoko.com
                 </a>
               </div>
             </div>

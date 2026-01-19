@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @font-face {
-  font-family: "DuukaSans";
+  font-family: ".SokoSans";
   src: url("/fonts/weblysleekuisb.ttf") format("truetype");
   font-weight: 600;
   font-style: normal;
@@ -11,7 +11,7 @@
 :root {
   --background: #ffffff;
   --foreground: #0f172a; /* Slate 900 */
-  --font-sans: "DuukaSans", Arial, Helvetica, sans-serif;
+  --font-sans: ".SokoSans", Arial, Helvetica, sans-serif;
   --primary: #3b82f6; /* Blue 500 */
   --primary-foreground: #ffffff;
   --secondary: #f97316; /* Orange 500 */

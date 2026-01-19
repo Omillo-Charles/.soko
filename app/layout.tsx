@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Duuka E-Commerce",
+  title: ".Soko E-Commerce",
   description: "Top Multivendor E-Commerce Platform",
 };
 

@@ -33,7 +33,7 @@ const Navbar = () => {
       <div className="hidden md:flex bg-slate-900 text-slate-200 text-xs py-2 px-4 md:px-8 justify-between items-center">
         <div className="flex items-center gap-4">
           <span className="hidden sm:inline">
-            Welcome to Duuka Multivendor Store
+            Welcome to <span className="text-secondary">.</span>Soko Multivendor Store
           </span>
           <div className="flex items-center gap-1">
             <Phone className="w-3 h-3" /> <span>+123 456 7890</span>
@@ -60,9 +60,9 @@ const Navbar = () => {
             {/* Logo */}
             <Link
               href="/"
-              className="text-2xl md:text-3xl font-bold text-primary tracking-tight"
+              className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight"
             >
-              Duuka<span className="text-secondary">.</span>
+              <span className="text-secondary">.</span>Soko
             </Link>
 
             {/* Mobile Icons (Visible only on mobile) */}
