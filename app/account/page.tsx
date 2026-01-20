@@ -23,6 +23,7 @@ import {
 
 import { useUser } from "@/hooks/useUser";
 import { toast } from "sonner";
+import LogoutConfirmation from "@/components/LogoutConfirmation";
 
 const AccountPage = () => {
   const router = useRouter();
@@ -30,8 +31,11 @@ const AccountPage = () => {
 
   const [accountType, setAccountType] = useState<"buyer" | "seller">("buyer");
   const [isLoading, setIsLoading] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
     if (!userLoading && !user) {
       router.push("/auth?mode=login");
     }
@@ -41,6 +45,10 @@ const AccountPage = () => {
   }, [user, userLoading, router]);
 
   const handleLogout = () => {
+    setShowLogoutConfirm(true);
+  };
+
+  const confirmLogout = () => {
     logout();
     router.push("/auth?mode=login");
   };
@@ -116,6 +124,11 @@ const AccountPage = () => {
   return (
     <div className="min-h-screen bg-slate-50 pb-24 lg:pb-20 pt-8 px-4">
       <div className="max-w-6xl mx-auto">
+        <LogoutConfirmation 
+          isOpen={showLogoutConfirm} 
+          onClose={() => setShowLogoutConfirm(false)} 
+          onConfirm={confirmLogout} 
+        />
         {/* Header Section */}
         <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-100 mb-8">
           <div className="flex flex-col md:flex-row items-center gap-6">
@@ -124,7 +137,9 @@ const AccountPage = () => {
             </div>
             <div className="flex-1 text-center md:text-left">
               <div className="flex flex-row flex-wrap items-center justify-center md:justify-start gap-2 mb-1">
-                <h1 className="text-3xl font-bold text-slate-900 leading-tight">Hello, {user?.name || "User"}!</h1>
+                <h1 className="text-3xl font-bold text-slate-900 leading-tight">
+                  Hello, {isMounted ? (user?.name || "User") : "User"}!
+                </h1>
                 <span className={`px-3 py-1 rounded-lg text-[10px] uppercase tracking-wider font-black whitespace-nowrap ${
                   accountType === "seller" ? "bg-amber-100 text-amber-700" : "bg-indigo-100 text-indigo-700"
                 }`}>

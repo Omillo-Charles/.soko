@@ -40,6 +40,11 @@ const ShopProfilePage = () => {
   const { data: myShop } = useMyShop();
   
   const [activeSection, setActiveSection] = useState('Products');
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const { data: shop, isLoading: isShopLoading, error: shopError } = useShop(id);
   const { data: productsData = [], isLoading: isProductsLoading } = useShopProducts(id);
@@ -135,7 +140,7 @@ const ShopProfilePage = () => {
         
         {/* Left Sidebar */}
         <div className="hidden lg:block w-[280px] shrink-0">
-          <aside className="fixed top-[160px] w-[280px] h-[calc(100vh-160px)] overflow-y-auto custom-scrollbar px-6 py-6 pb-24 space-y-8">
+          <aside className="fixed top-[128px] w-[280px] h-[calc(100vh-128px)] overflow-y-auto custom-scrollbar px-6 py-6 pb-24 space-y-8">
             <button 
               onClick={() => router.push('/shop')}
               className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:text-primary hover:bg-primary/5 transition-all group w-full"
@@ -182,7 +187,7 @@ const ShopProfilePage = () => {
        {/* Middle Feed - Products */}
         <main className="flex-1 min-w-0 border-x border-slate-100 pb-24 lg:pb-0">
           {/* Header - Profile Style */}
-          <div className="sticky top-0 bg-white/80 backdrop-blur-md z-30 border-b border-slate-100 px-4 py-4 flex items-center gap-4">
+          <div className="sticky top-[70px] md:top-[128px] bg-white/80 backdrop-blur-md z-30 border-b border-slate-100 px-4 py-4 flex items-center gap-4">
             <button onClick={() => router.back()} className="lg:hidden p-2 hover:bg-slate-100 rounded-full">
               <ChevronLeft className="w-5 h-5" />
             </button>
@@ -209,26 +214,36 @@ const ShopProfilePage = () => {
                   />
                 </div>
                 <div className="flex gap-2 pb-2">
-                  {currentUser && (!myShop || String(myShop._id || myShop.id) !== String(id)) && shop?.owner !== currentUser?._id && (
+                  {!isMounted ? (
                     <button 
-                      onClick={handleFollowToggle}
-                      disabled={followMutation.isPending}
-                      className={`px-6 py-2 rounded-full text-sm font-black transition-all ${
-                        isFollowing 
-                          ? 'bg-slate-100 text-slate-900 hover:bg-red-50 hover:text-red-600 hover:border-red-100' 
-                          : 'bg-slate-900 text-white hover:bg-primary'
-                      } ${followMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
-                      {followMutation.isPending ? '...' : (isFollowing ? 'Following' : 'Follow')}
-                    </button>
-                  )}
-                  {!currentUser && (
-                    <button 
-                      onClick={handleFollowToggle}
                       className="px-6 py-2 rounded-full text-sm font-black transition-all bg-slate-900 text-white hover:bg-primary"
                     >
                       Follow
                     </button>
+                  ) : (
+                    <>
+                      {currentUser && (!myShop || String(myShop._id || myShop.id) !== String(id)) && shop?.owner !== currentUser?._id && (
+                        <button 
+                          onClick={handleFollowToggle}
+                          disabled={followMutation.isPending}
+                          className={`px-6 py-2 rounded-full text-sm font-black transition-all ${
+                            isFollowing 
+                              ? 'bg-slate-100 text-slate-900 hover:bg-red-50 hover:text-red-600 hover:border-red-100' 
+                              : 'bg-slate-900 text-white hover:bg-primary'
+                          } ${followMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        >
+                          {followMutation.isPending ? '...' : (isFollowing ? 'Following' : 'Follow')}
+                        </button>
+                      )}
+                      {!currentUser && (
+                        <button 
+                          onClick={handleFollowToggle}
+                          className="px-6 py-2 rounded-full text-sm font-black transition-all bg-slate-900 text-white hover:bg-primary"
+                        >
+                          Follow
+                        </button>
+                      )}
+                    </>
                   )}
                   <button className="p-2 border border-slate-200 rounded-full hover:bg-slate-50 transition-all">
                     <Share2 className="w-4 h-4 text-slate-600" />
@@ -528,7 +543,7 @@ const ShopProfilePage = () => {
 
         {/* Right Sidebar */}
         <div className="hidden lg:block w-[320px] shrink-0">
-          <aside className="fixed top-[160px] w-[320px] h-[calc(100vh-160px)] overflow-y-auto custom-scrollbar px-6 py-6 pb-24 space-y-8">
+          <aside className="fixed top-[128px] w-[320px] h-[calc(100vh-128px)] overflow-y-auto custom-scrollbar px-6 py-6 pb-24 space-y-8">
             {/* Store Stats */}
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-slate-50/50 p-4 rounded-2xl border border-slate-100 text-center">

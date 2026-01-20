@@ -199,7 +199,7 @@ const ShopPage = () => {
         
         {/* Left Sidebar - Categories & Filters */}
         <div className="hidden lg:block w-[280px] shrink-0">
-          <aside className="fixed top-[160px] w-[280px] h-[calc(100vh-160px)] overflow-y-auto custom-scrollbar px-6 py-6 pb-24 space-y-8">
+          <aside className="fixed top-[128px] w-[280px] h-[calc(100vh-128px)] overflow-y-auto custom-scrollbar px-6 py-6 pb-24 space-y-8">
             {/* Search */}
             <div className="relative group">
               <form onSubmit={handleSearch} className="relative">
@@ -271,7 +271,7 @@ const ShopPage = () => {
         {/* Middle Feed - Products */}
         <main className="flex-1 min-w-0 border-x border-slate-100 pb-24 lg:pb-0">
           {/* Header - Twitter Style */}
-          <div className="sticky top-0 bg-white/80 backdrop-blur-md z-30 border-b border-slate-100">
+          <div className="sticky top-[70px] md:top-[128px] bg-white/80 backdrop-blur-md z-30 border-b border-slate-100">
             <div className="px-4 py-4">
               <h1 className="text-xl font-black text-slate-900">Explore</h1>
             </div>
@@ -501,7 +501,7 @@ const ShopPage = () => {
 
         {/* Right Sidebar - Trending/Quick Links */}
         <div className="hidden lg:block w-[320px] shrink-0">
-          <aside className="fixed top-[160px] w-[320px] h-[calc(100vh-160px)] overflow-y-auto custom-scrollbar px-6 py-6 pb-24 space-y-8">
+          <aside className="fixed top-[128px] w-[320px] h-[calc(100vh-128px)] overflow-y-auto custom-scrollbar px-6 py-6 pb-24 space-y-8">
             {/* Popular Shops */}
             <div className="space-y-4">
               <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Popular Shops</h3>

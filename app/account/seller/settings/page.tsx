@@ -24,15 +24,19 @@ import {
   CheckCircle2,
   Info
 } from "lucide-react";
+import { useUser } from "@/hooks/useUser";
+import LogoutConfirmation from "@/components/LogoutConfirmation";
 
 const SellerSettingsPage = () => {
   const router = useRouter();
+  const { logout } = useUser();
   const [user, setUser] = useState<any>(null);
   const [shop, setShop] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState<"shop" | "account" | null>(null);
   const [activeTab, setActiveTab] = useState<"profile" | "branding" | "danger">("profile");
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   
   const [formData, setFormData] = useState({
     name: "",
@@ -301,8 +305,11 @@ const SellerSettingsPage = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("user");
+    setShowLogoutConfirm(true);
+  };
+
+  const confirmLogout = () => {
+    logout();
     router.push("/auth?mode=login");
   };
 
@@ -316,6 +323,11 @@ const SellerSettingsPage = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col lg:flex-row">
+      <LogoutConfirmation 
+        isOpen={showLogoutConfirm} 
+        onClose={() => setShowLogoutConfirm(false)} 
+        onConfirm={confirmLogout} 
+      />
       {/* Sidebar (Consistent with Seller Center) */}
       <div className="hidden lg:block w-72 shrink-0 border-r border-slate-100">
         <aside className="fixed w-72 h-screen bg-white flex flex-col overflow-y-auto custom-scrollbar">

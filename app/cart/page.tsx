@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -23,6 +23,11 @@ const CartPage = () => {
   const { cartItems, isLoading, updateQuantity, removeFromCart, subtotal } = useCart();
   const router = useRouter();
   const [promoCode, setPromoCode] = useState("");
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const shippingThreshold = 6500;
   const shippingFee = 500;
@@ -33,7 +38,7 @@ const CartPage = () => {
     return `KES ${price?.toLocaleString() || 0}`;
   };
 
-  if (isLoading) {
+  if (!isMounted || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <Loader2 className="w-10 h-10 text-primary animate-spin" />
@@ -41,9 +46,9 @@ const CartPage = () => {
     );
   }
 
-  if (cartItems.length === 0) {
+  if (cart.length === 0) {
     return (
-      <div className="min-h-[calc(100vh-80px)] bg-slate-50 flex flex-col items-center justify-center p-4">
+      <div className="min-h-[calc(100vh-70px)] md:min-h-[calc(100vh-128px)] bg-slate-50 flex flex-col items-center justify-center p-4">
         <div className="bg-white p-12 rounded-[2.5rem] shadow-2xl shadow-primary/5 flex flex-col items-center gap-6 border border-slate-100 max-w-md w-full text-center">
           <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center">
             <ShoppingBag className="w-12 h-12 text-slate-300" />

@@ -24,17 +24,21 @@ import {
 import { useUser } from "@/hooks/useUser";
 import { useMyShop } from "@/hooks/useShop";
 import { useMyProducts } from "@/hooks/useProducts";
+import LogoutConfirmation from "@/components/LogoutConfirmation";
 
 const SellerDashboard = () => {
   const router = useRouter();
-  const { user, isLoading: isUserLoading } = useUser();
+  const { user, isLoading: isUserLoading, logout } = useUser();
   const { data: shop, isLoading: isShopLoading, error: shopError } = useMyShop();
   const { data: products = [], isLoading: isProductsLoading } = useMyProducts();
 
-  const [accountType, setAccountType] = useState<"buyer" | "seller">("seller");
+  const [accountType, setAccountType] = useState<"seller" | "buyer">("seller");
   const [isMobile, setIsMobile] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
     if (!isUserLoading && !user) {
       router.push("/auth?mode=login");
       return;
@@ -92,8 +96,11 @@ const SellerDashboard = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("user");
+    setShowLogoutConfirm(true);
+  };
+
+  const confirmLogout = () => {
+    logout();
     router.push("/auth?mode=login");
   };
 
@@ -120,6 +127,11 @@ const SellerDashboard = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col lg:flex-row">
+      <LogoutConfirmation 
+        isOpen={showLogoutConfirm} 
+        onClose={() => setShowLogoutConfirm(false)} 
+        onConfirm={confirmLogout} 
+      />
       {/* Mobile Header */}
       <div className="lg:hidden bg-white px-4 py-3 border-b border-slate-100 flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -136,7 +148,7 @@ const SellerDashboard = () => {
       {/* Sidebar - Desktop */}
       <div className="hidden lg:block w-72 shrink-0 border-r border-slate-100">
         <aside 
-          className="fixed top-[144px] w-72 h-[calc(100vh-144px)] bg-white flex flex-col overflow-y-auto custom-scrollbar"
+          className="fixed top-[128px] w-72 h-[calc(100vh-128px)] bg-white flex flex-col overflow-y-auto custom-scrollbar"
         >
           <div className="p-6 border-b border-slate-50">
           <div className="flex items-center gap-3">
@@ -198,8 +210,8 @@ const SellerDashboard = () => {
           {/* Top Bar */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h2 className="text-2xl font-black text-slate-900 tracking-tight">{shop?.name || "Store Overview"}</h2>
-              <p className="text-slate-500 font-medium text-sm">Welcome back, {user?.name}! Your shop is looking great.</p>
+              <h2 className="text-2xl font-black text-slate-900 tracking-tight">{isMounted ? (shop?.name || "Store Overview") : "Store Overview"}</h2>
+              <p className="text-slate-500 font-medium text-sm">Welcome back, {isMounted ? (user?.name || "User") : "User"}! Your shop is looking great.</p>
             </div>
             <div className="flex items-center gap-3">
               {quickActions.map((action, idx) => (
@@ -246,7 +258,7 @@ const SellerDashboard = () => {
             </div>
             <div className="flex-1 p-8 pt-12 md:pt-8 md:pl-16 grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div>
-                <h3 className="font-bold text-slate-900 text-2xl">{shop?.name || user?.name + "'s Shop"}</h3>
+                <h3 className="font-bold text-slate-900 text-2xl">{isMounted ? (shop?.name || user?.name + "'s Shop") : "Your Shop"}</h3>
                 <p className="text-slate-500 font-medium mt-1">Status: <span className="text-emerald-600 font-bold">{shop?.isVerified ? "Verified" : "Active"}</span></p>
                 
                 <div className="mt-6 space-y-3">

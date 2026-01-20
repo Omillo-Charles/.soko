@@ -101,6 +101,22 @@ body {
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: #cbd5e1;
   }
+
+  @keyframes modal-pop {
+    0% {
+      opacity: 0;
+      transform: scale(0.95) translateY(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  .animate-modal-pop {
+    animation: modal-pop 0.3s ease-out forwards;
+  }
+
   .custom-scrollbar {
     scrollbar-width: thin;
     scrollbar-color: #e2e8f0 transparent;

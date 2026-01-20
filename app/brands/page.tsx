@@ -28,6 +28,11 @@ const BrandsPage = () => {
   const { data: myShop } = useMyShop();
   const { data: shops = [], isLoading } = usePopularShops();
   const followMutation = useFollowShop();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const normalizedShops = useMemo(() => {
     return (shops || []).map((shop: any) => ({
@@ -198,20 +203,30 @@ const BrandsPage = () => {
 
                   {/* Footer Action */}
                   <div className="mt-auto flex items-center gap-3">
-                    {(!currentUser || (myShop && String(myShop._id || myShop.id) !== String(shop._id)) || (!myShop && shop.owner !== currentUser?._id)) && (
+                    {!isMounted ? (
                       <button 
-                        onClick={(e) => handleFollowToggle(e, shop._id)}
-                        disabled={followMutation.isPending && followMutation.variables === shop._id}
-                        className={`flex-1 h-11 rounded-xl text-xs font-black transition-all ${
-                          currentUser && shop.followers?.includes(currentUser._id)
-                            ? 'bg-slate-100 text-slate-900 hover:bg-red-50 hover:text-red-600 hover:border-red-100'
-                            : 'bg-slate-900 text-white hover:bg-primary shadow-lg shadow-slate-900/10'
-                        } disabled:opacity-50 disabled:cursor-not-allowed`}
+                        className="flex-1 h-11 rounded-xl text-xs font-black transition-all bg-slate-900 text-white hover:bg-primary shadow-lg shadow-slate-900/10"
                       >
-                        {followMutation.isPending && followMutation.variables === shop._id ? '...' : (
-                          currentUser && shop.followers?.includes(currentUser._id) ? 'Following' : 'Follow'
-                        )}
+                        Follow
                       </button>
+                    ) : (
+                      <>
+                        {(!currentUser || (myShop && String(myShop._id || myShop.id) !== String(shop._id)) || (!myShop && shop.owner !== currentUser?._id)) && (
+                          <button 
+                            onClick={(e) => handleFollowToggle(e, shop._id)}
+                            disabled={followMutation.isPending && followMutation.variables === shop._id}
+                            className={`flex-1 h-11 rounded-xl text-xs font-black transition-all ${
+                              currentUser && shop.followers?.includes(currentUser._id)
+                                ? 'bg-slate-100 text-slate-900 hover:bg-red-50 hover:text-red-600 hover:border-red-100'
+                                : 'bg-slate-900 text-white hover:bg-primary shadow-lg shadow-slate-900/10'
+                            } disabled:opacity-50 disabled:cursor-not-allowed`}
+                          >
+                            {followMutation.isPending && followMutation.variables === shop._id ? '...' : (
+                              currentUser && shop.followers?.includes(currentUser._id) ? 'Following' : 'Follow'
+                            )}
+                          </button>
+                        )}
+                      </>
                     )}
                     <button className="w-11 h-11 bg-white border border-slate-200 rounded-xl flex items-center justify-center text-slate-600 hover:text-primary hover:border-primary transition-all group/btn shadow-sm">
                       <ChevronRight className="w-5 h-5 group-hover/btn:translate-x-0.5 transition-transform" />

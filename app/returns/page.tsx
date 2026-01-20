@@ -123,7 +123,7 @@ const ReturnsPage = () => {
 
           {/* Sidebar */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="sticky top-[160px]">
+            <div className="sticky top-[128px]">
               <div className="bg-white border border-slate-200 rounded-2xl p-6 mb-6">
                 <h3 className="font-bold text-slate-900 mb-4">Start a Return</h3>
                 <p className="text-sm text-slate-600 mb-6 leading-relaxed">
