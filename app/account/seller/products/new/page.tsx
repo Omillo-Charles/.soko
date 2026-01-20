@@ -152,12 +152,12 @@ const NewProductPage = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col selection:bg-primary/10">
-      <div className="max-w-[1400px] mx-auto w-full px-4 md:px-8 pt-8 pb-32 md:py-12">
+      <div className="max-w-[1400px] mx-auto w-full px-4 md:px-8 pt-0 pb-32 md:pt-1 md:pb-32">
         <div className="flex flex-col lg:flex-row gap-12 items-start">
           
           {/* Left Column: Form */}
-          <div className="w-full lg:w-3/5 space-y-8 animate-in fade-in slide-in-from-left-4 duration-700">
-            <div className="flex items-center justify-between mb-8">
+          <div className="w-full lg:w-3/5 space-y-4 md:space-y-8 animate-in fade-in slide-in-from-left-4 duration-700">
+            <div className="flex items-center justify-between mb-2">
               <div>
                 <h1 className="text-3xl font-black text-slate-900 tracking-tight">Create Listing</h1>
                 <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mt-1">Drafting in {shop?.name || 'Shop'}</p>

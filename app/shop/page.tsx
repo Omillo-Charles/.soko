@@ -30,7 +30,7 @@ import { categories as allCategories } from "@/constants/categories";
 import { toast } from "sonner";
 
 import { useProducts } from "@/hooks/useProducts";
-import { usePopularShops, useFollowShop } from "@/hooks/useShop";
+import { usePopularShops, useFollowShop, useMyShop } from "@/hooks/useShop";
 import { useUser } from "@/hooks/useUser";
 
 const ShopPage = () => {
@@ -44,6 +44,7 @@ const ShopPage = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [activeTab, setActiveTab] = useState<'foryou' | 'following'>('foryou');
   const { user: currentUser } = useUser();
+  const { data: myShop } = useMyShop();
   const { data: popularShopsData, isLoading: isShopsLoading } = usePopularShops();
   const followMutation = useFollowShop();
 
@@ -108,7 +109,18 @@ const ShopPage = () => {
   };
 
   const displayProducts = React.useMemo(() => {
-    const formatted = products.map((p: any) => ({
+    let filtered = products;
+
+    // Filter out user's own shop products from the "Following" tab
+    if (activeTab === 'following' && myShop) {
+      const myShopId = myShop._id || myShop.id;
+      filtered = products.filter((p: any) => {
+        const productShopId = p.shop?._id || p.shop?.id || p.shop;
+        return String(productShopId) !== String(myShopId);
+      });
+    }
+
+    const formatted = filtered.map((p: any) => ({
       id: p._id || p.id || `product-${Math.random()}`,
       vendor: {
         id: p.shop?._id || p.shop?.id || `vendor-${Math.random()}`,
@@ -128,12 +140,8 @@ const ShopPage = () => {
       time: p.createdAt ? new Date(p.createdAt).toLocaleDateString() : "Just now"
     }));
 
-    if (activeTab === 'following' && currentUser) {
-      // Filter is already handled by the API when following=true is passed
-      return formatted;
-    }
     return formatted;
-  }, [products, activeTab, currentUser]);
+  }, [products, activeTab, currentUser, myShop]);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -521,7 +529,7 @@ const ShopPage = () => {
                         </div>
                       </div>
                     </div>
-                    {isMounted && currentUser?._id !== vendor.id && (
+                    {isMounted && currentUser && myShop && String(myShop._id || myShop.id) !== String(vendor.id) && (
                       <button 
                         onClick={(e) => { e.stopPropagation(); handleFollowToggle(vendor.id); }}
                         disabled={followMutation.isPending && followMutation.variables === vendor.id}
@@ -532,6 +540,27 @@ const ShopPage = () => {
                         } ${followMutation.isPending && followMutation.variables === vendor.id ? 'opacity-50 cursor-not-allowed' : ''}`}
                       >
                         {followMutation.isPending && followMutation.variables === vendor.id ? '...' : (vendor.followersList?.includes(currentUser?._id) ? 'Following' : 'Follow')}
+                      </button>
+                    )}
+                    {isMounted && currentUser && !myShop && (
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); handleFollowToggle(vendor.id); }}
+                        disabled={followMutation.isPending && followMutation.variables === vendor.id}
+                        className={`bg-slate-900 text-white text-[11px] font-black px-4 py-1.5 rounded-full hover:bg-primary transition-all shrink-0 ${
+                          vendor.followersList?.includes(currentUser?._id) 
+                            ? 'bg-slate-100 text-slate-900 hover:bg-red-50 hover:text-red-600 hover:border-red-100' 
+                            : ''
+                        } ${followMutation.isPending && followMutation.variables === vendor.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      >
+                        {followMutation.isPending && followMutation.variables === vendor.id ? '...' : (vendor.followersList?.includes(currentUser?._id) ? 'Following' : 'Follow')}
+                      </button>
+                    )}
+                    {isMounted && !currentUser && (
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); handleFollowToggle(vendor.id); }}
+                        className="bg-slate-900 text-white text-[11px] font-black px-4 py-1.5 rounded-full hover:bg-primary transition-all shrink-0"
+                      >
+                        Follow
                       </button>
                     )}
                   </div>

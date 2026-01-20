@@ -71,25 +71,32 @@ const SearchBar = () => {
   return (
     <div className="relative w-full" ref={searchRef}>
       <form onSubmit={onSubmit} className="flex w-full relative">
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          className="block border border-r-0 border-slate-200 rounded-l-2xl bg-slate-50 text-slate-700 px-4 py-3 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer max-w-[140px] appearance-none"
-        >
-          {categories.map((c) => (
-            <option key={c.value} value={c.value}>
-              {c.label}
-            </option>
-          ))}
-        </select>
+        <div className="relative shrink-0">
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="block h-11 border border-r-0 border-slate-200 rounded-l-2xl bg-slate-50 text-slate-700 pl-2 pr-6 md:pl-4 md:pr-10 text-[10px] md:text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer w-[70px] md:w-[110px] appearance-none truncate transition-all"
+          >
+            {categories.map((c) => (
+              <option key={c.value} value={c.value}>
+                {c.label}
+              </option>
+            ))}
+          </select>
+          <div className="absolute right-1.5 md:right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+            <svg width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg" className="md:w-2.5 md:h-2.5">
+              <path d="M1 3L4 6L7 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+        </div>
         <div className="relative flex-1">
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => query.trim().length >= 2 && setShowSuggestions(true)}
             type="text"
-            placeholder="Search products, brands and categories..."
-            className="w-full border-y border-slate-200 rounded-none py-3 px-4 text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary/20 placeholder:text-slate-400 text-sm font-medium"
+            placeholder="Search..."
+            className="w-full h-11 border-y border-slate-200 rounded-none px-3 md:px-4 text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary/20 placeholder:text-slate-400 text-sm font-medium"
           />
           {query && (
             <button
@@ -103,7 +110,7 @@ const SearchBar = () => {
         </div>
         <button
           type="submit"
-          className="bg-slate-900 text-white px-6 rounded-r-2xl hover:bg-primary transition-all flex items-center justify-center cursor-pointer shadow-lg shadow-slate-900/10"
+          className="bg-slate-900 h-11 text-white px-6 rounded-r-2xl hover:bg-primary transition-all flex items-center justify-center cursor-pointer shadow-lg shadow-slate-900/10"
         >
           {isLoading ? (
             <Loader2 className="w-5 h-5 animate-spin" />

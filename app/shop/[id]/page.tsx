@@ -27,7 +27,7 @@ import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { toast } from "sonner";
-import { useShop, useShopProducts, usePopularShops, useFollowShop, useShopLists } from "@/hooks/useShop";
+import { useShop, useShopProducts, usePopularShops, useFollowShop, useShopLists, useMyShop } from "@/hooks/useShop";
 import { useUser } from "@/hooks/useUser";
 
 const ShopProfilePage = () => {
@@ -37,6 +37,7 @@ const ShopProfilePage = () => {
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const { user: currentUser } = useUser();
+  const { data: myShop } = useMyShop();
   
   const [activeSection, setActiveSection] = useState('Products');
 
@@ -208,7 +209,7 @@ const ShopProfilePage = () => {
                   />
                 </div>
                 <div className="flex gap-2 pb-2">
-                  {currentUser?._id !== shop.owner && (
+                  {currentUser && (!myShop || String(myShop._id || myShop.id) !== String(id)) && shop?.owner !== currentUser?._id && (
                     <button 
                       onClick={handleFollowToggle}
                       disabled={followMutation.isPending}
@@ -219,6 +220,14 @@ const ShopProfilePage = () => {
                       } ${followMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                       {followMutation.isPending ? '...' : (isFollowing ? 'Following' : 'Follow')}
+                    </button>
+                  )}
+                  {!currentUser && (
+                    <button 
+                      onClick={handleFollowToggle}
+                      className="px-6 py-2 rounded-full text-sm font-black transition-all bg-slate-900 text-white hover:bg-primary"
+                    >
+                      Follow
                     </button>
                   )}
                   <button className="p-2 border border-slate-200 rounded-full hover:bg-slate-50 transition-all">
