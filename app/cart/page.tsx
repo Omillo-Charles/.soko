@@ -46,7 +46,7 @@ const CartPage = () => {
     );
   }
 
-  if (cart.length === 0) {
+  if (cartItems.length === 0) {
     return (
       <div className="min-h-[calc(100vh-70px)] md:min-h-[calc(100vh-128px)] bg-slate-50 flex flex-col items-center justify-center p-4">
         <div className="bg-white p-12 rounded-[2.5rem] shadow-2xl shadow-primary/5 flex flex-col items-center gap-6 border border-slate-100 max-w-md w-full text-center">

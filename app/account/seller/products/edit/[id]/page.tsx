@@ -17,6 +17,7 @@ import {
   Loader2,
   Save
 } from "lucide-react";
+import { toast } from "sonner";
 
 import { categories as allCategories } from "@/constants/categories";
 
@@ -27,7 +28,6 @@ const EditProductPage = () => {
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -63,11 +63,11 @@ const EditProductPage = () => {
           });
           setImagePreview(product.image);
         } else {
-          setError("Product not found");
+          toast.error("Product not found");
         }
       } catch (err) {
         console.error("Error fetching product:", err);
-        setError("Failed to load product data");
+        toast.error("Failed to load product data");
       } finally {
         setIsFetching(false);
       }
@@ -96,7 +96,6 @@ const EditProductPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError(null);
 
     const token = localStorage.getItem("accessToken");
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
@@ -127,9 +126,10 @@ const EditProductPage = () => {
         throw new Error(data.message || "Failed to update product");
       }
 
+      toast.success("Product updated successfully!");
       router.push("/account/seller/products");
     } catch (err: any) {
-      setError(err.message);
+      toast.error(err.message || "Something went wrong");
     } finally {
       setIsLoading(false);
     }
@@ -167,13 +167,6 @@ const EditProductPage = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="p-10 space-y-8">
-            {error && (
-              <div className="p-4 bg-red-50 border border-red-100 text-red-600 rounded-2xl text-sm font-bold flex items-center gap-3">
-                <AlertCircle className="w-5 h-5" />
-                {error}
-              </div>
-            )}
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-6 md:col-span-2">
                 <h2 className="text-lg font-black text-slate-900 flex items-center gap-2 border-b border-slate-50 pb-2">
@@ -326,14 +319,6 @@ const EditProductPageIcon = () => (
   <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M11 4H4C3.46957 4 2.96086 4.21071 2.58579 4.58579C2.21071 4.96086 2 5.46957 2 6V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
     <path d="M18.5 2.5C18.8978 2.10217 19.4374 1.87868 20 1.87868C20.5626 1.87868 21.1022 2.10217 21.5 2.5C21.8978 2.89782 22.1213 3.43739 22.1213 4C22.1213 4.56261 21.8978 5.10217 21.5 5.5L12 15L8 16L9 12L18.5 2.5Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-
-const AlertCircle = ({ className }: { className?: string }) => (
-  <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="10" />
-    <line x1="12" y1="8" x2="12" y2="12" />
-    <line x1="12" y1="16" x2="12.01" y2="16" />
   </svg>
 );
 

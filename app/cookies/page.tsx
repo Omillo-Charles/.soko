@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { Cookie, Shield, Eye, Settings, Clock, Info, FileText, Bell, Mail } from "lucide-react";
 
 const CookiePolicyPage = () => {
@@ -153,16 +154,16 @@ const CookiePolicyPage = () => {
                   {[
                     { name: 'Privacy Policy', href: '/privacy' },
                     { name: 'Terms of Service', href: '/terms' },
-                    { name: 'Seller Agreement', href: '#' },
-                    { name: 'Data Protection', href: '#' }
+                    { name: 'Returns & Refunds', href: '/returns' },
+                    { name: 'Help Center', href: '/help' }
                   ].map((item) => (
-                    <a 
+                    <Link 
                       key={item.name}
                       href={item.href} 
                       className="block text-sm text-slate-500 hover:text-primary transition-colors"
                     >
                       {item.name}
-                    </a>
+                    </Link>
                   ))}
                 </nav>
               </div>

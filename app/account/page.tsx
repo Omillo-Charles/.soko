@@ -50,6 +50,7 @@ const AccountPage = () => {
 
   const confirmLogout = () => {
     logout();
+    toast.success("Logged out successfully");
     router.push("/auth?mode=login");
   };
 
@@ -146,14 +147,14 @@ const AccountPage = () => {
                   {accountType} Mode
                 </span>
               </div>
-              <p className="text-slate-500 font-medium">{user?.email}</p>
+              <p className="text-slate-500 font-medium">{isMounted ? user?.email : ""}</p>
               <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-4">
                 <span className="px-4 py-1.5 bg-green-50 text-green-700 text-xs font-bold rounded-full border border-green-100 flex items-center gap-1.5">
                   <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
                   Verified Account
                 </span>
                 <span className="px-4 py-1.5 bg-primary/5 text-primary text-xs font-bold rounded-full border border-primary/10">
-                  Member since {new Date().getFullYear()}
+                  Member since {isMounted ? new Date().getFullYear() : "2026"}
                 </span>
                 <button 
                   onClick={() => toggleAccountType()}

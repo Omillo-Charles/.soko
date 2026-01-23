@@ -11,6 +11,7 @@ import {
   AlertCircle,
   Loader2,
 } from "lucide-react";
+import { toast } from "sonner";
 
 const XIcon = () => (
   <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
@@ -20,10 +21,6 @@ const XIcon = () => (
 
 const ContactPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<{
-    type: "success" | "error";
-    message: string;
-  } | null>(null);
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -41,7 +38,6 @@ const ContactPage = () => {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setSubmitStatus(null);
 
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
@@ -67,16 +63,10 @@ const ContactPage = () => {
         throw new Error(data?.message || data?.error || "Failed to send message");
       }
 
-      setSubmitStatus({
-        type: "success",
-        message: data?.message || "Thank you! Your message has been sent successfully.",
-      });
+      toast.success(data?.message || "Thank you! Your message has been sent successfully.");
       setForm({ name: "", email: "", subject: "", message: "" });
     } catch (err: any) {
-      setSubmitStatus({
-        type: "error",
-        message: err.message || "Something went wrong. Please try again later.",
-      });
+      toast.error(err.message || "Something went wrong. Please try again later.");
     } finally {
       setIsSubmitting(false);
     }
@@ -128,24 +118,6 @@ const ContactPage = () => {
                 onSubmit={onSubmit}
                 className="bg-white border border-slate-200 rounded-lg p-6"
               >
-                {submitStatus && (
-                  <div
-                    className={`mb-6 p-4 rounded-xl flex items-center gap-3 ${
-                      submitStatus.type === "success"
-                        ? "bg-green-50 border border-green-100 text-green-700"
-                        : "bg-red-50 border border-red-100 text-red-700"
-                    }`}
-                  >
-                    {submitStatus.type === "success" ? (
-                      <CheckCircle2 className="w-5 h-5 shrink-0" />
-                    ) : (
-                      <AlertCircle className="w-5 h-5 shrink-0" />
-                    )}
-                    <p className="text-sm font-medium">
-                      {submitStatus.message}
-                    </p>
-                  </div>
-                )}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label htmlFor="name" className="text-sm text-slate-600">

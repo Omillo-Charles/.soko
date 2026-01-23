@@ -16,6 +16,7 @@ import {
   Trash2,
   Store
 } from "lucide-react";
+import { toast } from "sonner";
 
 import { categories as allCategories } from "@/constants/categories";
 
@@ -25,7 +26,6 @@ const NewProductPage = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [isChecking, setIsChecking] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [shop, setShop] = useState<any>(null);
 
   const [formData, setFormData] = useState({
@@ -89,10 +89,9 @@ const NewProductPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError(null);
 
     if (!imageFile) {
-      setError("Please select a product image");
+      toast.error("Please select a product image");
       setIsLoading(false);
       return;
     }
@@ -134,9 +133,10 @@ const NewProductPage = () => {
       }
 
       // Success! Redirect to shop page to see the new product
+      toast.success("Product listed successfully!");
       router.push("/shop");
     } catch (err: any) {
-      setError(err.message);
+      toast.error(err.message || "Something went wrong");
     } finally {
       setIsLoading(false);
     }
@@ -171,15 +171,6 @@ const NewProductPage = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-8">
-              {error && (
-                <div className="p-4 bg-red-50 border border-red-100 text-red-500 rounded-3xl text-xs font-bold flex items-center gap-3 animate-shake">
-                  <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm">
-                    <Info className="w-4 h-4" />
-                  </div>
-                  {error}
-                </div>
-              )}
-
               <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/40 overflow-hidden">
                 <div className="p-8 md:p-10 space-y-8">
                   {/* Image Upload Area */}

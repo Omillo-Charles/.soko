@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { Scale, Gavel, ShieldCheck, ShoppingBag, Users, AlertCircle, FileText, Bell, Mail } from "lucide-react";
 
 const TermsPage = () => {
@@ -151,17 +152,17 @@ const TermsPage = () => {
                 <nav className="space-y-3">
                   {[
                     { name: 'Privacy Policy', href: '/privacy' },
-                    { name: 'Seller Guidelines', href: '#' },
-                    { name: 'Return Policy', href: '#' },
-                    { name: 'Buyer Protection', href: '#' }
+                    { name: 'Cookie Policy', href: '/cookies' },
+                    { name: 'Return Policy', href: '/returns' },
+                    { name: 'Help Center', href: '/help' }
                   ].map((item) => (
-                    <a 
+                    <Link 
                       key={item.name}
                       href={item.href} 
                       className="block text-sm text-slate-500 hover:text-primary transition-colors"
                     >
                       {item.name}
-                    </a>
+                    </Link>
                   ))}
                 </nav>
               </div>

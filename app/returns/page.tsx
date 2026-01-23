@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { RefreshCcw, Package, Truck, CreditCard, ShieldCheck, AlertCircle, FileText, Bell, Mail, ArrowRight } from "lucide-react";
 
 const ReturnsPage = () => {
@@ -149,15 +150,15 @@ const ReturnsPage = () => {
                     { name: 'Terms of Service', href: '/terms' },
                     { name: 'Privacy Policy', href: '/privacy' },
                     { name: 'Cookie Policy', href: '/cookies' },
-                    { name: 'Seller Agreement', href: '#' }
+                    { name: 'Help Center', href: '/help' }
                   ].map((item) => (
-                    <a 
+                    <Link 
                       key={item.name}
                       href={item.href} 
                       className="block text-sm text-slate-500 hover:text-primary transition-colors"
                     >
                       {item.name}
-                    </a>
+                    </Link>
                   ))}
                 </nav>
               </div>

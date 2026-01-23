@@ -18,6 +18,7 @@ import {
   Camera,
   Trash2
 } from "lucide-react";
+import { toast } from "sonner";
 
 import { categories as allCategories } from "@/constants/categories";
 
@@ -27,7 +28,6 @@ const RegisterShopPage = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [isChecking, setIsChecking] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -100,7 +100,6 @@ const RegisterShopPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError(null);
 
     const token = localStorage.getItem("accessToken");
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
@@ -143,11 +142,11 @@ const RegisterShopPage = () => {
             const brandingError = await brandingResponse.json();
             console.error("Branding upload error:", brandingError);
             // We don't throw here because the shop was already created successfully
-            alert("Shop created, but there was an error uploading the images. You can update them later in settings.");
+            toast.error("Shop created, but there was an error uploading the images. You can update them later in settings.");
           }
         } catch (brandingErr) {
           console.error("Branding upload fetch error:", brandingErr);
-          alert("Shop created, but images could not be uploaded. You can update them in settings.");
+          toast.error("Shop created, but images could not be uploaded. You can update them in settings.");
         }
       }
 
@@ -157,9 +156,10 @@ const RegisterShopPage = () => {
          userData.accountType = "seller";
          localStorage.setItem("user", JSON.stringify(userData));
        }
+       toast.success("Shop registered successfully!");
        router.push("/account/seller");
     } catch (err: any) {
-      setError(err.message);
+      toast.error(err.message || "Failed to register shop");
     } finally {
       setIsLoading(false);
     }
@@ -201,15 +201,6 @@ const RegisterShopPage = () => {
           {/* Left Column: Form */}
           <div className="w-full lg:w-3/5 space-y-10 animate-in fade-in slide-in-from-left-8 duration-1000">
             <form onSubmit={handleSubmit} className="space-y-10">
-              {error && (
-                <div className="p-5 bg-red-50 border border-red-100 text-red-500 rounded-3xl text-sm font-bold flex items-center gap-4 animate-shake">
-                  <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm">
-                    <Info className="w-5 h-5" />
-                  </div>
-                  {error}
-                </div>
-              )}
-
               {/* Branding Section */}
               <section className="space-y-6">
                 <div className="flex items-center gap-4 ml-2">

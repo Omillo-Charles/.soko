@@ -23,6 +23,7 @@ import {
   CheckCircle2,
   ArrowLeft,
 } from "lucide-react";
+import { toast } from "sonner";
 
 const GoogleIcon = () => (
   <svg
@@ -59,8 +60,6 @@ const AuthContent = () => {
   const [mode, setMode] = useState<AuthMode>("login");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
   const [pendingEmail, setPendingEmail] = useState<string>("");
   const [resetToken, setResetToken] = useState<string>("");
 
@@ -93,7 +92,7 @@ const AuthContent = () => {
     // Handle query param modes
     const errorParam = searchParams.get("error") || urlParams.get("error");
     if (errorParam) {
-      setError(errorParam);
+      toast.error(errorParam);
     }
 
     if (m === "social-success") {
@@ -102,11 +101,11 @@ const AuthContent = () => {
         try {
           localStorage.setItem("accessToken", t);
           localStorage.setItem("user", userData);
-          setSuccess("Social login successful! Redirecting...");
+          toast.success("Social login successful! Redirecting...");
           setTimeout(() => router.push("/account"), 1500);
           return;
         } catch (e) {
-          setError("Failed to process login data");
+          toast.error("Failed to process login data");
         }
       }
     }
@@ -136,15 +135,11 @@ const AuthContent = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    if (error) setError(null);
-    if (success) setSuccess(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError(null);
-    setSuccess(null);
 
     try {
       let response;
@@ -164,7 +159,7 @@ const AuthContent = () => {
           localStorage.setItem("accessToken", data.data.accessToken);
           localStorage.setItem("user", JSON.stringify(data.data.user));
           
-          setSuccess("Login successful! Redirecting...");
+          toast.success("Login successful! Redirecting...");
           setTimeout(() => router.push("/account"), 1500);
           break;
 
@@ -179,7 +174,7 @@ const AuthContent = () => {
           
           setPendingEmail(formData.email);
           setMode("verify");
-          setSuccess("Account created! Please check your email for the verification code.");
+          toast.success("Account created! Please check your email for the verification code.");
           break;
 
         case "verify":
@@ -191,7 +186,7 @@ const AuthContent = () => {
           data = await response.json();
           if (!response.ok) throw new Error(data.message || data.error || "Verification failed");
           
-          setSuccess("Email verified successfully! You can now sign in.");
+          toast.success("Email verified successfully! You can now sign in.");
           setTimeout(() => setMode("login"), 2000);
           break;
 
@@ -204,7 +199,7 @@ const AuthContent = () => {
           data = await response.json();
           if (!response.ok) throw new Error(data.message || data.error || "Request failed");
           
-          setSuccess("Password reset link sent to your email!");
+          toast.success("Password reset link sent to your email!");
           break;
 
         case "reset":
@@ -216,12 +211,12 @@ const AuthContent = () => {
           data = await response.json();
           if (!response.ok) throw new Error(data.message || data.error || "Reset failed");
           
-          setSuccess("Password reset successful! You can now sign in.");
+          toast.success("Password reset successful! You can now sign in.");
           setTimeout(() => setMode("login"), 2000);
           break;
       }
     } catch (err: any) {
-      setError(err.message || "Something went wrong");
+      toast.error(err.message || "Something went wrong");
     } finally {
       setIsLoading(false);
     }
@@ -236,8 +231,6 @@ const AuthContent = () => {
 
   const resetForm = () => {
     setFormData({ name: "", email: "", password: "", otp: "" });
-    setError(null);
-    setSuccess(null);
   };
 
   const switchMode = (newMode: AuthMode) => {
@@ -697,20 +690,6 @@ const AuthContent = () => {
 
         {/* Right Side: Auth Forms */}
         <div className="p-8 md:p-16 flex flex-col justify-center">
-          {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-700 rounded-2xl flex items-center gap-3">
-              <AlertCircle className="w-5 h-5 shrink-0" />
-              <p className="text-sm font-medium">{error}</p>
-            </div>
-          )}
-
-          {success && (
-            <div className="mb-6 p-4 bg-green-50 border border-green-100 text-green-700 rounded-2xl flex items-center gap-3">
-              <CheckCircle2 className="w-5 h-5 shrink-0" />
-              <p className="text-sm font-medium">{success}</p>
-            </div>
-          )}
-
           {renderForm()}
         </div>
       </div>

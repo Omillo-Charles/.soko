@@ -60,7 +60,7 @@ const HelpPage = () => {
             </Link>
 
             <Link 
-              href="/shipping"
+              href="/help"
               className="flex items-center gap-4 bg-white border border-slate-200 rounded-xl p-6 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all group"
             >
               <div className="w-12 h-12 bg-slate-50 rounded-lg flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
@@ -86,25 +86,26 @@ const HelpPage = () => {
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {[
-                    { title: "Account Settings", desc: "Manage profile and security", icon: Shield },
-                    { title: "Payment Methods", desc: "Cards, M-Pesa, and more", icon: CreditCard },
-                    { title: <>Selling on <span className="text-secondary">.</span>Soko</>, desc: "Start your own shop today", icon: ArrowRight },
-                    { title: "Buyer Protection", desc: "How we keep you safe", icon: HelpCircle },
+                    { title: "Account Settings", desc: "Manage profile and security", icon: Shield, href: "/account/security" },
+                    { title: "Payment Methods", desc: "Cards, M-Pesa, and more", icon: CreditCard, href: "/help" },
+                    { title: <>Selling on <span className="text-secondary">.</span>Soko</>, desc: "Start your own shop today", icon: ArrowRight, href: "/account/seller" },
+                    { title: "Buyer Protection", desc: "How we keep you safe", icon: HelpCircle, href: "/returns" },
                   ].map((topic, i) => {
                     const Icon = topic.icon;
                     return (
-                      <div 
+                      <Link 
                         key={i}
-                        className="p-4 border border-slate-100 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors flex gap-4"
+                        href={topic.href}
+                        className="p-4 border border-slate-100 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors flex gap-4 group"
                       >
-                        <div className="text-slate-400 group-hover:text-primary">
+                        <div className="text-slate-400 group-hover:text-primary transition-colors">
                           <Icon className="w-5 h-5" />
                         </div>
                         <div>
                           <h3 className="font-bold text-slate-900 text-sm">{topic.title}</h3>
                           <p className="text-xs text-slate-500 mt-1">{topic.desc}</p>
                         </div>
-                      </div>
+                      </Link>
                     );
                   })}
                 </div>
@@ -136,17 +137,17 @@ const HelpPage = () => {
                 <h3 className="font-bold text-slate-900 mb-4">Quick Links</h3>
                 <ul className="space-y-3">
                   {[
-                    "Privacy Policy",
-                    "Terms of Service",
-                    "Buyer Protection",
-                    "Seller Handbook",
+                    { name: "Privacy Policy", href: "/privacy" },
+                    { name: "Terms of Service", href: "/terms" },
+                    { name: "Cookie Policy", href: "/cookies" },
+                    { name: "Return Policy", href: "/returns" },
                   ].map((link, i) => (
                     <li key={i}>
                       <Link 
-                        href={`/${link.toLowerCase().replace(/\s+/g, '-')}`}
+                        href={link.href}
                         className="flex items-center justify-between text-sm text-slate-600 hover:text-primary transition-colors py-1 group"
                       >
-                        {link}
+                        {link.name}
                         <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-primary" />
                       </Link>
                     </li>

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { Shield, Lock, Eye, FileText, Bell, Globe, Mail } from "lucide-react";
 
 const PrivacyPage = () => {
@@ -141,14 +142,19 @@ const PrivacyPage = () => {
               <div className="bg-slate-50 rounded-2xl p-6">
                 <h4 className="font-bold text-slate-900 text-sm mb-4">Legal Directory</h4>
                 <nav className="space-y-3">
-                  {['Terms of Service', 'Cookie Policy', 'Seller Agreement', 'Buyer Protection'].map((item) => (
-                    <a 
-                      key={item}
-                      href="#" 
+                  {[
+                    { name: 'Terms of Service', href: '/terms' },
+                    { name: 'Cookie Policy', href: '/cookies' },
+                    { name: 'Returns & Refunds', href: '/returns' },
+                    { name: 'Help Center', href: '/help' }
+                  ].map((item) => (
+                    <Link 
+                      key={item.name}
+                      href={item.href} 
                       className="block text-sm text-slate-500 hover:text-primary transition-colors"
                     >
-                      {item}
-                    </a>
+                      {item.name}
+                    </Link>
                   ))}
                 </nav>
               </div>
