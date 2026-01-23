@@ -120,7 +120,7 @@ const SellerDashboard = () => {
   ];
 
   const quickActions = [
-    { label: "Add Product", icon: <Plus className="w-5 h-5" />, href: "/account/seller/products/new", color: "bg-primary text-white" },
+    { label: "Add Product", icon: <Plus className="w-5 h-5" />, href: "/account/seller/products?action=add", color: "bg-primary text-white" },
     { label: "View Store", icon: <Store className="w-5 h-5" />, href: shop?._id ? `/shop/${shop._id}` : `/shop/my-shop`, color: "bg-white text-slate-700 border border-slate-200" },
     { label: "Settings", icon: <Settings className="w-5 h-5" />, href: "/account/seller/settings", color: "bg-white text-slate-700 border border-slate-200" },
   ];
@@ -356,7 +356,7 @@ const SellerDashboard = () => {
                     </div>
                     <h4 className="font-bold text-slate-900">No products yet</h4>
                     <p className="text-slate-500 text-sm mt-2">Start adding products to see them here.</p>
-                    <Link href="/account/seller/products/new" className="mt-4 inline-block px-6 py-2 bg-primary text-white rounded-xl font-bold text-sm">
+                    <Link href="/account/seller/products?action=add" className="mt-4 inline-block px-6 py-2 bg-primary text-white rounded-xl font-bold text-sm">
                       Add Your First Product
                     </Link>
                   </div>

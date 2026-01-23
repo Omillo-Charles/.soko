@@ -355,7 +355,7 @@ const ShopPage = () => {
                   </button>
                 ) : (
                   <Link 
-                    href="/account/seller/products/new"
+                    href="/account/seller/products?action=add"
                     className="mt-2 px-8 py-3.5 bg-primary text-white rounded-2xl text-sm font-bold shadow-xl shadow-primary/20 hover:bg-blue-700 transition-all"
                   >
                     Post a Product
@@ -634,7 +634,7 @@ const ShopPage = () => {
       {/* Floating Action Button for Sellers */}
       {isMounted && currentUser?.accountType === 'seller' && (
         <Link
-          href="/account/seller/products/new"
+          href="/account/seller/products?action=add"
           className={`fixed bottom-24 right-6 md:bottom-8 md:right-8 z-40 transition-all duration-300 transform ${
             showFab ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0 pointer-events-none'
           }`}
