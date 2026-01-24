@@ -84,7 +84,7 @@ const ShopPage = () => {
     return (popularShopsData || []).map((s: any) => ({
       id: s._id || s.id || `shop-${Math.random()}`,
       name: s.name || "Unknown Shop",
-      handle: `@${(s.name || "shop").toLowerCase().replace(/\s+/g, "_")}`,
+      handle: s.username ? `@${s.username}` : null,
       avatar: s.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${s.name || "shop"}`,
       followers: s.followersCount || s.followers?.length || 0,
       verified: s.isVerified || false,
@@ -125,7 +125,7 @@ const ShopPage = () => {
       vendor: {
         id: p.shop?._id || p.shop?.id || `vendor-${Math.random()}`,
         name: p.shop?.name || "Unknown Shop",
-        handle: `@${p.shop?.name?.toLowerCase().replace(/\s+/g, "_") || "shop"}`,
+        handle: p.shop?.username ? `@${p.shop.username}` : null,
         avatar: p.shop?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.shop?.name || "shop"}`,
         verified: p.shop?.isVerified || false
       },
@@ -399,7 +399,9 @@ const ShopPage = () => {
                               {product.vendor.name}
                               {product.vendor.verified && <CheckCircle2 className="w-3.5 h-3.5 text-primary fill-primary/10" />}
                             </span>
-                            <span className="text-slate-500 text-xs truncate">{product.vendor.handle}</span>
+                            {product.vendor.handle && (
+                              <span className="text-slate-500 text-xs truncate">{product.vendor.handle}</span>
+                            )}
                             <span className="text-slate-400 text-xs shrink-0">· {product.time}</span>
                           </div>
                           <button 
@@ -521,7 +523,9 @@ const ShopPage = () => {
                           <p className="text-sm font-black text-slate-900 truncate">{vendor.name}</p>
                           {vendor.verified && <CheckCircle2 className="w-3 h-3 text-primary fill-primary/10" />}
                         </div>
-                        <p className="text-[11px] font-bold text-slate-400 truncate">{vendor.handle}</p>
+                        {vendor.handle && (
+                          <p className="text-[11px] font-bold text-slate-400 truncate">{vendor.handle}</p>
+                        )}
                         <div className="flex items-center gap-2 mt-0.5">
                           <p className="text-[10px] font-bold text-slate-500">{vendor.followers} followers</p>
                           <span className="text-slate-300 text-[8px]">·</span>

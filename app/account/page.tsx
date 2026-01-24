@@ -24,6 +24,7 @@ import {
 import { useUser } from "@/hooks/useUser";
 import { toast } from "sonner";
 import LogoutConfirmation from "@/components/LogoutConfirmation";
+import { RegisterShopModal } from "@/components/RegisterShopModal";
 
 const AccountPage = () => {
   const router = useRouter();
@@ -32,6 +33,7 @@ const AccountPage = () => {
   const [accountType, setAccountType] = useState<"buyer" | "seller">("buyer");
   const [isLoading, setIsLoading] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -92,8 +94,9 @@ const AccountPage = () => {
           // Shop exists, go to dashboard
           window.location.href = "/account/seller";
         } else {
-          // No shop, go to registration
-          window.location.href = "/account/seller/register-shop";
+          // No shop, show registration modal
+          setIsLoading(false);
+          setShowRegisterModal(true);
         }
       } catch (err) {
         console.error("Error checking shop:", err);
@@ -129,6 +132,14 @@ const AccountPage = () => {
           isOpen={showLogoutConfirm} 
           onClose={() => setShowLogoutConfirm(false)} 
           onConfirm={confirmLogout} 
+        />
+        <RegisterShopModal
+          isOpen={showRegisterModal}
+          onClose={() => setShowRegisterModal(false)}
+          onSuccess={() => {
+            setShowRegisterModal(false);
+            window.location.href = "/account/seller";
+          }}
         />
         {/* Header Section */}
         <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-100 mb-8">

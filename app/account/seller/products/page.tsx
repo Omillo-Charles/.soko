@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { categories as allCategories } from "@/constants/categories";
+import { RegisterShopModal } from "@/components/RegisterShopModal";
 
 const categories = allCategories.filter(c => c.value !== 'all');
 
@@ -39,6 +40,7 @@ const SellerProductsPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [shop, setShop] = useState<any>(null);
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
 
   // Create Modal State
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -79,7 +81,8 @@ const SellerProductsPage = () => {
       if (shopData.success && shopData.data) {
         setShop(shopData.data);
       } else {
-        router.push("/account/seller/register-shop");
+        setShowRegisterModal(true);
+        setIsLoading(false);
         return;
       }
 
@@ -239,7 +242,12 @@ const SellerProductsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-32 lg:pb-20">
+    <div className="min-h-screen bg-slate-50 pb-24 lg:pb-12">
+      <RegisterShopModal 
+        isOpen={showRegisterModal}
+        onClose={() => router.push("/account")}
+        onSuccess={() => window.location.reload()}
+      />
       {/* Header */}
       <div className="bg-white border-b border-slate-100 sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

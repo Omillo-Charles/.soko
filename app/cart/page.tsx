@@ -115,6 +115,11 @@ const CartPage = () => {
                           <span className="text-[10px] font-black text-primary uppercase tracking-widest truncate">
                             {item.product.shop?.name || "Official Store"}
                           </span>
+                          {item.product.shop?.username && (
+                            <span className="text-[9px] font-bold text-slate-400">
+                              @{item.product.shop.username}
+                            </span>
+                          )}
                         </div>
                         <h3 
                           onClick={() => router.push(`/shop/product/${item.product._id}`)}

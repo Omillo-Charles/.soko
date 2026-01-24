@@ -148,12 +148,19 @@ const ProductDetailsPage = () => {
           <div className="flex flex-col">
             <div className="mb-8">
               <div className="flex items-center gap-3 mb-4">
-                <Link 
-                  href={`/shop/${product.shop?._id}`}
-                  className="px-4 py-1.5 bg-primary/10 text-primary text-xs font-black rounded-full uppercase tracking-wider hover:bg-primary/20 transition-colors"
-                >
-                  {product.shop?.name || "Official Store"}
-                </Link>
+                <div className="flex flex-col">
+                  <Link 
+                    href={`/shop/${product.shop?._id}`}
+                    className="px-4 py-1.5 bg-primary/10 text-primary text-xs font-black rounded-full uppercase tracking-wider hover:bg-primary/20 transition-colors inline-block w-fit"
+                  >
+                    {product.shop?.name || "Official Store"}
+                  </Link>
+                  {product.shop?.username && (
+                    <span className="text-[10px] font-bold text-slate-400 mt-1 ml-1">
+                      @{product.shop.username}
+                    </span>
+                  )}
+                </div>
                 {(product.rating > 0 || product.reviewsCount > 0) && (
                   <div className="flex items-center gap-1 text-amber-500">
                     <Star className="w-4 h-4 fill-current" />

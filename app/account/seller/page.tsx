@@ -25,6 +25,7 @@ import { useUser } from "@/hooks/useUser";
 import { useMyShop } from "@/hooks/useShop";
 import { useMyProducts } from "@/hooks/useProducts";
 import LogoutConfirmation from "@/components/LogoutConfirmation";
+import { RegisterShopModal } from "@/components/RegisterShopModal";
 
 const SellerDashboard = () => {
   const router = useRouter();
@@ -35,6 +36,7 @@ const SellerDashboard = () => {
   const [accountType, setAccountType] = useState<"seller" | "buyer">("seller");
   const [isMobile, setIsMobile] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -50,7 +52,7 @@ const SellerDashboard = () => {
     }
 
     if (!isShopLoading && !shop && !shopError) {
-      router.push("/account/seller/register-shop");
+      setShowRegisterModal(true);
     }
   }, [user, isUserLoading, shop, isShopLoading, shopError, router]);
 
@@ -126,13 +128,19 @@ const SellerDashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col lg:flex-row">
+    <div className="min-h-screen bg-slate-50 pb-24 lg:pb-0 lg:flex">
+      <RegisterShopModal 
+        isOpen={showRegisterModal}
+        onClose={() => router.push("/account")}
+        onSuccess={() => window.location.reload()}
+      />
       <LogoutConfirmation 
         isOpen={showLogoutConfirm} 
         onClose={() => setShowLogoutConfirm(false)} 
         onConfirm={confirmLogout} 
       />
-      {/* Mobile Header */}
+      
+      {/* Mobile Top Header */}
       <div className="lg:hidden bg-white px-4 py-3 border-b border-slate-100 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
@@ -228,7 +236,7 @@ const SellerDashboard = () => {
           </div>
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
             {stats.map((stat, idx) => (
               <div key={idx} className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-md transition-all">
                 <div className="flex items-center justify-between mb-4">
@@ -246,20 +254,35 @@ const SellerDashboard = () => {
           </div>
 
           {/* Shop Profile Card - Full Width */}
-          <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden flex flex-col md:flex-row">
-            <div className="w-full md:w-1/3 h-48 md:h-auto bg-gradient-to-br from-primary to-indigo-600 relative shrink-0">
-              <div className="absolute -bottom-8 left-8 md:bottom-auto md:top-1/2 md:-translate-y-1/2 md:-right-10 md:left-auto">
-                <div className="w-24 h-24 bg-white rounded-3xl p-1 shadow-2xl">
-                  <div className="w-full h-full bg-slate-50 rounded-2xl flex items-center justify-center">
-                    <Store className="w-12 h-12 text-slate-300" />
+          <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden flex flex-col md:flex-row">
+            <div className="w-full md:w-1/3 h-48 md:h-auto bg-slate-100 relative shrink-0">
+              {shop?.banner ? (
+                <img src={shop.banner} alt="Shop Banner" className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-br from-primary to-indigo-600" />
+              )}
+              
+              <div className="absolute -bottom-10 left-8 md:bottom-auto md:top-1/2 md:-translate-y-1/2 md:-right-12 md:left-auto">
+                <div className="w-24 h-24 bg-white rounded-[2rem] p-1.5 shadow-2xl relative z-10">
+                  <div className="w-full h-full bg-slate-50 rounded-[1.5rem] flex items-center justify-center overflow-hidden">
+                    {shop?.avatar ? (
+                      <img src={shop.avatar} alt="Shop Logo" className="w-full h-full object-cover" />
+                    ) : (
+                      <Store className="w-10 h-10 text-slate-300" />
+                    )}
                   </div>
                 </div>
               </div>
             </div>
-            <div className="flex-1 p-8 pt-12 md:pt-8 md:pl-16 grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="flex-1 p-8 pt-14 md:pt-8 md:pl-20 grid grid-cols-1 xl:grid-cols-2 gap-8">
               <div>
-                <h3 className="font-bold text-slate-900 text-2xl">{isMounted ? (shop?.name || user?.name + "'s Shop") : "Your Shop"}</h3>
-                <p className="text-slate-500 font-medium mt-1">Status: <span className="text-emerald-600 font-bold">{shop?.isVerified ? "Verified" : "Active"}</span></p>
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className="font-black text-slate-900 text-2xl tracking-tight">{isMounted ? (shop?.name || user?.name + "'s Shop") : "Your Shop"}</h3>
+                  {shop?.username && (
+                    <span className="text-xs font-bold text-slate-400">@{shop.username}</span>
+                  )}
+                </div>
+                <p className="text-slate-500 font-medium text-sm">Status: <span className="text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-lg text-xs">{shop?.isVerified ? "Verified" : "Active"}</span></p>
                 
                 <div className="mt-6 space-y-3">
                   <div className="flex items-center gap-3 text-slate-600">
@@ -317,7 +340,7 @@ const SellerDashboard = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
             {/* Recent Orders */}
             <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden">
               <div className="p-8 border-b border-slate-50 flex items-center justify-between">

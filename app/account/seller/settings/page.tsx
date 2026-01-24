@@ -24,8 +24,10 @@ import {
   CheckCircle2,
   Info
 } from "lucide-react";
+import { toast } from "sonner";
 import { useUser } from "@/hooks/useUser";
 import LogoutConfirmation from "@/components/LogoutConfirmation";
+import { RegisterShopModal } from "@/components/RegisterShopModal";
 
 const SellerSettingsPage = () => {
   const router = useRouter();
@@ -37,9 +39,11 @@ const SellerSettingsPage = () => {
   const [isDeleting, setIsDeleting] = useState<"shop" | "account" | null>(null);
   const [activeTab, setActiveTab] = useState<"profile" | "branding" | "danger">("profile");
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
   
   const [formData, setFormData] = useState({
     name: "",
+    username: "",
     description: "",
     address: "",
     phone: "",
@@ -51,6 +55,15 @@ const SellerSettingsPage = () => {
   const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string>("");
   const [bannerPreview, setBannerPreview] = useState<string>("");
+  const [usernameStatus, setUsernameStatus] = useState<{
+    loading: boolean;
+    available: boolean | null;
+    error: string | null;
+  }>({
+    loading: false,
+    available: null,
+    error: null
+  });
 
   useEffect(() => {
     const checkAuthAndShop = async () => {
@@ -80,6 +93,7 @@ const SellerSettingsPage = () => {
           setShop(shopData.data);
           setFormData({
             name: shopData.data.name || "",
+            username: shopData.data.username || "",
             description: shopData.data.description || "",
             address: shopData.data.address || "",
             phone: shopData.data.phone || "",
@@ -89,7 +103,7 @@ const SellerSettingsPage = () => {
           setAvatarPreview(shopData.data.avatar || "");
           setBannerPreview(shopData.data.banner || "");
         } else {
-          router.push("/account/seller/register-shop");
+          setShowRegisterModal(true);
         }
       } catch (e) {
         console.error("Settings Auth Error:", e);
@@ -101,6 +115,42 @@ const SellerSettingsPage = () => {
 
     checkAuthAndShop();
   }, [router]);
+
+  useEffect(() => {
+    const checkUsername = async () => {
+      if (!formData.username || formData.username === shop?.username) {
+        setUsernameStatus({ loading: false, available: null, error: null });
+        return;
+      }
+
+      if (formData.username.length < 3) {
+        setUsernameStatus({ loading: false, available: null, error: "Username too short" });
+        return;
+      }
+
+      if (!/^[a-zA-Z0-9_]+$/.test(formData.username)) {
+        setUsernameStatus({ loading: false, available: null, error: "Only letters, numbers and underscores" });
+        return;
+      }
+
+      setUsernameStatus(prev => ({ ...prev, loading: true }));
+      try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
+        const res = await fetch(`${apiUrl}/shops/check-username/${formData.username}`);
+        const data = await res.json();
+        setUsernameStatus({
+          loading: false,
+          available: data.available,
+          error: data.available ? null : "Username already taken"
+        });
+      } catch (e) {
+        setUsernameStatus({ loading: false, available: null, error: "Error checking availability" });
+      }
+    };
+
+    const timeoutId = setTimeout(checkUsername, 500);
+    return () => clearTimeout(timeoutId);
+  }, [formData.username, shop?.username]);
 
   const handleUpdateShop = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -127,13 +177,13 @@ const SellerSettingsPage = () => {
       const data = await response.json();
       if (data.success) {
         setShop(data.data);
-        alert("Shop settings updated successfully!");
+        toast.success("Shop settings updated successfully!");
       } else {
-        alert(data.message || "Failed to update shop settings");
+        toast.error(data.message || "Failed to update shop settings");
       }
     } catch (error) {
       console.error("Update Shop Error:", error);
-      alert("An error occurred. Please try again.");
+      toast.error("An error occurred. Please try again.");
     } finally {
       setIsUpdating(false);
     }
@@ -175,7 +225,7 @@ const SellerSettingsPage = () => {
 
       // If no new files, don't send anything
       if (!avatarFile && !bannerFile) {
-        alert("Please select a new image to upload.");
+        toast.info("Please select a new image to upload.");
         setIsUpdating(false);
         return;
       }
@@ -219,16 +269,16 @@ const SellerSettingsPage = () => {
         setShop(data.data);
         setAvatarFile(null);
         setBannerFile(null);
-        alert("Shop branding updated successfully!");
+        toast.success("Shop branding updated successfully!");
       } else {
-        alert(data.message || "Failed to update branding");
+        toast.error(data.message || "Failed to update branding");
       }
     } catch (error: any) {
       console.error("Update Branding Error:", error);
       if (error.name === 'AbortError') {
-        alert("The upload took too long and was cancelled. Please try with a smaller image or check your connection.");
+        toast.error("The upload took too long and was cancelled. Please try with a smaller image or check your connection.");
       } else {
-        alert(error.message || "An error occurred. Please try again.");
+        toast.error(error.message || "An error occurred. Please try again.");
       }
     } finally {
       setIsUpdating(false);
@@ -238,7 +288,7 @@ const SellerSettingsPage = () => {
   const handleDeleteShop = async () => {
     const confirmName = prompt(`To delete your shop, please type your shop name: "${shop.name}"`);
     if (confirmName !== shop.name) {
-      if (confirmName !== null) alert("Shop name mismatch. Deletion cancelled.");
+      if (confirmName !== null) toast.error("Shop name mismatch. Deletion cancelled.");
       return;
     }
 
@@ -259,14 +309,14 @@ const SellerSettingsPage = () => {
         userData.accountType = "buyer";
         localStorage.setItem("user", JSON.stringify(userData));
         
-        alert("Shop deleted successfully. You have been switched back to a buyer account.");
+        toast.success("Shop deleted successfully. You have been switched back to a buyer account.");
         router.push("/account");
       } else {
-        alert(data.message || "Failed to delete shop");
+        toast.error(data.message || "Failed to delete shop");
       }
     } catch (error) {
       console.error("Delete Shop Error:", error);
-      alert("An error occurred. Please try again.");
+      toast.error("An error occurred. Please try again.");
     } finally {
       setIsDeleting(null);
     }
@@ -289,16 +339,15 @@ const SellerSettingsPage = () => {
 
       const data = await response.json();
       if (data.success) {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("user");
-        alert("Account deleted permanently. We're sorry to see you go.");
+        toast.success("Account deleted permanently. We're sorry to see you go.");
+        logout();
         router.push("/");
       } else {
-        alert(data.message || "Failed to delete account");
+        toast.error(data.message || "Failed to delete account");
       }
     } catch (error) {
       console.error("Delete Account Error:", error);
-      alert("An error occurred. Please try again.");
+      toast.error("An error occurred. Please try again.");
     } finally {
       setIsDeleting(null);
     }
@@ -323,6 +372,11 @@ const SellerSettingsPage = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col lg:flex-row">
+      <RegisterShopModal 
+        isOpen={showRegisterModal}
+        onClose={() => router.push("/account")}
+        onSuccess={() => window.location.reload()}
+      />
       <LogoutConfirmation 
         isOpen={showLogoutConfirm} 
         onClose={() => setShowLogoutConfirm(false)} 
@@ -422,6 +476,34 @@ const SellerSettingsPage = () => {
                       placeholder="Your Shop Name"
                       required
                     />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Shop Username (Handle)</label>
+                    <div className="relative">
+                      <span className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 font-bold">@</span>
+                      <input 
+                        type="text" 
+                        value={formData.username}
+                        onChange={(e) => setFormData({...formData, username: e.target.value.toLowerCase()})}
+                        className={`w-full pl-10 pr-5 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 transition-all font-bold text-slate-900 ${
+                          usernameStatus.error ? 'focus:ring-red-500/20 text-red-600' : 
+                          usernameStatus.available ? 'focus:ring-emerald-500/20 text-emerald-600' : 
+                          'focus:ring-primary/20'
+                        }`}
+                        placeholder="adidas"
+                      />
+                    </div>
+                    {formData.username && (
+                      <div className="flex items-center gap-2 ml-1">
+                        {usernameStatus.loading ? (
+                          <Loader2 className="w-3 h-3 text-slate-400 animate-spin" />
+                        ) : usernameStatus.error ? (
+                          <p className="text-[10px] font-bold text-red-500 uppercase">{usernameStatus.error}</p>
+                        ) : usernameStatus.available ? (
+                          <p className="text-[10px] font-bold text-emerald-500 uppercase">Username is available</p>
+                        ) : null}
+                      </div>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Category</label>

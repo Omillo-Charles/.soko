@@ -170,7 +170,7 @@ const BrandsPage = () => {
                         </h3>
                         {shop.isVerified && <CheckCircle2 className="w-4 h-4 text-primary fill-primary/10 shrink-0" />}
                       </div>
-                      <p className="text-xs font-bold text-slate-400">@{shop.name.toLowerCase().replace(/\s+/g, "_")}</p>
+                      <p className="text-xs font-bold text-slate-400">{shop.username ? `@${shop.username}` : `@${shop.name.toLowerCase().replace(/\s+/g, "_")}`}</p>
                     </div>
                   </div>
 

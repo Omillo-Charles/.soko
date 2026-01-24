@@ -72,7 +72,7 @@ const ShopProfilePage = () => {
     return (popularShopsData || []).map((s: any) => ({
       id: String(s._id || s.id || `shop-${Math.random()}`),
       name: String(s.name || "Unknown Shop"),
-      handle: `@${String(s.name || "shop").toLowerCase().replace(/\s+/g, "_")}`,
+      handle: s.username ? `@${s.username}` : `@${String(s.name || "shop").toLowerCase().replace(/\s+/g, "_")}`,
       avatar: s.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${s.name || "shop"}`,
       followers: Number(s.followersCount || s.followers?.length || 0),
       verified: Boolean(s.isVerified || false)
@@ -260,7 +260,7 @@ const ShopProfilePage = () => {
                   {shop.isVerified && <CheckCircle2 className="w-5 h-5 text-primary fill-primary/10" />}
                 </div>
                 <div className="flex items-center gap-3">
-                  <p className="text-sm font-bold text-slate-500">@{shop.name.toLowerCase().replace(/\s+/g, "_")}</p>
+                  <p className="text-sm font-bold text-slate-500">{shop.username ? `@${shop.username}` : `@${shop.name.toLowerCase().replace(/\s+/g, "_")}`}</p>
                   <div className="w-1 h-1 rounded-full bg-slate-300" />
                   <button 
                     onClick={() => setActiveSection('Followers')}
@@ -329,7 +329,7 @@ const ShopProfilePage = () => {
                               {shop.name}
                               {shop.isVerified && <CheckCircle2 className="w-3.5 h-3.5 text-primary fill-primary/10" />}
                             </span>
-                            <span className="text-slate-500 text-xs truncate">@{shop.name.toLowerCase().replace(/\s+/g, "_")}</span>
+                            <span className="text-slate-500 text-xs truncate">{shop.username ? `@${shop.username}` : `@${shop.name.toLowerCase().replace(/\s+/g, "_")}`}</span>
                           </div>
 
                           <p className="text-slate-800 text-[13px] leading-relaxed mb-3 whitespace-pre-wrap">
@@ -435,8 +435,8 @@ const ShopProfilePage = () => {
                           />
                         </div>
                         <div>
-                          <p className="font-black text-slate-900 text-sm">{follower.name || 'Unknown User'}</p>
-                          <p className="text-xs font-bold text-slate-400">@{ (follower.name || 'user').toLowerCase().replace(/\s+/g, "_")}</p>
+                          <p className="text-sm font-black text-slate-900 leading-none mb-1">{follower.name}</p>
+                          <p className="text-xs font-bold text-slate-400">{follower.username ? `@${follower.username}` : `@${(follower.name || 'user').toLowerCase().replace(/\s+/g, "_")}`}</p>
                         </div>
                       </div>
                     </div>
@@ -478,7 +478,7 @@ const ShopProfilePage = () => {
                             <p className="font-black text-slate-900 text-sm">{followedShop.name || 'Unknown Shop'}</p>
                             {followedShop.isVerified && <CheckCircle2 className="w-3 h-3 text-primary fill-primary/10" />}
                           </div>
-                          <p className="text-xs font-bold text-slate-400">@{ (followedShop.name || 'shop').toLowerCase().replace(/\s+/g, "_")}</p>
+                          <p className="text-xs font-bold text-slate-400">{followedShop.username ? `@${followedShop.username}` : `@${(followedShop.name || 'shop').toLowerCase().replace(/\s+/g, "_")}`}</p>
                         </div>
                       </div>
                       <button className="px-4 py-1.5 bg-slate-100 text-slate-900 rounded-full text-xs font-black hover:bg-slate-200 transition-all">
