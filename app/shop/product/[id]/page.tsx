@@ -59,9 +59,9 @@ const ProductDetailsPage = () => {
   }, [id]);
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-UG', {
+    return new Intl.NumberFormat('en-KE', {
       style: 'currency',
-      currency: 'UGX',
+      currency: 'KES',
       maximumFractionDigits: 0
     }).format(price);
   };
@@ -105,175 +105,177 @@ const ProductDetailsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-20">
+    <div className="min-h-screen bg-white pb-20">
       {/* Header/Navigation */}
-      <div className="bg-white border-b border-slate-100 sticky top-[70px] md:top-[128px] z-30">
-        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div className="bg-white/80 backdrop-blur-md border-b border-slate-50 sticky top-[70px] md:top-[128px] z-30">
+        <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
           <button 
             onClick={() => router.back()}
-            className="p-2 hover:bg-slate-50 rounded-full transition-colors"
+            className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors text-sm font-medium group"
           >
-            <ChevronLeft className="w-6 h-6 text-slate-600" />
+            <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            <span>Back</span>
           </button>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
             <button 
               onClick={handleWishlistToggle}
-              className={`p-2 rounded-full transition-colors ${
-                isInWishlist(product._id) ? 'bg-pink-50 text-pink-500' : 'hover:bg-slate-50 text-slate-400'
+              className={`transition-colors ${
+                isInWishlist(product._id) ? 'text-pink-500' : 'text-slate-300 hover:text-slate-600'
               }`}
             >
-              <Heart className={`w-6 h-6 ${isInWishlist(product._id) ? 'fill-current' : ''}`} />
+              <Heart className={`w-5 h-5 ${isInWishlist(product._id) ? 'fill-current' : ''}`} />
             </button>
-            <button className="p-2 hover:bg-slate-50 rounded-full transition-colors text-slate-400">
-              <Share2 className="w-6 h-6" />
+            <button className="text-slate-300 hover:text-slate-600 transition-colors">
+              <Share2 className="w-5 h-5" />
             </button>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Image Gallery */}
-          <div className="space-y-4">
-            <div className="aspect-square rounded-[3rem] overflow-hidden bg-white border border-slate-100 shadow-sm relative group">
+      <div className="max-w-5xl mx-auto px-6 py-8 md:py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 xl:gap-16 items-start">
+          {/* Image Section */}
+          <div className="relative">
+            <div className="aspect-square rounded-2xl overflow-hidden bg-slate-50">
               <img 
                 src={product.image} 
                 alt={product.name}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                className="w-full h-full object-cover"
               />
             </div>
           </div>
 
-          {/* Product Info */}
+          {/* Info Section */}
           <div className="flex flex-col">
-            <div className="mb-8">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="flex flex-col">
-                  <Link 
-                    href={`/shop/${product.shop?._id}`}
-                    className="px-4 py-1.5 bg-primary/10 text-primary text-xs font-black rounded-full uppercase tracking-wider hover:bg-primary/20 transition-colors inline-block w-fit"
-                  >
-                    {product.shop?.name || "Official Store"}
-                  </Link>
-                  {product.shop?.username && (
-                    <span className="text-[10px] font-bold text-slate-400 mt-1 ml-1">
-                      @{product.shop.username}
-                    </span>
-                  )}
-                </div>
-                {(product.rating > 0 || product.reviewsCount > 0) && (
-                  <div className="flex items-center gap-1 text-amber-500">
-                    <Star className="w-4 h-4 fill-current" />
-                    <span className="text-sm font-bold">{product.rating || 0}</span>
-                    <span className="text-slate-400 font-medium">({product.reviewsCount || 0} reviews)</span>
+            <div className="space-y-6">
+              {/* Vendor & Meta */}
+              <div className="flex items-center justify-between">
+                <Link 
+                  href={`/shop/${product.shop?._id}`}
+                  className="group flex items-center gap-2"
+                >
+                  <div className="w-8 h-8 rounded-full bg-slate-100 overflow-hidden border border-slate-50">
+                    <img 
+                      src={product.shop?.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${product.shop?.name}`} 
+                      className="w-full h-full object-cover" 
+                      alt="" 
+                    />
                   </div>
-                )}
-                {(product.rating > 0 || product.reviewsCount > 0) && <div className="w-1 h-1 bg-slate-300 rounded-full"></div>}
-                <div className="flex items-center gap-1 text-pink-500">
-                  <Heart className="w-4 h-4 fill-current" />
-                  <span className="text-sm font-bold">{product.likesCount || 0}</span>
-                  <span className="text-slate-400 font-medium text-xs">likes</span>
+                  <div className="text-sm font-bold text-slate-900 group-hover:text-primary transition-colors flex items-center gap-1">
+                    {product.shop?.name || "Official Store"}
+                    {product.shop?.isVerified && <CheckCircle2 className="w-3 h-3 text-primary fill-primary/10" />}
+                  </div>
+                </Link>
+
+                <div className="flex items-center gap-3">
+                  {(product.rating > 0) && (
+                    <div className="flex items-center gap-1 text-amber-500">
+                      <Star className="w-3.5 h-3.5 fill-current" />
+                      <span className="text-xs font-bold">{product.rating}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-1 text-slate-400">
+                    <Heart className="w-3.5 h-3.5" />
+                    <span className="text-xs font-medium">{product.likesCount || 0}</span>
+                  </div>
                 </div>
-              </div>
-              
-              <h1 className="text-4xl lg:text-5xl font-black text-slate-900 leading-tight mb-4">
-                {product.name}
-              </h1>
-              
-              <div className="flex items-baseline gap-4 mb-6">
-                <span className="text-3xl font-black text-primary">
-                  {formatPrice(product.price)}
-                </span>
               </div>
 
-              <p className="text-slate-500 font-medium leading-relaxed text-lg mb-8">
+              {/* Title & Price */}
+              <div className="space-y-2">
+                <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight leading-tight">
+                  {product.name}
+                </h1>
+                <div className="text-xl font-bold text-primary">
+                  {formatPrice(product.price)}
+                </div>
+              </div>
+
+              {/* Description Short */}
+              <p className="text-slate-500 leading-relaxed text-sm font-medium">
                 {product.description}
               </p>
 
-              {/* Quantity Selector */}
-              <div className="flex items-center gap-6 mb-10">
-                <div className="flex items-center bg-white border border-slate-100 rounded-2xl p-1 shadow-sm">
-                  <button 
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="p-3 hover:bg-slate-50 rounded-xl transition-colors"
-                  >
-                    <Minus className="w-5 h-5 text-slate-600" />
-                  </button>
-                  <span className="w-12 text-center font-black text-slate-900 text-lg">{quantity}</span>
-                  <button 
-                    onClick={() => setQuantity(quantity + 1)}
-                    className="p-3 hover:bg-slate-50 rounded-xl transition-colors"
-                  >
-                    <Plus className="w-5 h-5 text-slate-600" />
-                  </button>
+              {/* Selection Controls */}
+              <div className="pt-2 space-y-4">
+                <div className="flex items-center justify-between border-y border-slate-50 py-4">
+                  <div className="text-xs font-bold text-slate-900 uppercase tracking-wider">Quantity</div>
+                  <div className="flex items-center bg-slate-50 rounded-lg p-0.5">
+                    <button 
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      className="p-1.5 hover:bg-white hover:shadow-sm rounded-md transition-all"
+                    >
+                      <Minus className="w-3.5 h-3.5 text-slate-600" />
+                    </button>
+                    <span className="w-8 text-center text-sm font-bold text-slate-900">{quantity}</span>
+                    <button 
+                      onClick={() => setQuantity(quantity + 1)}
+                      className="p-1.5 hover:bg-white hover:shadow-sm rounded-md transition-all"
+                    >
+                      <Plus className="w-3.5 h-3.5 text-slate-600" />
+                    </button>
+                  </div>
                 </div>
-                <div className="text-slate-400 font-bold">
-                  Stock: <span className="text-primary">{product.stock || 0} items</span> available
-                </div>
-              </div>
 
-              {/* Action Buttons */}
-              <div className="flex gap-4">
-                <button 
-                  onClick={() => addToCart(product._id, quantity)}
-                  className="flex-1 bg-slate-900 text-white h-16 rounded-[2rem] font-black text-lg flex items-center justify-center gap-3 hover:bg-primary transition-all shadow-xl shadow-slate-900/10 hover:shadow-primary/20"
-                >
-                  <ShoppingCart className="w-6 h-6" />
-                  Add to Cart
-                </button>
-                <button 
-                  onClick={handleWishlistToggle}
-                  className={`w-16 h-16 rounded-[2rem] flex items-center justify-center transition-all border ${
-                    isInWishlist(product._id) 
-                      ? 'bg-pink-50 border-pink-100 text-pink-500 shadow-lg shadow-pink-500/10' 
-                      : 'bg-white border-slate-100 text-slate-400 hover:border-pink-200 hover:text-pink-500'
-                  }`}
-                >
-                  <Heart className={`w-7 h-7 ${isInWishlist(product._id) ? 'fill-current' : ''}`} />
-                </button>
+                {/* Main Action */}
+                <div className="flex gap-3">
+                  <button 
+                    onClick={() => addToCart(product._id, quantity)}
+                    className="flex-1 bg-slate-900 text-white h-12 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-primary transition-all active:scale-[0.98]"
+                  >
+                    <ShoppingCart className="w-4 h-4" />
+                    Add to Cart
+                  </button>
+                  <button 
+                    onClick={handleWishlistToggle}
+                    className={`w-12 h-12 rounded-xl flex items-center justify-center border transition-all ${
+                      isInWishlist(product._id) 
+                        ? 'bg-pink-50 border-pink-100 text-pink-500' 
+                        : 'bg-white border-slate-100 text-slate-300 hover:border-slate-200 hover:text-slate-600'
+                    }`}
+                  >
+                    <Heart className={`w-4 h-4 ${isInWishlist(product._id) ? 'fill-current' : ''}`} />
+                  </button>
+                </div>
+
+                <div className="flex items-center justify-center gap-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest pt-1">
+                  <div className="flex items-center gap-1">
+                    <ShieldCheck className="w-3 h-3" />
+                    Secure
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Truck className="w-3 h-3" />
+                    Fast Delivery
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Product Details/Content */}
-        <div className="mt-20">
-          <div className="flex border-b border-slate-100 mb-10 overflow-x-auto scrollbar-hide">
-            <button 
-              className="px-8 py-4 font-black text-sm uppercase tracking-widest whitespace-nowrap border-b-2 border-primary text-primary transition-all"
-            >
-              Description
-            </button>
-          </div>
-          
-          <div className="max-w-3xl">
-            <h3 className="text-2xl font-black text-slate-900 mb-6">Product Description</h3>
-            <p className="text-slate-500 font-medium leading-relaxed text-lg mb-8 whitespace-pre-wrap">
-              {product.content || product.description}
-            </p>
-          </div>
-        </div>
       </div>
 
-      {/* Sticky Bottom Bar for Mobile */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 p-4 z-40 flex gap-4">
-        <button 
-          onClick={() => addToCart(product._id, quantity)}
-          className="flex-1 bg-slate-900 text-white h-14 rounded-2xl font-black flex items-center justify-center gap-3 shadow-lg shadow-slate-900/10"
-        >
-          <ShoppingCart className="w-5 h-5" />
-          Add to Cart
-        </button>
-        <button 
-          onClick={handleWishlistToggle}
-          className={`w-14 h-14 rounded-2xl flex items-center justify-center border ${
-            isInWishlist(product._id) 
-              ? 'bg-pink-50 border-pink-100 text-pink-500' 
-              : 'bg-white border-slate-100 text-slate-400'
-          }`}
-        >
-          <Heart className={`w-6 h-6 ${isInWishlist(product._id) ? 'fill-current' : ''}`} />
-        </button>
+      {/* Mobile Sticky Action */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-slate-50 p-4 z-40">
+        <div className="max-w-6xl mx-auto flex gap-3">
+          <button 
+            onClick={() => addToCart(product._id, quantity)}
+            className="flex-1 bg-slate-900 text-white h-12 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-slate-900/10"
+          >
+            <ShoppingCart className="w-4 h-4" />
+            Add to Cart
+          </button>
+          <button 
+            onClick={handleWishlistToggle}
+            className={`w-12 h-12 rounded-xl flex items-center justify-center border transition-all ${
+              isInWishlist(product._id) 
+                ? 'bg-pink-50 border-pink-100 text-pink-500' 
+                : 'bg-white border-slate-100 text-slate-300'
+            }`}
+          >
+            <Heart className={`w-5 h-5 ${isInWishlist(product._id) ? 'fill-current' : ''}`} />
+          </button>
+        </div>
       </div>
     </div>
   );
