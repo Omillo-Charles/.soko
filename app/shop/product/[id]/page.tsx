@@ -20,6 +20,7 @@ import {
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
+import ProductRating from "@/components/ProductRating";
 
 const ProductDetailsPage = () => {
   const { id } = useParams();
@@ -195,6 +196,20 @@ const ProductDetailsPage = () => {
               <p className="text-slate-500 leading-relaxed text-sm font-medium">
                 {product.description}
               </p>
+
+              {/* Product Rating Interaction */}
+              <ProductRating 
+                productId={product._id} 
+                initialRating={product.rating}
+                initialReviewsCount={product.reviewsCount}
+                onRatingUpdate={(newRating, newCount) => {
+                  setProduct({
+                    ...product,
+                    rating: newRating,
+                    reviewsCount: newCount
+                  });
+                }}
+              />
 
               {/* Selection Controls */}
               <div className="pt-2 space-y-4">

@@ -29,6 +29,7 @@ import { useWishlist } from "@/context/WishlistContext";
 import { toast } from "sonner";
 import { useShop, useShopProducts, usePopularShops, useFollowShop, useShopLists, useMyShop } from "@/hooks/useShop";
 import { useUser } from "@/hooks/useUser";
+import RatingModal from "@/components/RatingModal";
 
 const ShopProfilePage = () => {
   const params = useParams();
@@ -41,6 +42,19 @@ const ShopProfilePage = () => {
   
   const [activeSection, setActiveSection] = useState('Products');
   const [isMounted, setIsMounted] = useState(false);
+
+  // Rating Modal State
+  const [ratingModal, setRatingModal] = useState<{
+    isOpen: boolean;
+    productId: string;
+    productName: string;
+    initialRating: number;
+  }>({
+    isOpen: false,
+    productId: "",
+    productName: "",
+    initialRating: 0
+  });
 
   useEffect(() => {
     setIsMounted(true);
@@ -62,7 +76,9 @@ const ShopProfilePage = () => {
       image: p.image || p.images?.[0] || null,
       likesCount: Number(p.likesCount || p.likes?.length || 0),
       commentsCount: Number(p.commentsCount || p.comments?.length || 0),
-      repostsCount: Number(p.repostsCount || 0)
+      repostsCount: Number(p.repostsCount || 0),
+      rating: Number(p.rating || 0),
+      reviewsCount: Number(p.reviewsCount || 0)
     }));
   }, [productsData]);
 
@@ -324,12 +340,31 @@ const ShopProfilePage = () => {
 
                         {/* Content Area */}
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-1.5 mb-1">
-                            <span className="text-sm font-black text-slate-900 truncate flex items-center gap-1">
-                              {shop.name}
-                              {shop.isVerified && <CheckCircle2 className="w-3.5 h-3.5 text-primary fill-primary/10" />}
-                            </span>
-                            <span className="text-slate-500 text-xs truncate">{shop.username ? `@${shop.username}` : `@${shop.name.toLowerCase().replace(/\s+/g, "_")}`}</span>
+                          <div className="flex items-center justify-between gap-2 mb-1">
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              <span className="text-sm font-black text-slate-900 truncate flex items-center gap-1">
+                                {shop.name}
+                                {shop.isVerified && <CheckCircle2 className="w-3.5 h-3.5 text-primary fill-primary/10" />}
+                              </span>
+                              <span className="text-slate-500 text-xs truncate">{shop.username ? `@${shop.username}` : `@${shop.name.toLowerCase().replace(/\s+/g, "_")}`}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <button 
+                                onClick={(e) => { 
+                                  e.stopPropagation(); 
+                                  setRatingModal({
+                                    isOpen: true,
+                                    productId: product._id,
+                                    productName: product.name,
+                                    initialRating: product.rating
+                                  });
+                                }}
+                                className="text-slate-300 hover:text-amber-500 p-1.5 rounded-full hover:bg-amber-50 transition-all"
+                                title="Rate Product"
+                              >
+                                <Star className="w-4 h-4" />
+                              </button>
+                            </div>
                           </div>
 
                           <p className="text-slate-800 text-[13px] leading-relaxed mb-3 whitespace-pre-wrap">
@@ -343,8 +378,14 @@ const ShopProfilePage = () => {
                                 alt={product.name} 
                                 className="w-full h-full object-cover group-hover/img:scale-[1.02] transition-transform duration-500" 
                               />
-                              <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl border border-slate-100 shadow-xl">
+                              <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl border border-slate-100 shadow-xl flex flex-col items-end">
                                 <span className="text-primary font-black text-sm">KES {product.price?.toLocaleString()}</span>
+                                {product.rating > 0 && (
+                                  <div className="flex items-center gap-1 mt-0.5">
+                                    <Star className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
+                                    <span className="text-[10px] font-black text-amber-600">{product.rating.toFixed(1)}</span>
+                                  </div>
+                                )}
                               </div>
                             </div>
                           )}
@@ -540,6 +581,18 @@ const ShopProfilePage = () => {
             )}
           </div>
         </main>
+
+        <RatingModal 
+          isOpen={ratingModal.isOpen}
+          onClose={() => setRatingModal(prev => ({ ...prev, isOpen: false }))}
+          productId={ratingModal.productId}
+          productName={ratingModal.productName}
+          initialRating={ratingModal.initialRating}
+          onRatingUpdate={() => {
+            // Refresh shop data or products
+            window.location.reload();
+          }}
+        />
 
         {/* Right Sidebar */}
         <div className="hidden lg:block w-[320px] shrink-0">

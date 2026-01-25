@@ -8,12 +8,25 @@ import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { useFeaturedProducts } from "@/hooks/useProducts";
+import RatingModal from "./RatingModal";
 
 const FeaturedProducts = () => {
   const router = useRouter();
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   
+  const [ratingModal, setRatingModal] = useState<{
+    isOpen: boolean;
+    productId: string;
+    productName: string;
+    initialRating: number;
+  }>({
+    isOpen: false,
+    productId: "",
+    productName: "",
+    initialRating: 0
+  });
+
   const { data: products = [], isLoading } = useFeaturedProducts(4);
 
 
@@ -61,24 +74,36 @@ const FeaturedProducts = () => {
                   <ShoppingCart className="w-4 h-4 text-slate-700" />
                 </button>
                 <button 
-                  onClick={async (e) => {
+                  onClick={(e) => {
                     e.stopPropagation();
-                    p._id && await toggleWishlist(p._id);
+                    if (p._id) {
+                      setRatingModal({
+                        isOpen: true,
+                        productId: p._id,
+                        productName: p.name || "Product",
+                        initialRating: p.rating || 0
+                      });
+                    }
                   }}
-                  className={`absolute top-2 right-2 bg-white/80 hover:bg-white rounded-full p-2 shadow transition-all hover:scale-110 z-10 ${
-                    p._id && isInWishlist(p._id) ? 'text-pink-500' : 'text-slate-700'
-                  }`}
-                  title={p._id && isInWishlist(p._id) ? "Remove from Wishlist" : "Add to Wishlist"}
+                  className="absolute top-2 right-2 bg-white/80 hover:bg-white rounded-full p-2 shadow transition-all hover:scale-110 z-10 text-amber-500"
+                  title="Rate Product"
                 >
-                  <Heart className={`w-4 h-4 ${p._id && isInWishlist(p._id) ? 'fill-current' : ''}`} />
+                  <Star className="w-4 h-4" />
                 </button>
               </div>
               <div className="p-3">
                 <div className="flex items-center gap-1 mb-1">
                   {[1, 2, 3, 4, 5].map((s) => (
-                    <Star key={s} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                    <Star 
+                      key={s} 
+                      className={`w-3 h-3 ${
+                        (p.rating || 0) >= s 
+                          ? "fill-yellow-400 text-yellow-400" 
+                          : "text-slate-200 fill-slate-100"
+                      }`} 
+                    />
                   ))}
-                  <span className="text-[10px] text-slate-400 ml-1">({p.rating || "4.5"})</span>
+                  <span className="text-[10px] text-slate-400 ml-1">({p.rating?.toFixed(1) || "0.0"})</span>
                 </div>
                 <h3 className="font-semibold text-slate-900 text-sm md:text-base line-clamp-1 group-hover:text-primary transition-colors cursor-pointer" onClick={() => p._id && router.push(`/shop/product/${p._id}`)}>
                   {p.name || "Untitled Product"}
@@ -95,6 +120,18 @@ const FeaturedProducts = () => {
           ))}
         </div>
       </div>
+
+      <RatingModal 
+        isOpen={ratingModal.isOpen}
+        onClose={() => setRatingModal(prev => ({ ...prev, isOpen: false }))}
+        productId={ratingModal.productId}
+        productName={ratingModal.productName}
+        initialRating={ratingModal.initialRating}
+        onRatingUpdate={() => {
+          // Re-fetch products to update the UI
+          window.location.reload();
+        }}
+      />
     </section>
   );
 };

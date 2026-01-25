@@ -12,7 +12,6 @@ import {
   Repeat2, 
   Heart, 
   Share2,
-  MoreHorizontal,
   TrendingUp,
   CheckCircle2,
   LayoutGrid,
@@ -32,6 +31,7 @@ import { toast } from "sonner";
 import { useProducts } from "@/hooks/useProducts";
 import { usePopularShops, useFollowShop, useMyShop } from "@/hooks/useShop";
 import { useUser } from "@/hooks/useUser";
+import RatingModal from "@/components/RatingModal";
 
 const ShopPage = () => {
   const router = useRouter();
@@ -51,6 +51,19 @@ const ShopPage = () => {
   const [isMounted, setIsMounted] = useState(false);
   const [showFab, setShowFab] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+
+  // Rating Modal State
+  const [ratingModal, setRatingModal] = useState<{
+    isOpen: boolean;
+    productId: string;
+    productName: string;
+    initialRating: number;
+  }>({
+    isOpen: false,
+    productId: "",
+    productName: "",
+    initialRating: 0
+  });
 
   useEffect(() => {
     setIsMounted(true);
@@ -130,6 +143,7 @@ const ShopPage = () => {
         verified: p.shop?.isVerified || false
       },
       content: p.description || p.content || "",
+      name: p.name || "Product",
       image: p.image,
       price: p.price?.toLocaleString() || "0",
       rating: p.rating || 0,
@@ -404,12 +418,23 @@ const ShopPage = () => {
                             )}
                             <span className="text-slate-400 text-xs shrink-0">· {product.time}</span>
                           </div>
-                          <button 
-                            onClick={(e) => { e.stopPropagation(); }}
-                            className="text-slate-400 hover:text-primary p-1 rounded-full hover:bg-primary/5 transition-all"
-                          >
-                            <MoreHorizontal className="w-4 h-4" />
-                          </button>
+                          <div className="flex items-center gap-1">
+                            <button 
+                              onClick={(e) => { 
+                                e.stopPropagation(); 
+                                setRatingModal({
+                                  isOpen: true,
+                                  productId: product.id,
+                                  productName: product.name,
+                                  initialRating: product.rating
+                                });
+                              }}
+                              className="text-slate-300 hover:text-amber-500 p-1.5 rounded-full hover:bg-amber-50 transition-all"
+                              title="Rate Product"
+                            >
+                              <Star className="w-4 h-4" />
+                            </button>
+                          </div>
                         </div>
 
                         {/* Product Content */}
@@ -425,8 +450,14 @@ const ShopPage = () => {
                               alt="Product" 
                               className="w-full h-full object-cover group-hover/img:scale-[1.02] transition-transform duration-500" 
                             />
-                            <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl border border-slate-100 shadow-xl shadow-slate-900/5">
+                            <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl border border-slate-100 shadow-xl shadow-slate-900/5 flex flex-col items-end">
                               <span className="text-primary font-black text-sm">KES {product.price}</span>
+                              {product.rating > 0 && (
+                                <div className="flex items-center gap-1 mt-0.5">
+                                  <Star className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
+                                  <span className="text-[10px] font-black text-amber-600">{product.rating.toFixed(1)}</span>
+                                </div>
+                              )}
                             </div>
                           </div>
                         )}
@@ -500,6 +531,18 @@ const ShopPage = () => {
             )}
           </div>
         </main>
+
+        <RatingModal 
+          isOpen={ratingModal.isOpen}
+          onClose={() => setRatingModal(prev => ({ ...prev, isOpen: false }))}
+          productId={ratingModal.productId}
+          productName={ratingModal.productName}
+          initialRating={ratingModal.initialRating}
+          onRatingUpdate={() => {
+            // Re-fetch products to update the UI
+            window.location.reload();
+          }}
+        />
 
         {/* Right Sidebar - Trending/Quick Links */}
         <div className="hidden lg:block w-[320px] shrink-0">
