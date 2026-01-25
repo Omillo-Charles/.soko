@@ -140,7 +140,7 @@ const CategoriesPage = () => {
   return (
     <div className="min-h-screen bg-slate-50/50 pb-20">
       {/* Header */}
-      <div className="bg-white border-b border-slate-100 sticky top-[70px] md:top-[128px] z-20">
+      <div className="sticky top-[100px] md:top-[128px] bg-white/80 backdrop-blur-md z-30 border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col gap-1">
             <h1 className="text-2xl font-black text-slate-900 tracking-tight">Explore Categories</h1>

@@ -32,6 +32,7 @@ import { useProducts } from "@/hooks/useProducts";
 import { usePopularShops, useFollowShop, useMyShop } from "@/hooks/useShop";
 import { useUser } from "@/hooks/useUser";
 import RatingModal from "@/components/RatingModal";
+import ShareModal from "@/components/ShareModal";
 
 const ShopPage = () => {
   const router = useRouter();
@@ -63,6 +64,16 @@ const ShopPage = () => {
     productId: "",
     productName: "",
     initialRating: 0
+  });
+
+  const [shareModal, setShareModal] = useState<{
+    isOpen: boolean;
+    url: string;
+    title: string;
+  }>({
+    isOpen: false,
+    url: "",
+    title: ""
   });
 
   useEffect(() => {
@@ -285,7 +296,7 @@ const ShopPage = () => {
         {/* Middle Feed - Products */}
         <main className="flex-1 min-w-0 border-x border-slate-100 pb-24 lg:pb-0">
           {/* Header - Twitter Style */}
-          <div className="sticky top-[70px] md:top-[128px] bg-white/80 backdrop-blur-md z-30 border-b border-slate-100">
+          <div className="sticky top-[100px] md:top-[128px] bg-white/80 backdrop-blur-md z-30 border-b border-slate-100">
             <div className="px-4 py-4">
               <h1 className="text-xl font-black text-slate-900">Explore</h1>
             </div>
@@ -515,7 +526,15 @@ const ShopPage = () => {
                           </button>
 
                           <button 
-                            onClick={(e) => { e.stopPropagation(); }}
+                            onClick={(e) => { 
+                              e.stopPropagation();
+                              const productUrl = `${window.location.origin}/shop/product/${product.id}`;
+                              setShareModal({
+                                isOpen: true,
+                                url: productUrl,
+                                title: product.name
+                              });
+                            }}
                             className="flex items-center gap-2 group transition-colors hover:text-slate-900"
                           >
                             <div className="p-2 rounded-full group-hover:bg-slate-100 transition-colors">
@@ -542,6 +561,13 @@ const ShopPage = () => {
             // Re-fetch products to update the UI
             window.location.reload();
           }}
+        />
+
+        <ShareModal 
+          isOpen={shareModal.isOpen}
+          onClose={() => setShareModal(prev => ({ ...prev, isOpen: false }))}
+          url={shareModal.url}
+          title={shareModal.title}
         />
 
         {/* Right Sidebar - Trending/Quick Links */}

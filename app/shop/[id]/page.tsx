@@ -30,6 +30,7 @@ import { toast } from "sonner";
 import { useShop, useShopProducts, usePopularShops, useFollowShop, useShopLists, useMyShop } from "@/hooks/useShop";
 import { useUser } from "@/hooks/useUser";
 import RatingModal from "@/components/RatingModal";
+import ShareModal from "@/components/ShareModal";
 
 const ShopProfilePage = () => {
   const params = useParams();
@@ -40,6 +41,16 @@ const ShopProfilePage = () => {
   const { user: currentUser } = useUser();
   const { data: myShop } = useMyShop();
   
+  const [shareModal, setShareModal] = useState<{
+    isOpen: boolean;
+    url: string;
+    title: string;
+  }>({
+    isOpen: false,
+    url: "",
+    title: ""
+  });
+
   const [activeSection, setActiveSection] = useState('Products');
   const [isMounted, setIsMounted] = useState(false);
 
@@ -203,7 +214,7 @@ const ShopProfilePage = () => {
        {/* Middle Feed - Products */}
         <main className="flex-1 min-w-0 border-x border-slate-100 pb-24 lg:pb-0">
           {/* Header - Profile Style */}
-          <div className="sticky top-[70px] md:top-[128px] bg-white/80 backdrop-blur-md z-30 border-b border-slate-100 px-4 py-4 flex items-center gap-4">
+          <div className="sticky top-[100px] md:top-[128px] bg-white/80 backdrop-blur-md z-30 border-b border-slate-100 px-4 py-4 flex items-center gap-4">
             <button onClick={() => router.back()} className="lg:hidden p-2 hover:bg-slate-100 rounded-full">
               <ChevronLeft className="w-5 h-5" />
             </button>
@@ -431,7 +442,18 @@ const ShopProfilePage = () => {
                               </div>
                               <span className="text-xs font-bold">Add to Cart</span>
                             </button>
-                            <button onClick={(e) => e.stopPropagation()} className="p-2 rounded-full hover:bg-primary/10 hover:text-primary transition-colors">
+                            <button 
+                              onClick={(e) => { 
+                                e.stopPropagation();
+                                const productUrl = `${window.location.origin}/shop/product/${product._id}`;
+                                setShareModal({
+                                  isOpen: true,
+                                  url: productUrl,
+                                  title: product.name
+                                });
+                              }}
+                              className="p-2 rounded-full hover:bg-primary/10 hover:text-primary transition-colors"
+                            >
                               <Share2 className="w-[18px] h-[18px]" />
                             </button>
                           </div>
@@ -592,6 +614,13 @@ const ShopProfilePage = () => {
             // Refresh shop data or products
             window.location.reload();
           }}
+        />
+
+        <ShareModal 
+          isOpen={shareModal.isOpen}
+          onClose={() => setShareModal(prev => ({ ...prev, isOpen: false }))}
+          url={shareModal.url}
+          title={shareModal.title}
         />
 
         {/* Right Sidebar */}

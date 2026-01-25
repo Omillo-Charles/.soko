@@ -24,7 +24,7 @@ const Navbar = () => {
   return (
     <>
       {/* Spacer to prevent content from hiding behind the fixed navbar */}
-      <div className="h-[70px] md:h-[128px]"></div>
+      <div className="h-[100px] md:h-[128px]"></div>
       
       <header 
         className="w-full flex flex-col shadow-sm fixed top-0 left-0 right-0 z-50 bg-white"

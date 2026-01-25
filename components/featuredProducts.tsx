@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ShoppingCart, Star, ChevronRight, Heart, Loader2 } from "lucide-react";
+import { ShoppingCart, Star, ChevronRight, Heart, Loader2, Share2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { useFeaturedProducts } from "@/hooks/useProducts";
 import RatingModal from "./RatingModal";
+import ShareModal from "./ShareModal";
 
 const FeaturedProducts = () => {
   const router = useRouter();
@@ -25,6 +26,16 @@ const FeaturedProducts = () => {
     productId: "",
     productName: "",
     initialRating: 0
+  });
+
+  const [shareModal, setShareModal] = useState<{
+    isOpen: boolean;
+    url: string;
+    title: string;
+  }>({
+    isOpen: false,
+    url: "",
+    title: ""
   });
 
   const { data: products = [], isLoading } = useFeaturedProducts(4);
@@ -77,6 +88,23 @@ const FeaturedProducts = () => {
                   onClick={(e) => {
                     e.stopPropagation();
                     if (p._id) {
+                      const productUrl = `${window.location.origin}/shop/product/${p._id}`;
+                      setShareModal({
+                        isOpen: true,
+                        url: productUrl,
+                        title: p.name || "Product"
+                      });
+                    }
+                  }}
+                  className="absolute bottom-2 left-2 bg-white/80 hover:bg-white rounded-full p-2 shadow transition-all hover:scale-110 z-10 text-slate-700"
+                  title="Share Product"
+                >
+                  <Share2 className="w-4 h-4" />
+                </button>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (p._id) {
                       setRatingModal({
                         isOpen: true,
                         productId: p._id,
@@ -122,18 +150,25 @@ const FeaturedProducts = () => {
       </div>
 
       <RatingModal 
-        isOpen={ratingModal.isOpen}
-        onClose={() => setRatingModal(prev => ({ ...prev, isOpen: false }))}
-        productId={ratingModal.productId}
-        productName={ratingModal.productName}
-        initialRating={ratingModal.initialRating}
-        onRatingUpdate={() => {
-          // Re-fetch products to update the UI
-          window.location.reload();
-        }}
-      />
-    </section>
-  );
-};
+          isOpen={ratingModal.isOpen}
+          onClose={() => setRatingModal(prev => ({ ...prev, isOpen: false }))}
+          productId={ratingModal.productId}
+          productName={ratingModal.productName}
+          initialRating={ratingModal.initialRating}
+          onRatingUpdate={() => {
+            // Re-fetch products to update the UI
+            window.location.reload();
+          }}
+        />
+
+        <ShareModal 
+          isOpen={shareModal.isOpen}
+          onClose={() => setShareModal(prev => ({ ...prev, isOpen: false }))}
+          url={shareModal.url}
+          title={shareModal.title}
+        />
+      </section>
+    );
+  };
 
 export default FeaturedProducts;

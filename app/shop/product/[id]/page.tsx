@@ -21,6 +21,7 @@ import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import ProductRating from "@/components/ProductRating";
+import ShareModal from "@/components/ShareModal";
 
 const ProductDetailsPage = () => {
   const { id } = useParams();
@@ -33,6 +34,7 @@ const ProductDetailsPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -108,7 +110,7 @@ const ProductDetailsPage = () => {
   return (
     <div className="min-h-screen bg-white pb-20">
       {/* Header/Navigation */}
-      <div className="bg-white/80 backdrop-blur-md border-b border-slate-50 sticky top-[70px] md:top-[128px] z-30">
+      <div className="bg-white/80 backdrop-blur-md border-b border-slate-50 sticky top-[100px] md:top-[128px] z-30">
         <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
           <button 
             onClick={() => router.back()}
@@ -126,7 +128,10 @@ const ProductDetailsPage = () => {
             >
               <Heart className={`w-5 h-5 ${isInWishlist(product._id) ? 'fill-current' : ''}`} />
             </button>
-            <button className="text-slate-300 hover:text-slate-600 transition-colors">
+            <button 
+              onClick={() => setIsShareModalOpen(true)}
+              className="text-slate-300 hover:text-slate-600 transition-colors"
+            >
               <Share2 className="w-5 h-5" />
             </button>
           </div>
@@ -292,6 +297,13 @@ const ProductDetailsPage = () => {
           </button>
         </div>
       </div>
+
+      <ShareModal 
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        url={typeof window !== "undefined" ? window.location.href : ""}
+        title={product.name}
+      />
     </div>
   );
 };
