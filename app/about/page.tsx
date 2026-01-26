@@ -172,7 +172,7 @@ const AboutPage = () => {
                   {[
                     { name: 'Shop', href: '/shop' },
                     { name: 'Careers', href: '/careers' },
-                    { name: 'Press', href: '/press' },
+                    { name: 'Help Center', href: '/help' },
                     { name: 'Contact', href: '/contact' }
                   ].map((item) => (
                     <Link 
