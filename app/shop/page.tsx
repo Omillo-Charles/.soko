@@ -646,9 +646,10 @@ const ShopPage = () => {
               <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Special Offers</h3>
               <div className="space-y-3 px-2">
                 {specialOffers.map((offer, index) => (
-                  <div 
+                  <Link 
                     key={offer.title} 
-                    className={`group cursor-pointer relative overflow-hidden rounded-2xl p-5 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl ${
+                    href="/deals"
+                    className={`group block relative overflow-hidden rounded-2xl p-5 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl ${
                       index === 0 
                         ? 'bg-primary shadow-blue-500/20' 
                         : 'bg-secondary shadow-orange-500/20'
@@ -665,7 +666,7 @@ const ShopPage = () => {
                     <div className="absolute right-3 bottom-3 text-5xl opacity-20 group-hover:scale-110 group-hover:opacity-30 transition-all duration-500 transform -rotate-12">
                       {offer.icon}
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -675,7 +676,11 @@ const ShopPage = () => {
               <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Flash Deals</h3>
               <div className="space-y-4 px-2">
                 {[1, 2].map((i) => (
-                  <div key={i} className="flex gap-3 group cursor-pointer">
+                  <Link 
+                    key={i} 
+                    href="/deals"
+                    className="flex gap-3 group cursor-pointer"
+                  >
                     <div className="w-16 h-16 rounded-xl bg-slate-50 overflow-hidden border border-slate-100 shrink-0">
                       <div className="w-full h-full bg-slate-200 animate-pulse"></div>
                     </div>
@@ -688,15 +693,27 @@ const ShopPage = () => {
                         <div className="h-full bg-primary rounded-full" style={{ width: i === 1 ? '75%' : '40%' }}></div>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>
 
             {/* Links */}
             <div className="px-4 py-4 border-t border-slate-50 flex flex-wrap gap-x-4 gap-y-2">
-              {['Terms', 'Privacy', 'Help', 'Cookies', 'About'].map(link => (
-                <button key={link} className="text-[11px] font-bold text-slate-400 hover:text-primary transition-colors">{link}</button>
+              {[
+                { label: 'Terms', href: '/terms' },
+                { label: 'Privacy', href: '/privacy' },
+                { label: 'Help', href: '/help' },
+                { label: 'Cookies', href: '/cookies' },
+                { label: 'About', href: '/about' }
+              ].map(link => (
+                <Link 
+                  key={link.label} 
+                  href={link.href} 
+                  className="text-[11px] font-bold text-slate-400 hover:text-primary transition-colors"
+                >
+                  {link.label}
+                </Link>
               ))}
               <p className="text-[11px] font-bold text-slate-300 w-full mt-2">© 2026 <span className="text-secondary">.</span>Soko Marketplace</p>
             </div>
