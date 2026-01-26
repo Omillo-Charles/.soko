@@ -33,6 +33,7 @@ import { usePopularShops, useFollowShop, useMyShop } from "@/hooks/useShop";
 import { useUser } from "@/hooks/useUser";
 import RatingModal from "@/components/RatingModal";
 import ShareModal from "@/components/ShareModal";
+import CommentModal from "@/components/CommentModal";
 
 const ShopPage = () => {
   const router = useRouter();
@@ -64,6 +65,16 @@ const ShopPage = () => {
     productId: "",
     productName: "",
     initialRating: 0
+  });
+
+  const [commentModal, setCommentModal] = useState<{
+    isOpen: boolean;
+    productId: string;
+    productName: string;
+  }>({
+    isOpen: false,
+    productId: "",
+    productName: ""
   });
 
   const [shareModal, setShareModal] = useState<{
@@ -476,7 +487,14 @@ const ShopPage = () => {
                         {/* Action Buttons: Twitter Style */}
                         <div className="flex items-center justify-between max-w-md text-slate-500 -ml-2">
                           <button 
-                            onClick={(e) => { e.stopPropagation(); }}
+                            onClick={(e) => { 
+                              e.stopPropagation();
+                              setCommentModal({
+                                isOpen: true,
+                                productId: product.id,
+                                productName: product.name
+                              });
+                            }}
                             className="flex items-center gap-0 group transition-colors hover:text-primary"
                           >
                             <div className="p-1.5 rounded-full group-hover:bg-primary/10 transition-colors">
@@ -568,6 +586,13 @@ const ShopPage = () => {
           onClose={() => setShareModal(prev => ({ ...prev, isOpen: false }))}
           url={shareModal.url}
           title={shareModal.title}
+        />
+
+        <CommentModal
+          isOpen={commentModal.isOpen}
+          onClose={() => setCommentModal(prev => ({ ...prev, isOpen: false }))}
+          productId={commentModal.productId}
+          productName={commentModal.productName}
         />
 
         {/* Right Sidebar - Trending/Quick Links */}

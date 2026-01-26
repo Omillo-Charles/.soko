@@ -15,13 +15,18 @@ import {
   Plus,
   Minus,
   CheckCircle2,
-  Info
+  Info,
+  Trash2,
+  MessageSquare as MessageIcon
 } from "lucide-react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
+import { useUser } from "@/hooks/useUser";
+import { useComments } from "@/hooks/useComments";
 import ProductRating from "@/components/ProductRating";
 import ShareModal from "@/components/ShareModal";
+import CommentModal from "@/components/CommentModal";
 
 const ProductDetailsPage = () => {
   const { id } = useParams();
@@ -35,6 +40,10 @@ const ProductDetailsPage = () => {
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
+
+  const { user } = useUser();
+  const { comments, isLoading: isCommentsLoading, deleteComment } = useComments(id as string);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -273,7 +282,107 @@ const ProductDetailsPage = () => {
           </div>
         </div>
 
+        {/* Comments Section */}
+        <div className="mt-20 border-t border-slate-100 pt-16">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+            <div>
+              <h2 className="text-2xl font-bold text-slate-900 mb-2 flex items-center gap-3">
+                Community Feedback
+                <span className="px-2.5 py-0.5 bg-slate-100 text-slate-500 rounded-full text-xs font-bold">
+                  {comments.length}
+                </span>
+              </h2>
+              <p className="text-slate-500 text-sm font-medium">
+                Hear what others are saying about this product
+              </p>
+            </div>
+            <button 
+              onClick={() => setIsCommentModalOpen(true)}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-900 rounded-xl font-bold hover:bg-slate-50 transition-all text-sm shadow-sm"
+            >
+              <MessageIcon className="w-4 h-4 text-primary" />
+              Write a Comment
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {isCommentsLoading ? (
+              [1, 2].map((i) => (
+                <div key={i} className="bg-slate-50 rounded-2xl p-6 animate-pulse h-40"></div>
+              ))
+            ) : comments.length > 0 ? (
+              comments.map((comment: any) => (
+                <div 
+                  key={comment._id} 
+                  className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all group"
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-slate-100 overflow-hidden border border-slate-50 shrink-0">
+                        <img 
+                          src={comment.user?.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${comment.user?.name}`} 
+                          className="w-full h-full object-cover" 
+                          alt="" 
+                        />
+                      </div>
+                      <div>
+                        <div className="text-sm font-bold text-slate-900">
+                          {comment.user?.name}
+                        </div>
+                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                          {new Date(comment.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                        </div>
+                      </div>
+                    </div>
+                    {user && user._id === comment.user?._id && (
+                      <button 
+                        onClick={() => deleteComment(comment._id)}
+                        className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                        title="Delete comment"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                  <p className="text-slate-600 text-sm leading-relaxed">
+                    {comment.content}
+                  </p>
+                </div>
+              ))
+            ) : (
+              <div className="md:col-span-2 bg-slate-50 rounded-3xl p-12 text-center border border-dashed border-slate-200">
+                <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
+                  <MessageIcon className="w-8 h-8 text-slate-200" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 mb-1">No comments yet</h3>
+                <p className="text-slate-500 text-sm font-medium mb-6">Be the first to share your thoughts on this product!</p>
+                <button 
+                  onClick={() => setIsCommentModalOpen(true)}
+                  className="px-6 py-3 bg-primary text-white rounded-xl font-bold hover:bg-blue-700 transition-all text-sm shadow-lg shadow-primary/20"
+                >
+                  Post First Comment
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
       </div>
+
+      {/* Modals */}
+      <ShareModal 
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        url={typeof window !== 'undefined' ? window.location.href : ''}
+        title={product.name}
+      />
+
+      <CommentModal
+        isOpen={isCommentModalOpen}
+        onClose={() => setIsCommentModalOpen(false)}
+        productId={product._id}
+        productName={product.name}
+      />
 
       {/* Mobile Sticky Action */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-slate-50 p-4 z-40">

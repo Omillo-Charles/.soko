@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ShoppingCart, Star, ChevronRight, Heart, Loader2, Share2 } from "lucide-react";
+import { ShoppingCart, Star, ChevronRight, Heart, Loader2, Share2, MessageSquare } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
@@ -10,6 +10,7 @@ import { useWishlist } from "@/context/WishlistContext";
 import { useFeaturedProducts } from "@/hooks/useProducts";
 import RatingModal from "./RatingModal";
 import ShareModal from "./ShareModal";
+import CommentModal from "./CommentModal";
 
 const FeaturedProducts = () => {
   const router = useRouter();
@@ -26,6 +27,16 @@ const FeaturedProducts = () => {
     productId: "",
     productName: "",
     initialRating: 0
+  });
+
+  const [commentModal, setCommentModal] = useState<{
+    isOpen: boolean;
+    productId: string;
+    productName: string;
+  }>({
+    isOpen: false,
+    productId: "",
+    productName: ""
   });
 
   const [shareModal, setShareModal] = useState<{
@@ -118,6 +129,22 @@ const FeaturedProducts = () => {
                 >
                   <Star className="w-4 h-4" />
                 </button>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (p._id) {
+                      setCommentModal({
+                        isOpen: true,
+                        productId: p._id,
+                        productName: p.name || "Product"
+                      });
+                    }
+                  }}
+                  className="absolute bottom-2 right-2 bg-white/80 hover:bg-white rounded-full p-2 shadow transition-all hover:scale-110 z-10 text-primary"
+                  title="Comment on Product"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                </button>
               </div>
               <div className="p-3">
                 <div className="flex items-center gap-1 mb-1">
@@ -166,6 +193,13 @@ const FeaturedProducts = () => {
           onClose={() => setShareModal(prev => ({ ...prev, isOpen: false }))}
           url={shareModal.url}
           title={shareModal.title}
+        />
+
+        <CommentModal
+          isOpen={commentModal.isOpen}
+          onClose={() => setCommentModal(prev => ({ ...prev, isOpen: false }))}
+          productId={commentModal.productId}
+          productName={commentModal.productName}
         />
       </section>
     );
