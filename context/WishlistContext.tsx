@@ -45,8 +45,12 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       const response = await api.post('/wishlist/toggle', { productId });
       return response.data;
     },
-    onSuccess: (data) => {
+    onSuccess: (data, productId) => {
       queryClient.invalidateQueries({ queryKey: ['wishlist'] });
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['featured-products'] });
+      queryClient.invalidateQueries({ queryKey: ['product', productId] });
+      
       if (data.action === 'added') {
         toast.success("Added to wishlist");
       } else {

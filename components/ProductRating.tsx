@@ -5,6 +5,7 @@ import { Star, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import api from "@/lib/api";
 import { useUser } from "@/hooks/useUser";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface ProductRatingProps {
   productId: string;
@@ -20,6 +21,7 @@ const ProductRating = ({
   onRatingUpdate 
 }: ProductRatingProps) => {
   const { user } = useUser();
+  const queryClient = useQueryClient();
   const [hoverRating, setHoverRating] = useState(0);
   const [selectedRating, setSelectedRating] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -37,6 +39,12 @@ const ProductRating = ({
       if (response.data.success) {
         toast.success("Thank you for your rating!");
         setSelectedRating(rating);
+        
+        // Invalidate queries to update UI in real-time
+        queryClient.invalidateQueries({ queryKey: ['product', productId] });
+        queryClient.invalidateQueries({ queryKey: ['products'] });
+        queryClient.invalidateQueries({ queryKey: ['featured-products'] });
+
         if (onRatingUpdate) {
           onRatingUpdate(response.data.data.rating, response.data.data.reviewsCount);
         }

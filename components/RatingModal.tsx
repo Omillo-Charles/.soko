@@ -5,6 +5,7 @@ import { Star, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import api from "@/lib/api";
 import { useUser } from "@/hooks/useUser";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface RatingModalProps {
   isOpen: boolean;
@@ -23,6 +24,7 @@ const RatingModal = ({
   initialRating = 0,
   onRatingUpdate,
 }: RatingModalProps) => {
+  const queryClient = useQueryClient();
   const { user } = useUser();
   const [hoverRating, setHoverRating] = useState(0);
   const [selectedRating, setSelectedRating] = useState(0);
@@ -43,6 +45,12 @@ const RatingModal = ({
       if (response.data.success) {
         toast.success("Thank you for your rating!");
         setSelectedRating(rating);
+        
+        // Invalidate queries to update the UI globally
+        queryClient.invalidateQueries({ queryKey: ['product', productId] });
+        queryClient.invalidateQueries({ queryKey: ['products'] });
+        queryClient.invalidateQueries({ queryKey: ['featured-products'] });
+
         if (onRatingUpdate) {
           onRatingUpdate(response.data.data.rating, response.data.data.reviewsCount);
         }

@@ -575,10 +575,6 @@ const ShopPage = () => {
           productId={ratingModal.productId}
           productName={ratingModal.productName}
           initialRating={ratingModal.initialRating}
-          onRatingUpdate={() => {
-            // Re-fetch products to update the UI
-            window.location.reload();
-          }}
         />
 
         <ShareModal 
