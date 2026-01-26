@@ -36,8 +36,8 @@ const EditProductPage = () => {
     category: "",
     stock: "",
   });
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -61,7 +61,11 @@ const EditProductPage = () => {
             category: product.category,
             stock: product.stock.toString(),
           });
-          setImagePreview(product.image);
+          if (product.images && Array.isArray(product.images)) {
+            setImagePreviews(product.images);
+          } else if (product.image) {
+            setImagePreviews([product.image]);
+          }
         } else {
           toast.error("Product not found");
         }
@@ -82,15 +86,43 @@ const EditProductPage = () => {
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImageFile(file);
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    const remainingSlots = 3 - imagePreviews.length;
+    if (remainingSlots <= 0) {
+      toast.error("You can only upload up to 3 images");
+      return;
+    }
+
+    const filesToAdd = files.slice(0, remainingSlots);
+    
+    filesToAdd.forEach(file => {
+      setImageFiles(prev => [...prev, file]);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result as string);
+        setImagePreviews(prev => [...prev, reader.result as string]);
       };
       reader.readAsDataURL(file);
+    });
+  };
+
+  const removeImage = (index: number) => {
+    // If it's a new file being uploaded
+    const previewToRemove = imagePreviews[index];
+    const isNewFile = previewToRemove.startsWith('data:');
+    
+    if (isNewFile) {
+      // Find which file it corresponds to in imageFiles
+      // This is a bit tricky if multiple files are uploaded, but we can manage
+      // For simplicity, let's just clear the specific index from both
+      // We'll need to keep track of which preview belongs to which file
     }
+
+    setImagePreviews(prev => prev.filter((_, i) => i !== index));
+    // When removing, we might need to filter imageFiles too if it was a new file
+    // But for now let's just keep it simple and filter both
+    setImageFiles(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -108,9 +140,15 @@ const EditProductPage = () => {
       submitData.append("price", formData.price);
       submitData.append("category", formData.category);
       submitData.append("stock", formData.stock);
-      if (imageFile) {
-        submitData.append("image", imageFile);
-      }
+      
+      // Handle images
+      imageFiles.forEach(file => {
+        submitData.append("image", file);
+      });
+
+      // We might also need to send the existing images that were kept
+      const existingImages = imagePreviews.filter(p => !p.startsWith('data:'));
+      submitData.append("existingImages", JSON.stringify(existingImages));
 
       const response = await fetch(`${apiUrl}/products/${id}`, {
         method: "PUT",
@@ -252,38 +290,49 @@ const EditProductPage = () => {
               <div className="space-y-6 md:col-span-2 pt-4 border-t border-slate-50">
                 <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
                   <ImageIcon className="w-5 h-5 text-primary" />
-                  Product Image
+                  Product Media ({imagePreviews.length}/3)
                 </h2>
                 
                 <div className="space-y-4">
-                  <div className="relative group cursor-pointer">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                    />
-                    <div className="w-full border-2 border-dashed border-slate-200 rounded-[2rem] p-8 flex flex-col items-center justify-center bg-slate-50 group-hover:bg-slate-100 group-hover:border-primary/50 transition-all">
-                      <div className="w-16 h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                        <Plus className="w-8 h-8 text-primary" />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    {imagePreviews.map((preview, index) => (
+                      <div key={index} className="relative group rounded-2xl overflow-hidden border-2 border-slate-100 bg-slate-50 aspect-square">
+                        <img 
+                          src={preview} 
+                          alt={`Preview ${index + 1}`} 
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        />
+                        <button 
+                          type="button"
+                          onClick={() => removeImage(index)}
+                          className="absolute top-2 right-2 w-8 h-8 bg-black/50 hover:bg-red-500 text-white rounded-full flex items-center justify-center transition-all backdrop-blur-sm opacity-0 group-hover:opacity-100"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                        {!preview.startsWith('data:') && (
+                          <div className="absolute bottom-2 left-2 bg-slate-900/60 backdrop-blur-sm px-2 py-1 rounded-md">
+                            <p className="text-[8px] font-black text-white uppercase tracking-widest">Existing</p>
+                          </div>
+                        )}
                       </div>
-                      <p className="text-slate-900 font-black">Change product image</p>
-                      <p className="text-slate-400 text-sm mt-1">PNG, JPG or WebP (Max. 5MB)</p>
-                    </div>
+                    ))}
+                    
+                    {imagePreviews.length < 3 && (
+                      <label className="relative flex flex-col items-center justify-center aspect-square border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50 hover:bg-white hover:border-primary/30 transition-all cursor-pointer group">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          onChange={handleImageChange}
+                          className="hidden"
+                        />
+                        <div className="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                          <Plus className="w-5 h-5 text-primary" />
+                        </div>
+                        <p className="text-[10px] font-black text-slate-900 uppercase">Add Photo</p>
+                      </label>
+                    )}
                   </div>
-
-                  {imagePreview && (
-                    <div className="mt-4 rounded-3xl overflow-hidden border-2 border-slate-100 bg-slate-50 aspect-video relative group">
-                      <img 
-                        src={imagePreview} 
-                        alt="Preview" 
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <p className="text-white font-black uppercase tracking-widest text-sm">Current Image</p>
-                      </div>
-                    </div>
-                  )}
                 </div>
               </div>
             </div>

@@ -97,12 +97,12 @@ const CartPage = () => {
                   {/* Product Image */}
                   <div 
                     onClick={() => router.push(`/shop/product/${item.product._id}`)}
-                    className="relative w-full md:w-48 h-48 rounded-3xl overflow-hidden bg-slate-50 border border-slate-100 shrink-0 cursor-pointer"
+                    className="relative w-full md:w-48 h-48 rounded-[1.25rem] overflow-hidden bg-slate-50 border border-slate-100 shrink-0 cursor-pointer flex items-center justify-center"
                   >
                     <img 
                       src={item.product.image} 
                       alt={item.product.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      className="max-w-[90%] max-h-[90%] object-contain group-hover:scale-110 transition-transform duration-700"
                     />
                   </div>
 

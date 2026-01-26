@@ -383,11 +383,11 @@ const ShopProfilePage = () => {
                           </p>
 
                           {product.image && (
-                            <div className="rounded-2xl overflow-hidden border border-slate-100 mb-3 bg-slate-50 relative aspect-video group/img">
+                            <div className="rounded-[1.25rem] overflow-hidden border border-slate-100 mb-3 bg-slate-50 relative aspect-video group/img flex items-center justify-center">
                               <img 
                                 src={product.image} 
                                 alt={product.name} 
-                                className="w-full h-full object-cover group-hover/img:scale-[1.02] transition-transform duration-500" 
+                                className="max-w-full max-h-full object-contain group-hover/img:scale-[1.02] transition-transform duration-500" 
                               />
                               <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl border border-slate-100 shadow-xl flex flex-col items-end">
                                 <span className="text-primary font-black text-sm">KES {product.price?.toLocaleString()}</span>

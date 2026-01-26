@@ -10,6 +10,7 @@ interface Product {
   name: string;
   price: number;
   image: string;
+  images?: string[];
   shop?: {
     name: string;
   };

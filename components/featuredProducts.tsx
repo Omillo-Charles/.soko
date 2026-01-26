@@ -76,14 +76,14 @@ const FeaturedProducts = () => {
         </div>
         <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-6">
           {(products || []).map((p: any) => (
-            <div key={p._id || Math.random()} className="bg-white border border-slate-200 rounded-lg overflow-hidden group">
-              <div className="relative h-32 md:h-40 bg-slate-100 cursor-pointer" onClick={() => p._id && router.push(`/shop/product/${p._id}`)}>
+            <div key={p._id || Math.random()} className="bg-white border border-slate-200 rounded-[1.25rem] overflow-hidden group">
+              <div className="relative h-40 md:h-48 bg-slate-50 cursor-pointer flex items-center justify-center overflow-hidden border-b border-slate-100" onClick={() => p._id && router.push(`/shop/product/${p._id}`)}>
                 <Image
                   src={p.image || "/placeholder-product.jpg"}
                   alt={p.name || "Product"}
                   fill
                   sizes="(max-width: 768px) 50vw, 25vw"
-                  className="object-cover"
+                  className="object-contain p-2 group-hover:scale-105 transition-transform duration-500"
                 />
                 <button 
                   onClick={(e) => {

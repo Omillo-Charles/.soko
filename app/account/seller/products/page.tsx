@@ -52,8 +52,8 @@ const SellerProductsPage = () => {
     category: "",
     stock: "1",
   });
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
   const fetchProducts = async () => {
     const token = localStorage.getItem("accessToken");
@@ -128,23 +128,38 @@ const SellerProductsPage = () => {
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImageFile(file);
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    const remainingSlots = 3 - imageFiles.length;
+    if (remainingSlots <= 0) {
+      toast.error("You can only upload up to 3 images");
+      return;
+    }
+
+    const filesToAdd = files.slice(0, remainingSlots);
+    
+    filesToAdd.forEach(file => {
+      setImageFiles(prev => [...prev, file]);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result as string);
+        setImagePreviews(prev => [...prev, reader.result as string]);
       };
       reader.readAsDataURL(file);
-    }
+    });
+  };
+
+  const removeImage = (index: number) => {
+    setImageFiles(prev => prev.filter((_, i) => i !== index));
+    setImagePreviews(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    if (!imageFile) {
-      toast.error("Please select a product image");
+    if (imageFiles.length === 0) {
+      toast.error("Please select at least one product image");
       setIsSubmitting(false);
       return;
     }
@@ -160,7 +175,10 @@ const SellerProductsPage = () => {
       submitData.append("price", formData.price);
       submitData.append("category", formData.category);
       submitData.append("stock", formData.stock);
-      submitData.append("image", imageFile);
+      
+      imageFiles.forEach(file => {
+        submitData.append("image", file);
+      });
 
       const response = await fetch(`${apiUrl}/products`, {
         method: "POST",
@@ -193,8 +211,8 @@ const SellerProductsPage = () => {
       category: "",
       stock: "1",
     });
-    setImageFile(null);
-    setImagePreview(null);
+    setImageFiles([]);
+    setImagePreviews([]);
   };
 
   const handleDelete = async (productId: string) => {
@@ -428,34 +446,50 @@ const SellerProductsPage = () => {
                   <div className="space-y-8">
                     {/* Image Upload Area */}
                     <div className="space-y-4">
-                      <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Product Media</label>
-                      {imagePreview ? (
-                        <div className="relative group rounded-[2rem] overflow-hidden border-2 border-slate-100 bg-slate-50 aspect-video">
-                          <img src={imagePreview} alt="Preview" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center backdrop-blur-sm">
-                            <div className="flex gap-3">
-                              <label className="w-12 h-12 bg-white hover:bg-primary hover:text-white text-slate-900 rounded-2xl flex items-center justify-center transition-all cursor-pointer shadow-xl hover:scale-110">
-                                <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
-                                <ImageIcon className="w-5 h-5" />
-                              </label>
-                              <button 
-                                type="button"
-                                onClick={() => { setImageFile(null); setImagePreview(null); }}
-                                className="w-12 h-12 bg-white hover:bg-red-500 hover:text-white text-red-500 rounded-2xl flex items-center justify-center transition-all shadow-xl hover:scale-110"
-                              >
-                                <Trash2 className="w-5 h-5" />
-                              </button>
+                      <div className="flex items-center justify-between ml-2">
+                        <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Product Media ({imageFiles.length}/3)</label>
+                        {imageFiles.length < 3 && imageFiles.length > 0 && (
+                          <label className="text-[10px] font-black text-primary uppercase tracking-widest cursor-pointer hover:underline">
+                            Add more
+                            <input type="file" accept="image/*" multiple onChange={handleImageChange} className="hidden" />
+                          </label>
+                        )}
+                      </div>
+                      
+                      {imagePreviews.length > 0 ? (
+                        <div className={`grid gap-2 rounded-[2rem] overflow-hidden ${
+                          imagePreviews.length === 1 ? 'grid-cols-1' : 
+                          imagePreviews.length === 2 ? 'grid-cols-2' : 
+                          'grid-cols-2'
+                        }`}>
+                          {imagePreviews.map((preview, index) => (
+                            <div 
+                              key={index} 
+                              className={`relative group bg-slate-50 border border-slate-100 overflow-hidden ${
+                                imagePreviews.length === 3 && index === 0 ? 'row-span-2 h-full' : 'aspect-video'
+                              }`}
+                            >
+                              <img src={preview} alt={`Preview ${index + 1}`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                              <div className="absolute top-2 right-2 flex gap-2">
+                                <button 
+                                  type="button"
+                                  onClick={() => removeImage(index)}
+                                  className="w-8 h-8 bg-black/50 hover:bg-red-500 text-white rounded-full flex items-center justify-center transition-all backdrop-blur-sm"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
                             </div>
-                          </div>
+                          ))}
                         </div>
                       ) : (
                         <label className="flex flex-col items-center justify-center w-full aspect-video border-2 border-dashed border-slate-200 rounded-[2rem] bg-slate-50 hover:bg-white hover:border-primary/30 transition-all cursor-pointer group">
-                          <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+                          <input type="file" accept="image/*" multiple onChange={handleImageChange} className="hidden" />
                           <div className="w-16 h-16 bg-white rounded-3xl shadow-sm border border-slate-100 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:shadow-xl transition-all duration-500">
                             <ImageIcon className="w-6 h-6 text-slate-400 group-hover:text-primary transition-colors" />
                           </div>
-                          <span className="text-xs font-black text-slate-900 uppercase tracking-widest">Click to upload photo</span>
-                          <span className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-tighter">High quality JPG, PNG or WebP</span>
+                          <span className="text-xs font-black text-slate-900 uppercase tracking-widest">Click to upload photos</span>
+                          <span className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-tighter">Up to 3 high quality JPG, PNG or WebP</span>
                         </label>
                       )}
                     </div>
@@ -546,7 +580,7 @@ const SellerProductsPage = () => {
                     </button>
                     <button
                       type="submit"
-                      disabled={isSubmitting || !formData.name || !imageFile}
+                      disabled={isSubmitting || !formData.name || imageFiles.length === 0}
                       className="bg-primary text-white px-10 py-4 rounded-[2rem] font-black text-sm uppercase tracking-widest disabled:opacity-50 transition-all hover:bg-primary/90 hover:shadow-2xl hover:shadow-primary/30 active:scale-95 flex items-center gap-3"
                     >
                       {isSubmitting ? (
@@ -577,9 +611,25 @@ const SellerProductsPage = () => {
 
                     <div className="bg-white/40 backdrop-blur-xl border border-white rounded-[3rem] p-8 shadow-2xl shadow-slate-200/50">
                       <div className="bg-white rounded-[2rem] border border-slate-100 overflow-hidden group shadow-lg">
-                        <div className="aspect-square bg-slate-50 relative overflow-hidden">
-                          {imagePreview ? (
-                            <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                        <div className="aspect-square bg-slate-50 relative overflow-hidden flex items-center justify-center">
+                          {imagePreviews.length > 0 ? (
+                            <div className={`w-full h-full grid gap-0.5 ${
+                              imagePreviews.length === 1 ? 'grid-cols-1' : 
+                              imagePreviews.length === 2 ? 'grid-cols-2' : 
+                              'grid-cols-2 grid-rows-2'
+                            }`}>
+                              {imagePreviews.map((preview, idx) => (
+                                <div key={idx} className={`relative ${
+                                  imagePreviews.length === 3 && idx === 0 ? 'row-span-2' : ''
+                                }`}>
+                                  <img 
+                                    src={preview} 
+                                    alt="Preview" 
+                                    className="w-full h-full object-cover"
+                                  />
+                                </div>
+                              ))}
+                            </div>
                           ) : (
                             <div className="w-full h-full flex flex-col items-center justify-center text-slate-200 gap-3">
                               <ImageIcon className="w-12 h-12" />

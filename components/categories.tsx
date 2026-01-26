@@ -190,15 +190,15 @@ const Categories = () => {
             <Link
               key={item.name}
               href={item.href}
-              className="group min-w-[220px] md:min-w-[260px] border border-slate-200 rounded-lg overflow-hidden hover:shadow-sm transition"
+              className="group min-w-[220px] md:min-w-[260px] border border-slate-200 rounded-[1.25rem] overflow-hidden hover:shadow-sm transition"
             >
-              <div className="relative h-28 md:h-36 bg-slate-100">
+              <div className="relative h-28 md:h-36 bg-slate-50 flex items-center justify-center">
                 <Image
                   src={item.image}
                   alt={item.name}
                   fill
                   sizes="(max-width: 768px) 220px, 260px"
-                  className="object-cover"
+                  className="object-contain p-2"
                   priority
                 />
               </div>
