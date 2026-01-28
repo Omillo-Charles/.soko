@@ -58,24 +58,24 @@ const ProductRating = ({
   };
 
   return (
-    <div className="space-y-4 py-6 border-t border-slate-50">
+    <div className="space-y-4 py-6 border-t border-border">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
+        <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">
           Product Rating
         </h3>
-        <div className="flex items-center gap-1.5 bg-amber-50 px-2.5 py-1 rounded-full">
+        <div className="flex items-center gap-1.5 bg-amber-500/10 px-2.5 py-1 rounded-full">
           <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
-          <span className="text-xs font-black text-amber-700">
+          <span className="text-xs font-black text-amber-600 dark:text-amber-400">
             {initialRating.toFixed(1)}
           </span>
-          <span className="text-[10px] font-bold text-amber-600/60 ml-0.5">
+          <span className="text-[10px] font-bold text-amber-600/60 dark:text-amber-400/60 ml-0.5">
             ({initialReviewsCount})
           </span>
         </div>
       </div>
 
-      <div className="bg-slate-50/50 rounded-2xl p-6 flex flex-col items-center justify-center gap-4 border border-slate-100/50">
-        <p className="text-sm font-bold text-slate-600">
+      <div className="bg-muted/50 rounded-2xl p-6 flex flex-col items-center justify-center gap-4 border border-border">
+        <p className="text-sm font-bold text-muted-foreground">
           How would you rate this product?
         </p>
         
@@ -94,7 +94,7 @@ const ProductRating = ({
                 className={`w-8 h-8 transition-colors ${
                   (hoverRating || selectedRating) >= star
                     ? "fill-amber-400 text-amber-400"
-                    : "text-slate-300 fill-transparent"
+                    : "text-muted-foreground/30 fill-transparent"
                 }`}
               />
             </button>
@@ -109,7 +109,7 @@ const ProductRating = ({
         )}
 
         {!user && (
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">
+          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-2">
             Sign in to leave a review
           </p>
         )}

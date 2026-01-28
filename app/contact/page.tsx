@@ -74,40 +74,40 @@ const ContactPage = () => {
 
   return (
     <main className="flex flex-col pb-24 lg:pb-0">
-      <section className="bg-white">
+      <section className="bg-background">
         <div className="container mx-auto px-4 md:px-8 pt-6 pb-10">
-          <h1 className="text-2xl md:text-3xl font-bold">Contact Us</h1>
-          <p className="mt-2 text-slate-600">
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground">Contact Us</h1>
+          <p className="mt-2 text-muted-foreground">
             We'd love to hear from you. Reach out anytime.
           </p>
 
           <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-md p-4">
+            <div className="flex items-center gap-3 bg-background border border-border rounded-md p-4">
               <Phone className="w-6 h-6 text-primary" />
               <div>
-                <div className="font-semibold">Phone</div>
-                <a href="tel:+254700000000" className="text-sm text-slate-600">
+                <div className="font-semibold text-foreground">Phone</div>
+                <a href="tel:+254700000000" className="text-sm text-muted-foreground">
                   +254 700 000 000
                 </a>
               </div>
             </div>
-            <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-md p-4">
+            <div className="flex items-center gap-3 bg-background border border-border rounded-md p-4">
               <Mail className="w-6 h-6 text-primary" />
               <div>
-                <div className="font-semibold">Email</div>
+                <div className="font-semibold text-foreground">Email</div>
                 <a
                   href="mailto:support@dotsoko.com"
-                  className="text-sm text-slate-600"
+                  className="text-sm text-muted-foreground"
                 >
                   support@dotsoko.com
                 </a>
               </div>
             </div>
-            <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-md p-4">
+            <div className="flex items-center gap-3 bg-background border border-border rounded-md p-4">
               <MapPin className="w-6 h-6 text-primary" />
               <div>
-                <div className="font-semibold">Location</div>
-                <div className="text-sm text-slate-600">Nairobi, Kenya</div>
+                <div className="font-semibold text-foreground">Location</div>
+                <div className="text-sm text-muted-foreground">Nairobi, Kenya</div>
               </div>
             </div>
           </div>
@@ -116,11 +116,11 @@ const ContactPage = () => {
             <div className="space-y-6">
               <form
                 onSubmit={onSubmit}
-                className="bg-white border border-slate-200 rounded-lg p-6"
+                className="bg-background border border-border rounded-lg p-6"
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="name" className="text-sm text-slate-600">
+                    <label htmlFor="name" className="text-sm text-muted-foreground">
                       Name
                     </label>
                     <input
@@ -131,11 +131,11 @@ const ContactPage = () => {
                       value={form.name}
                       onChange={onChange}
                       placeholder="John Doe"
-                      className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
                   <div>
-                    <label htmlFor="email" className="text-sm text-slate-600">
+                    <label htmlFor="email" className="text-sm text-muted-foreground">
                       Email
                     </label>
                     <input
@@ -146,12 +146,12 @@ const ContactPage = () => {
                       value={form.email}
                       onChange={onChange}
                       placeholder="john@example.com"
-                      className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
                 </div>
                 <div className="mt-4">
-                  <label htmlFor="subject" className="text-sm text-slate-600">
+                  <label htmlFor="subject" className="text-sm text-muted-foreground">
                     Subject
                   </label>
                   <input
@@ -161,11 +161,11 @@ const ContactPage = () => {
                     value={form.subject}
                     onChange={onChange}
                     placeholder="Order inquiry, product question..."
-                    className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                 </div>
                 <div className="mt-4">
-                  <label htmlFor="message" className="text-sm text-slate-600">
+                  <label htmlFor="message" className="text-sm text-muted-foreground">
                     Message
                   </label>
                   <textarea
@@ -176,13 +176,13 @@ const ContactPage = () => {
                     value={form.message}
                     onChange={onChange}
                     placeholder="Write your message here..."
-                    className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                 </div>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="mt-6 w-full bg-primary text-white font-semibold py-3 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="mt-6 w-full bg-primary text-primary-foreground font-semibold py-3 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? (
                     <>
@@ -196,21 +196,21 @@ const ContactPage = () => {
               </form>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-lg p-6">
-              <div className="font-semibold">Business Hours</div>
-              <div className="mt-2 text-sm text-slate-600">
+            <div className="bg-background border border-border rounded-lg p-6">
+              <div className="font-semibold text-foreground">Business Hours</div>
+              <div className="mt-2 text-sm text-muted-foreground">
                 Mon–Fri: 9:00 AM – 6:00 PM
               </div>
-              <div className="text-sm text-slate-600">
+              <div className="text-sm text-muted-foreground">
                 Sat: 10:00 AM – 4:00 PM
               </div>
-              <div className="text-sm text-slate-600">Sun: Closed</div>
-              <div className="mt-6 font-semibold">Follow Us</div>
+              <div className="text-sm text-muted-foreground">Sun: Closed</div>
+              <div className="mt-6 font-semibold text-foreground">Follow Us</div>
               <div className="mt-2 flex flex-wrap items-center gap-3">
                 <a
                   href="#"
                   aria-label="X"
-                  className="p-3 rounded-full bg-black text-white shadow hover:scale-105 transition"
+                  className="p-3 rounded-full bg-foreground text-background shadow hover:scale-105 transition"
                 >
                   <XIcon />
                 </a>
@@ -244,7 +244,7 @@ const ContactPage = () => {
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
                 style={{ border: 0 }}
-                className="mt-6 w-full rounded-md"
+                className="mt-6 w-full rounded-md border border-border"
               />
             </div>
           </div>

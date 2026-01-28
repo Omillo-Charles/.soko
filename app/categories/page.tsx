@@ -138,13 +138,13 @@ const CategoriesPage = () => {
   const displayCategories = allCategories.filter(c => c.value !== 'all');
 
   return (
-    <div className="min-h-screen bg-slate-50/50 pb-20">
+    <div className="min-h-screen bg-background pb-20">
       {/* Header */}
-      <div className="sticky top-[100px] md:top-[128px] bg-white/80 backdrop-blur-md z-30 border-b border-slate-100">
+      <div className="sticky top-[100px] md:top-[128px] bg-background/80 backdrop-blur-md z-30 border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col gap-1">
-            <h1 className="text-2xl font-black text-slate-900 tracking-tight">Explore Categories</h1>
-            <p className="text-sm text-slate-500 font-medium">Find everything you need across {displayCategories.length} categories</p>
+            <h1 className="text-2xl font-black text-foreground tracking-tight">Explore Categories</h1>
+            <p className="text-sm text-muted-foreground font-medium">Find everything you need across {displayCategories.length} categories</p>
           </div>
         </div>
       </div>
@@ -162,10 +162,10 @@ const CategoriesPage = () => {
               <Link 
                 key={category.value}
                 href={`/shop?cat=${category.value}`}
-                className="group relative bg-white rounded-3xl overflow-hidden border border-slate-100 hover:border-primary/20 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 flex flex-col h-full"
+                className="group relative bg-background rounded-3xl overflow-hidden border border-border hover:border-primary/20 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 flex flex-col h-full"
               >
                 {/* Image Container */}
-                <div className="relative aspect-square w-full overflow-hidden bg-slate-100">
+                <div className="relative aspect-square w-full overflow-hidden bg-muted">
                   <Image 
                     src={meta.image} 
                     alt={category.label}
@@ -177,8 +177,8 @@ const CategoriesPage = () => {
                   
                   {/* Category Label on Image */}
                   <div className="absolute bottom-4 left-4 right-4">
-                    <div className="flex items-center gap-2 text-white">
-                      <div className="p-2 bg-white/20 backdrop-blur-md rounded-xl">
+                    <div className="flex items-center gap-2 text-primary-foreground">
+                      <div className="p-2 bg-primary-foreground/20 backdrop-blur-md rounded-xl">
                         {meta.icon}
                       </div>
                       <h2 className="text-lg font-black tracking-tight">{category.label}</h2>
@@ -188,7 +188,7 @@ const CategoriesPage = () => {
 
                 {/* Content */}
                 <div className="p-5 flex flex-col flex-1">
-                  <p className="text-sm text-slate-500 font-medium leading-relaxed mb-6">
+                  <p className="text-sm text-muted-foreground font-medium leading-relaxed mb-6">
                     {meta.description}
                   </p>
                   
@@ -197,7 +197,7 @@ const CategoriesPage = () => {
                       Explore Products
                       <ChevronRight className="w-3 h-3" />
                     </span>
-                    <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
+                    <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                       <ChevronRight className="w-4 h-4" />
                     </div>
                   </div>

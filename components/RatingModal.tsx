@@ -67,30 +67,30 @@ const RatingModal = ({
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/60 backdrop-blur-sm animate-in fade-in duration-300">
       <div 
-        className="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300"
+        className="bg-background w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 border border-border"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="relative p-8">
           <button
             onClick={onClose}
-            className="absolute top-6 right-6 p-2 rounded-full hover:bg-slate-100 text-slate-400 transition-colors"
+            className="absolute top-6 right-6 p-2 rounded-full hover:bg-muted text-muted-foreground transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
 
           <div className="flex flex-col items-center text-center space-y-6">
-            <div className="w-20 h-20 bg-amber-50 rounded-3xl flex items-center justify-center">
+            <div className="w-20 h-20 bg-amber-500/10 rounded-3xl flex items-center justify-center">
               <Star className="w-10 h-10 text-amber-500 fill-amber-500" />
             </div>
 
             <div className="space-y-2">
-              <h3 className="text-xl font-black text-slate-900 leading-tight">
+              <h3 className="text-xl font-black text-foreground leading-tight">
                 Rate Product
               </h3>
-              <p className="text-slate-500 font-medium text-sm px-4">
-                How was your experience with <span className="text-slate-900 font-bold">"{productName}"</span>?
+              <p className="text-muted-foreground font-medium text-sm px-4">
+                How was your experience with <span className="text-foreground font-bold">"{productName}"</span>?
               </p>
             </div>
 
@@ -109,7 +109,7 @@ const RatingModal = ({
                     className={`w-10 h-10 transition-colors ${
                       (hoverRating || selectedRating) >= star
                         ? "fill-amber-400 text-amber-400"
-                        : "text-slate-200 fill-transparent"
+                        : "text-muted-foreground/20 fill-transparent"
                     }`}
                   />
                 </button>
@@ -122,7 +122,7 @@ const RatingModal = ({
                 <span className="text-sm font-black uppercase tracking-widest">Submitting...</span>
               </div>
             ) : (
-              <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest">
+              <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
                 Tap a star to rate
               </p>
             )}

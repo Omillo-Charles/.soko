@@ -51,22 +51,22 @@ const ReturnsPage = () => {
   ];
 
   return (
-    <main className="flex flex-col pb-24 lg:pb-0 bg-slate-50/30">
-      <section className="bg-white border-b border-slate-100">
+    <main className="flex flex-col pb-24 lg:pb-0 bg-muted/30">
+      <section className="bg-background border-b border-border">
         <div className="container mx-auto px-4 md:px-8 py-8 md:py-10">
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/5 text-primary rounded-full text-xs font-bold mb-4">
               <RefreshCcw className="w-3.5 h-3.5" />
               Easy Returns
             </div>
-            <h1 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight">
+            <h1 className="text-3xl md:text-5xl font-black text-foreground tracking-tight">
               Returns & Refunds
             </h1>
-            <p className="mt-4 text-slate-600 text-lg leading-relaxed">
+            <p className="mt-4 text-muted-foreground text-lg leading-relaxed">
               We want you to be completely satisfied with your purchase. If something isn't 
               quite right, our straightforward return policy ensures a hassle-free experience.
             </p>
-            <div className="mt-6 flex items-center gap-4 text-sm text-slate-400">
+            <div className="mt-6 flex items-center gap-4 text-sm text-muted-foreground">
               <span className="flex items-center gap-1.5">
                 <FileText className="w-4 h-4" />
                 Version 1.5
@@ -85,16 +85,16 @@ const ReturnsPage = () => {
           {/* Main Content */}
           <div className="lg:col-span-8 space-y-12">
             {sections.map((section, idx) => (
-              <div key={idx} className="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm">
+              <div key={idx} className="bg-background border border-border rounded-2xl p-6 md:p-8 shadow-sm">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-10 h-10 bg-primary/5 rounded-xl flex items-center justify-center text-primary">
                     {section.icon}
                   </div>
-                  <h2 className="text-xl font-bold text-slate-900">{section.title}</h2>
+                  <h2 className="text-xl font-bold text-foreground">{section.title}</h2>
                 </div>
                 <ul className="space-y-4">
                   {section.content.map((item, i) => (
-                    <li key={i} className="flex gap-3 text-slate-600 leading-relaxed">
+                    <li key={i} className="flex gap-3 text-muted-foreground leading-relaxed">
                       <div className="mt-2 w-1.5 h-1.5 rounded-full bg-primary/30 shrink-0" />
                       {item}
                     </li>
@@ -103,7 +103,7 @@ const ReturnsPage = () => {
               </div>
             ))}
 
-            <div className="p-8 bg-slate-900 rounded-3xl text-white relative overflow-hidden">
+            <div className="p-8 bg-slate-900 dark:bg-slate-900/50 rounded-3xl text-slate-50 relative overflow-hidden border border-border/50">
               <div className="relative z-10">
                 <div className="flex items-center gap-3 mb-4">
                   <ShieldCheck className="w-6 h-6 text-primary" />
@@ -114,7 +114,7 @@ const ReturnsPage = () => {
                   item doesn't arrive or is significantly different from the description, 
                   we guarantee a full refund.
                 </p>
-                <button className="flex items-center gap-2 text-primary font-bold text-sm hover:text-blue-400 transition-colors">
+                <button className="flex items-center gap-2 text-primary font-bold text-sm hover:text-primary/80 transition-colors">
                   Learn more about protection <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
@@ -125,26 +125,26 @@ const ReturnsPage = () => {
           {/* Sidebar */}
           <div className="lg:col-span-4 space-y-6">
             <div className="sticky top-[128px]">
-              <div className="bg-white border border-slate-200 rounded-2xl p-6 mb-6">
-                <h3 className="font-bold text-slate-900 mb-4">Start a Return</h3>
-                <p className="text-sm text-slate-600 mb-6 leading-relaxed">
+              <div className="bg-background border border-border rounded-2xl p-6 mb-6">
+                <h3 className="font-bold text-foreground mb-4">Start a Return</h3>
+                <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
                   The quickest way to handle a return is through your user dashboard. 
                   Need help with a specific order?
                 </p>
                 <a 
                   href="mailto:support@dotsoko.com"
-                  className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors group"
+                  className="flex items-center gap-3 p-4 bg-muted rounded-xl hover:bg-muted/80 transition-colors group"
                 >
                   <Mail className="w-5 h-5 text-primary" />
                   <div>
-                    <div className="text-xs text-slate-400">Customer Support</div>
-                    <div className="text-sm font-bold text-slate-900">support@dotsoko.com</div>
+                    <div className="text-xs text-muted-foreground">Customer Support</div>
+                    <div className="text-sm font-bold text-foreground">support@dotsoko.com</div>
                   </div>
                 </a>
               </div>
 
-              <div className="bg-slate-50 rounded-2xl p-6">
-                <h4 className="font-bold text-slate-900 text-sm mb-4">Policy Hub</h4>
+              <div className="bg-muted rounded-2xl p-6">
+                <h4 className="font-bold text-foreground text-sm mb-4">Policy Hub</h4>
                 <nav className="space-y-3">
                   {[
                     { name: 'Terms of Service', href: '/terms' },
@@ -155,7 +155,7 @@ const ReturnsPage = () => {
                     <Link 
                       key={item.name}
                       href={item.href} 
-                      className="block text-sm text-slate-500 hover:text-primary transition-colors"
+                      className="block text-sm text-muted-foreground hover:text-primary transition-colors"
                     >
                       {item.name}
                     </Link>

@@ -230,7 +230,7 @@ const ShopPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <div className="max-w-[1920px] mx-auto grid grid-cols-1 lg:grid-cols-[280px_1fr_320px]">
         
         {/* Left Sidebar - Categories & Filters */}
@@ -240,18 +240,18 @@ const ShopPage = () => {
             <div className="relative group">
               <form onSubmit={handleSearch} className="relative">
                 <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                  <Search className="w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors" />
+                  <Search className="w-4 h-4 text-muted-foreground/60 group-focus-within:text-primary transition-colors" />
                 </div>
                 <input 
                   name="q"
                   type="text" 
                   defaultValue={query}
                   placeholder="Search products..." 
-                  className="w-full bg-slate-50 border-none rounded-2xl py-3.5 pl-11 pr-4 text-sm font-bold text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-primary/20 transition-all"
+                  className="w-full bg-muted border-none rounded-2xl py-3.5 pl-11 pr-4 text-sm font-bold text-foreground placeholder:text-muted-foreground/50 focus:ring-2 focus:ring-primary/20 transition-all"
                 />
               </form>
               <div className="mt-2 px-2">
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">
+                <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-tight">
                   Press Enter to search all categories
                 </p>
               </div>
@@ -260,7 +260,7 @@ const ShopPage = () => {
             {/* Categories */}
             <div className="space-y-4">
               <div className="flex items-center justify-between px-2">
-                <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Categories</h3>
+                <h3 className="text-[11px] font-black text-muted-foreground/60 uppercase tracking-[0.2em]">Categories</h3>
                 {cat !== 'all' && (
                   <button 
                     onClick={() => handleCategoryClick('all')}
@@ -278,7 +278,7 @@ const ShopPage = () => {
                     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all group ${
                       cat === category.value 
                         ? 'text-primary bg-primary/10' 
-                        : 'text-slate-600 hover:text-primary hover:bg-primary/5'
+                        : 'text-muted-foreground hover:text-primary hover:bg-primary/5'
                     }`}
                   >
                     {category.label}
@@ -289,14 +289,14 @@ const ShopPage = () => {
 
             {/* Price Filter */}
             <div className="space-y-4">
-              <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Price Range</h3>
+              <h3 className="text-[11px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] px-2">Price Range</h3>
               <div className="px-2 space-y-4">
                 <div className="flex gap-2">
                   <div className="flex-1">
-                    <input type="number" placeholder="Min" className="w-full bg-slate-50 border-none rounded-xl py-2 px-3 text-xs font-bold focus:ring-1 focus:ring-primary/20" />
+                    <input type="number" placeholder="Min" className="w-full bg-muted border-none rounded-xl py-2 px-3 text-xs font-bold focus:ring-1 focus:ring-primary/20 text-foreground placeholder:text-muted-foreground/50" />
                   </div>
                   <div className="flex-1">
-                    <input type="number" placeholder="Max" className="w-full bg-slate-50 border-none rounded-xl py-2 px-3 text-xs font-bold focus:ring-1 focus:ring-primary/20" />
+                    <input type="number" placeholder="Max" className="w-full bg-muted border-none rounded-xl py-2 px-3 text-xs font-bold focus:ring-1 focus:ring-primary/20 text-foreground placeholder:text-muted-foreground/50" />
                   </div>
                 </div>
               </div>
@@ -305,11 +305,11 @@ const ShopPage = () => {
         </div>
 
         {/* Middle Feed - Products */}
-        <main className="flex-1 min-w-0 border-x border-slate-100 pb-24 lg:pb-0">
+        <main className="flex-1 min-w-0 border-x border-border pb-24 lg:pb-0">
           {/* Header - Twitter Style */}
-          <div className="sticky top-[100px] md:top-[128px] bg-white/80 backdrop-blur-md z-30 border-b border-slate-100">
+          <div className="sticky top-[100px] md:top-[128px] bg-background/80 backdrop-blur-md z-30 border-b border-border">
             <div className="px-4 py-4">
-              <h1 className="text-xl font-black text-slate-900">Explore</h1>
+              <h1 className="text-xl font-black text-foreground">Explore</h1>
             </div>
             <div className="flex">
               {[
@@ -319,9 +319,9 @@ const ShopPage = () => {
                 <button 
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as 'foryou' | 'following')}
-                  className="flex-1 hover:bg-slate-100/50 transition-colors relative h-14 flex items-center justify-center group"
+                  className="flex-1 hover:bg-muted/50 transition-colors relative h-14 flex items-center justify-center group"
                 >
-                  <span className={`text-sm font-bold ${activeTab === tab.id ? 'text-slate-900' : 'text-slate-500'}`}>
+                  <span className={`text-sm font-bold ${activeTab === tab.id ? 'text-foreground' : 'text-muted-foreground'}`}>
                     {tab.label}
                   </span>
                   {activeTab === tab.id && (
@@ -335,35 +335,35 @@ const ShopPage = () => {
           {/* Product Feed */}
           <div>
             {isLoading ? (
-              <div className="p-20 flex flex-col items-center justify-center text-slate-400 gap-4">
+              <div className="p-20 flex flex-col items-center justify-center text-muted-foreground gap-4">
                 <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
                 <p className="font-bold text-sm">Loading products...</p>
               </div>
             ) : error ? (
-              <div className="p-20 flex flex-col items-center justify-center text-red-400 gap-4">
+              <div className="p-20 flex flex-col items-center justify-center text-destructive gap-4">
                 <Info className="w-10 h-10" />
                 <p className="font-bold text-sm">{error}</p>
                 <button 
                   onClick={() => window.location.reload()}
-                  className="px-6 py-2 bg-slate-100 text-slate-600 rounded-full text-xs font-bold hover:bg-slate-200 transition-colors"
+                  className="px-6 py-2 bg-muted text-muted-foreground rounded-full text-xs font-bold hover:bg-muted/80 transition-colors"
                 >
                   Try Again
                 </button>
               </div>
             ) : displayProducts.length === 0 ? (
-              <div className="p-20 flex flex-col items-center justify-center text-slate-400 gap-6 text-center animate-in fade-in duration-700">
-                <div className="w-20 h-20 bg-slate-50 rounded-[2rem] flex items-center justify-center mb-2">
-                  <ShoppingBag className="w-10 h-10 text-slate-200" />
+              <div className="p-20 flex flex-col items-center justify-center text-muted-foreground gap-6 text-center animate-in fade-in duration-700">
+                <div className="w-20 h-20 bg-muted rounded-[2rem] flex items-center justify-center mb-2">
+                  <ShoppingBag className="w-10 h-10 text-muted-foreground/20" />
                 </div>
                 <div className="space-y-2 max-w-xs">
-                  <p className="font-black text-slate-900 text-lg uppercase tracking-tight">
+                  <p className="font-black text-foreground text-lg uppercase tracking-tight">
                     {isMounted && activeTab === 'following' && !currentUser 
                       ? "Login Required" 
                       : query 
                         ? "No product found"
                         : "No products yet"}
                   </p>
-                  <p className="text-sm font-medium text-slate-500 leading-relaxed">
+                  <p className="text-sm font-medium text-muted-foreground leading-relaxed">
                     {isMounted && activeTab === 'following' && !currentUser
                       ? "Sign in to your account to view updates from your favorite shops."
                       : query
@@ -374,7 +374,7 @@ const ShopPage = () => {
                 {isMounted && activeTab === 'following' && !currentUser ? (
                   <Link 
                     href="/auth?mode=login"
-                    className="mt-2 px-8 py-3.5 bg-slate-900 text-white rounded-2xl text-sm font-bold shadow-xl shadow-slate-900/10 hover:bg-primary transition-all"
+                    className="mt-2 px-8 py-3.5 bg-foreground text-background rounded-2xl text-sm font-bold shadow-xl shadow-foreground/10 hover:bg-primary transition-all"
                   >
                     Login Now
                   </Link>
@@ -385,26 +385,26 @@ const ShopPage = () => {
                       params.delete('q');
                       router.push(`/shop?${params.toString()}`);
                     }}
-                    className="mt-2 px-8 py-3.5 bg-slate-100 text-slate-600 rounded-2xl text-sm font-bold hover:bg-slate-200 transition-all"
+                    className="mt-2 px-8 py-3.5 bg-muted text-muted-foreground rounded-2xl text-sm font-bold hover:bg-muted/80 transition-all"
                   >
                     Clear Search
                   </button>
                 ) : (
                   <Link 
                     href="/account/seller/products?action=add"
-                    className="mt-2 px-8 py-3.5 bg-primary text-white rounded-2xl text-sm font-bold shadow-xl shadow-primary/20 hover:bg-blue-700 transition-all"
+                    className="mt-2 px-8 py-3.5 bg-primary text-primary-foreground rounded-2xl text-sm font-bold shadow-xl shadow-primary/20 hover:bg-primary/90 transition-all"
                   >
                     Post a Product
                   </Link>
                 )}
               </div>
             ) : (
-              <div className="divide-y divide-slate-100 bg-white">
+              <div className="divide-y divide-border bg-background">
                 {displayProducts.map((product: any) => (
                   <div 
                     key={product.id} 
                     onClick={() => router.push(`/shop/product/${product.id}`)}
-                    className="p-4 md:p-6 hover:bg-slate-50/50 transition-colors cursor-pointer"
+                    className="p-4 md:p-6 hover:bg-muted/50 transition-colors cursor-pointer"
                   >
                     <div className="flex gap-3 md:gap-4">
                       {/* Profile Image */}
@@ -414,7 +414,7 @@ const ShopPage = () => {
                             e.stopPropagation(); 
                             router.push(`/shop/${product.vendor.id}`);
                           }}
-                          className="w-12 h-12 rounded-full overflow-hidden border border-slate-100 bg-slate-50 hover:opacity-90 transition-opacity"
+                          className="w-12 h-12 rounded-full overflow-hidden border border-border bg-muted hover:opacity-90 transition-opacity"
                         >
                           <img src={product.vendor.avatar} alt={product.vendor.name} className="w-full h-full object-cover" />
                         </div>
@@ -430,15 +430,15 @@ const ShopPage = () => {
                                 e.stopPropagation(); 
                                 router.push(`/shop/${product.vendor.id}`);
                               }}
-                              className="text-sm font-black text-slate-900 truncate hover:underline flex items-center gap-1"
+                              className="text-sm font-black text-foreground truncate hover:underline flex items-center gap-1"
                             >
                               {product.vendor.name}
                               {product.vendor.verified && <CheckCircle2 className="w-3.5 h-3.5 text-primary fill-primary/10" />}
                             </span>
                             {product.vendor.handle && (
-                              <span className="text-slate-500 text-xs truncate">{product.vendor.handle}</span>
+                              <span className="text-muted-foreground text-xs truncate">{product.vendor.handle}</span>
                             )}
-                            <span className="text-slate-400 text-xs shrink-0">· {product.time}</span>
+                            <span className="text-muted-foreground/60 text-xs shrink-0">· {product.time}</span>
                           </div>
                           <div className="flex items-center gap-1">
                             <button 
@@ -451,7 +451,7 @@ const ShopPage = () => {
                                   initialRating: product.rating
                                 });
                               }}
-                              className="text-slate-300 hover:text-amber-500 p-1.5 rounded-full hover:bg-amber-50 transition-all"
+                              className="text-muted-foreground/40 hover:text-amber-500 p-1.5 rounded-full hover:bg-amber-500/10 transition-all"
                               title="Rate Product"
                             >
                               <Star className="w-4 h-4" />
@@ -460,19 +460,19 @@ const ShopPage = () => {
                         </div>
 
                         {/* Product Content */}
-                        <p className="text-slate-800 text-[13px] leading-relaxed mb-3 whitespace-pre-wrap">
+                        <p className="text-foreground/90 text-[13px] leading-relaxed mb-3 whitespace-pre-wrap">
                           {product.content}
                         </p>
 
                         {/* Product Image */}
                         {product.image && (
-                          <div className="rounded-[1.25rem] overflow-hidden border border-slate-100 mb-3 bg-slate-50 relative aspect-square group/img flex items-center justify-center">
+                          <div className="rounded-[1.25rem] overflow-hidden border border-border mb-3 bg-muted relative aspect-square group/img flex items-center justify-center">
                             <img 
                               src={product.image} 
                               alt="Product" 
                               className="w-full h-full object-cover transition-transform duration-700 group-hover/img:scale-110" 
                             />
-                            <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl border border-slate-100 shadow-xl shadow-slate-900/5 flex flex-col items-end">
+                            <div className="absolute bottom-3 right-3 bg-background/90 backdrop-blur-md px-4 py-2 rounded-2xl border border-border shadow-xl shadow-foreground/5 flex flex-col items-end">
                               <span className="text-primary font-black text-sm">KES {product.price}</span>
                               {product.rating > 0 && (
                                 <div className="flex items-center gap-1 mt-0.5">
@@ -485,7 +485,7 @@ const ShopPage = () => {
                         )}
 
                         {/* Action Buttons: Twitter Style */}
-                        <div className="flex items-center justify-between max-w-md text-slate-500 -ml-2">
+                        <div className="flex items-center justify-between max-w-md text-muted-foreground -ml-2">
                           <button 
                             onClick={(e) => { 
                               e.stopPropagation();
@@ -505,9 +505,9 @@ const ShopPage = () => {
 
                           <button 
                             onClick={(e) => { e.stopPropagation(); }}
-                            className="flex items-center gap-0 group transition-colors hover:text-green-500"
+                            className="flex items-center gap-0 group transition-colors hover:text-emerald-500"
                           >
-                            <div className="p-1.5 rounded-full group-hover:bg-green-500/10 transition-colors">
+                            <div className="p-1.5 rounded-full group-hover:bg-emerald-500/10 transition-colors">
                               <Repeat2 className="w-[18px] h-[18px]" />
                             </div>
                             <span className="text-xs font-bold">{product.reposts || 0}</span>
@@ -553,9 +553,9 @@ const ShopPage = () => {
                                 title: product.name
                               });
                             }}
-                            className="flex items-center gap-2 group transition-colors hover:text-slate-900"
+                            className="flex items-center gap-2 group transition-colors hover:text-foreground"
                           >
-                            <div className="p-2 rounded-full group-hover:bg-slate-100 transition-colors">
+                            <div className="p-2 rounded-full group-hover:bg-muted transition-colors">
                               <Share2 className="w-[18px] h-[18px]" />
                             </div>
                           </button>
@@ -596,30 +596,30 @@ const ShopPage = () => {
           <aside className="fixed top-[128px] w-[320px] h-[calc(100vh-128px)] overflow-y-auto custom-scrollbar px-6 py-6 pb-24 space-y-8">
             {/* Popular Shops */}
             <div className="space-y-4">
-              <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Popular Shops</h3>
+              <h3 className="text-[11px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] px-2">Popular Shops</h3>
               <div className="space-y-1">
                 {popularShops.map((vendor: any) => (
                   <div 
                     key={vendor.id} 
-                    className="p-3 hover:bg-slate-50 transition-all cursor-pointer flex items-center justify-between gap-3 rounded-xl group"
+                    className="p-3 hover:bg-muted transition-all cursor-pointer flex items-center justify-between gap-3 rounded-xl group"
                     onClick={() => router.push(`/shop/${vendor.id}`)}
                   >
                     <div className="flex items-center gap-3 min-w-0 flex-1">
-                      <div className="w-10 aspect-square rounded-full overflow-hidden bg-slate-100 shrink-0 border border-slate-100">
+                      <div className="w-10 aspect-square rounded-full overflow-hidden bg-muted shrink-0 border border-border">
                         <img src={vendor.avatar} alt={vendor.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-1">
-                          <p className="text-sm font-black text-slate-900 truncate">{vendor.name}</p>
+                          <p className="text-sm font-black text-foreground truncate">{vendor.name}</p>
                           {vendor.verified && <CheckCircle2 className="w-3 h-3 text-primary fill-primary/10" />}
                         </div>
                         {vendor.handle && (
-                          <p className="text-[11px] font-bold text-slate-400 truncate">{vendor.handle}</p>
+                          <p className="text-[11px] font-bold text-muted-foreground/60 truncate">{vendor.handle}</p>
                         )}
                         <div className="flex items-center gap-2 mt-0.5">
-                          <p className="text-[10px] font-bold text-slate-500">{vendor.followers} followers</p>
-                          <span className="text-slate-300 text-[8px]">·</span>
-                          <p className="text-[10px] font-bold text-slate-500">{vendor.products} products</p>
+                          <p className="text-[10px] font-bold text-muted-foreground">{vendor.followers} followers</p>
+                          <span className="text-muted-foreground/40 text-[8px]">·</span>
+                          <p className="text-[10px] font-bold text-muted-foreground">{vendor.products} products</p>
                         </div>
                       </div>
                     </div>
@@ -627,9 +627,9 @@ const ShopPage = () => {
                       <button 
                         onClick={(e) => { e.stopPropagation(); handleFollowToggle(vendor.id); }}
                         disabled={followMutation.isPending && followMutation.variables === vendor.id}
-                        className={`bg-slate-900 text-white text-[11px] font-black px-4 py-1.5 rounded-full hover:bg-primary transition-all shrink-0 ${
+                        className={`bg-foreground text-background text-[11px] font-black px-4 py-1.5 rounded-full hover:bg-primary hover:text-primary-foreground transition-all shrink-0 ${
                           vendor.followersList?.includes(currentUser?._id) 
-                            ? 'bg-slate-100 text-slate-900 hover:bg-red-50 hover:text-red-600 hover:border-red-100' 
+                            ? 'bg-muted text-foreground hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20' 
                             : ''
                         } ${followMutation.isPending && followMutation.variables === vendor.id ? 'opacity-50 cursor-not-allowed' : ''}`}
                       >
@@ -640,9 +640,9 @@ const ShopPage = () => {
                       <button 
                         onClick={(e) => { e.stopPropagation(); handleFollowToggle(vendor.id); }}
                         disabled={followMutation.isPending && followMutation.variables === vendor.id}
-                        className={`bg-slate-900 text-white text-[11px] font-black px-4 py-1.5 rounded-full hover:bg-primary transition-all shrink-0 ${
+                        className={`bg-foreground text-background text-[11px] font-black px-4 py-1.5 rounded-full hover:bg-primary hover:text-primary-foreground transition-all shrink-0 ${
                           vendor.followersList?.includes(currentUser?._id) 
-                            ? 'bg-slate-100 text-slate-900 hover:bg-red-50 hover:text-red-600 hover:border-red-100' 
+                            ? 'bg-muted text-foreground hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20' 
                             : ''
                         } ${followMutation.isPending && followMutation.variables === vendor.id ? 'opacity-50 cursor-not-allowed' : ''}`}
                       >
@@ -652,7 +652,7 @@ const ShopPage = () => {
                     {isMounted && !currentUser && (
                       <button 
                         onClick={(e) => { e.stopPropagation(); handleFollowToggle(vendor.id); }}
-                        className="bg-slate-900 text-white text-[11px] font-black px-4 py-1.5 rounded-full hover:bg-primary transition-all shrink-0"
+                        className="bg-foreground text-background text-[11px] font-black px-4 py-1.5 rounded-full hover:bg-primary hover:text-primary-foreground transition-all shrink-0"
                       >
                         Follow
                       </button>
@@ -664,7 +664,7 @@ const ShopPage = () => {
 
             {/* Special Offers */}
             <div className="space-y-4">
-              <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Special Offers</h3>
+              <h3 className="text-[11px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] px-2">Special Offers</h3>
               <div className="space-y-3 px-2">
                 {specialOffers.map((offer, index) => (
                   <Link 
@@ -672,17 +672,17 @@ const ShopPage = () => {
                     href="/deals"
                     className={`group block relative overflow-hidden rounded-2xl p-5 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl ${
                       index === 0 
-                        ? 'bg-primary shadow-blue-500/20' 
-                        : 'bg-secondary shadow-orange-500/20'
+                        ? 'bg-primary shadow-primary/20' 
+                        : 'bg-secondary shadow-secondary/20'
                     }`}
                   >
                     <div className="relative z-10">
-                      <p className="text-[10px] font-black text-white/70 uppercase tracking-widest mb-1">{offer.title}</p>
-                      <p className="text-xl font-black text-white leading-tight">{offer.discount}</p>
+                      <p className="text-[10px] font-black text-primary-foreground/70 uppercase tracking-widest mb-1">{offer.title}</p>
+                      <p className="text-xl font-black text-primary-foreground leading-tight">{offer.discount}</p>
                     </div>
                     
                     {/* Decorative Background Elements */}
-                    <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-colors"></div>
+                    <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-primary-foreground/10 rounded-full blur-2xl group-hover:bg-primary-foreground/20 transition-colors"></div>
                     
                     <div className="absolute right-3 bottom-3 text-5xl opacity-20 group-hover:scale-110 group-hover:opacity-30 transition-all duration-500 transform -rotate-12">
                       {offer.icon}
@@ -694,7 +694,7 @@ const ShopPage = () => {
 
             {/* Flash Deals */}
             <div className="space-y-4">
-              <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Flash Deals</h3>
+              <h3 className="text-[11px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] px-2">Flash Deals</h3>
               <div className="space-y-4 px-2">
                 {[1, 2].map((i) => (
                   <Link 
@@ -702,15 +702,15 @@ const ShopPage = () => {
                     href="/deals"
                     className="flex gap-3 group cursor-pointer"
                   >
-                    <div className="w-16 h-16 rounded-xl bg-slate-50 overflow-hidden border border-slate-100 shrink-0">
-                      <div className="w-full h-full bg-slate-200 animate-pulse"></div>
+                    <div className="w-16 h-16 rounded-xl bg-muted overflow-hidden border border-border shrink-0">
+                      <div className="w-full h-full bg-muted-foreground/10 animate-pulse"></div>
                     </div>
                     <div className="min-w-0 flex-1 py-1">
-                      <p className="font-bold text-sm text-slate-900 line-clamp-1 group-hover:text-primary transition-colors">Premium Item {i}</p>
+                      <p className="font-bold text-sm text-foreground line-clamp-1 group-hover:text-primary transition-colors">Premium Item {i}</p>
                       <div className="flex items-center gap-2 mt-1">
                         <span className="text-primary font-black text-sm">KES {i * 1500}</span>
                       </div>
-                      <div className="w-full h-1 bg-slate-100 rounded-full mt-2 overflow-hidden">
+                      <div className="w-full h-1 bg-muted rounded-full mt-2 overflow-hidden">
                         <div className="h-full bg-primary rounded-full" style={{ width: i === 1 ? '75%' : '40%' }}></div>
                       </div>
                     </div>
@@ -720,7 +720,7 @@ const ShopPage = () => {
             </div>
 
             {/* Links */}
-            <div className="px-4 py-4 border-t border-slate-50 flex flex-wrap gap-x-4 gap-y-2">
+            <div className="px-4 py-4 border-t border-border flex flex-wrap gap-x-4 gap-y-2">
               {[
                 { label: 'Terms', href: '/terms' },
                 { label: 'Privacy', href: '/privacy' },
@@ -731,12 +731,12 @@ const ShopPage = () => {
                 <Link 
                   key={link.label} 
                   href={link.href} 
-                  className="text-[11px] font-bold text-slate-400 hover:text-primary transition-colors"
+                  className="text-[11px] font-bold text-muted-foreground hover:text-primary transition-colors"
                 >
                   {link.label}
                 </Link>
               ))}
-              <p className="text-[11px] font-bold text-slate-300 w-full mt-2">© 2026 <span className="text-secondary">.</span>Soko Marketplace</p>
+              <p className="text-[11px] font-bold text-muted-foreground/40 w-full mt-2">© 2026 <span className="text-secondary">.</span>Soko Marketplace</p>
             </div>
           </aside>
         </div>
@@ -750,7 +750,7 @@ const ShopPage = () => {
             showFab ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0 pointer-events-none'
           }`}
         >
-          <div className="bg-primary text-white p-4 rounded-full shadow-2xl shadow-primary/40 hover:scale-110 active:scale-95 transition-all group flex items-center gap-2">
+          <div className="bg-primary text-primary-foreground p-4 rounded-full shadow-2xl shadow-primary/40 hover:scale-110 active:scale-95 transition-all group flex items-center gap-2">
             <Plus className="w-6 h-6" />
             <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-500 font-black text-sm whitespace-nowrap">
               POST PRODUCT

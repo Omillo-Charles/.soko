@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist_Mono } from "next/font/google";
 import Navbar from "@/components/nav";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
 import QueryProvider from "@/components/QueryProvider";
@@ -23,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link
           rel="preload"
@@ -34,15 +35,22 @@ export default function RootLayout({
         />
       </head>
       <body className={`${geistMono.variable} antialiased`}>
-        <QueryProvider>
-          <CartProvider>
-            <WishlistProvider>
-              <Toaster position="top-right" richColors />
-              <Navbar />
-              {children}
-            </WishlistProvider>
-          </CartProvider>
-        </QueryProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <QueryProvider>
+            <CartProvider>
+              <WishlistProvider>
+                <Toaster position="top-right" richColors />
+                <Navbar />
+                {children}
+              </WishlistProvider>
+            </CartProvider>
+          </QueryProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

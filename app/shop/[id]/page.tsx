@@ -135,7 +135,7 @@ const ShopProfilePage = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
@@ -143,17 +143,17 @@ const ShopProfilePage = () => {
 
   if (error || !shop) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 p-4">
-        <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center text-red-500 mb-6">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-background p-4">
+        <div className="w-20 h-20 bg-red-50 dark:bg-red-500/10 rounded-full flex items-center justify-center text-red-500 mb-6">
           <Info className="w-10 h-10" />
         </div>
-        <h1 className="text-2xl font-black text-slate-900 mb-2">Oops!</h1>
-        <p className="text-slate-500 font-medium mb-8 text-center max-w-md">
+        <h1 className="text-2xl font-black text-foreground mb-2">Oops!</h1>
+        <p className="text-muted-foreground font-medium mb-8 text-center max-w-md">
           {error || "We couldn't find the shop you're looking for."}
         </p>
         <button 
           onClick={() => router.push("/shop")}
-          className="px-8 py-3 bg-primary text-white rounded-full font-bold shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all"
+          className="px-8 py-3 bg-primary text-primary-foreground rounded-full font-bold shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all"
         >
           Back to Shop
         </button>
@@ -162,7 +162,7 @@ const ShopProfilePage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <div className="max-w-[1920px] mx-auto grid grid-cols-1 lg:grid-cols-[280px_1fr_320px]">
         
         {/* Left Sidebar */}
@@ -170,14 +170,14 @@ const ShopProfilePage = () => {
           <aside className="fixed top-[128px] w-[280px] h-[calc(100vh-128px)] overflow-y-auto custom-scrollbar px-6 py-6 pb-24 space-y-8">
             <button 
               onClick={() => router.push('/shop')}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:text-primary hover:bg-primary/5 transition-all group w-full"
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all group w-full"
             >
               <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
               Back to Explore
             </button>
 
             <div className="space-y-4 pt-4">
-              <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Store Sections</h3>
+              <h3 className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em] px-2">Store Sections</h3>
               <div className="space-y-1">
                 {[
                   { name: 'Products', icon: <ShoppingBag className="w-5 h-5" />, count: products.length },
@@ -190,7 +190,7 @@ const ShopProfilePage = () => {
                     key={item.name}
                     onClick={() => setActiveSection(item.name)}
                     className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold transition-all ${
-                      activeSection === item.name ? 'text-primary bg-primary/5' : 'text-slate-600 hover:text-primary hover:bg-primary/5'
+                      activeSection === item.name ? 'text-primary bg-primary/5' : 'text-muted-foreground hover:text-primary hover:bg-primary/5'
                     }`}
                   >
                     <div className="flex items-center gap-3">
@@ -199,7 +199,7 @@ const ShopProfilePage = () => {
                     </div>
                     {item.count !== undefined && (
                       <span className={`text-[10px] px-2 py-0.5 rounded-full ${
-                        activeSection === item.name ? 'bg-primary/10 text-primary' : 'bg-slate-100 text-slate-500'
+                        activeSection === item.name ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
                       }`}>
                         {item.count}
                       </span>
@@ -212,28 +212,28 @@ const ShopProfilePage = () => {
         </div>
 
        {/* Middle Feed - Products */}
-        <main className="flex-1 min-w-0 border-x border-slate-100 pb-24 lg:pb-0">
+        <main className="flex-1 min-w-0 border-x border-border pb-24 lg:pb-0">
           {/* Header - Profile Style */}
-          <div className="sticky top-[100px] md:top-[128px] bg-white/80 backdrop-blur-md z-30 border-b border-slate-100 px-4 py-4 flex items-center gap-4">
-            <button onClick={() => router.back()} className="lg:hidden p-2 hover:bg-slate-100 rounded-full">
+          <div className="sticky top-[100px] md:top-[128px] bg-background/80 backdrop-blur-md z-30 border-b border-border px-4 py-4 flex items-center gap-4">
+            <button onClick={() => router.back()} className="lg:hidden p-2 hover:bg-muted rounded-full">
               <ChevronLeft className="w-5 h-5" />
             </button>
             <div>
-              <h1 className="text-lg font-black text-slate-900 leading-none">{shop.name}</h1>
-              <p className="text-xs font-bold text-slate-500 mt-1">{products.length} products</p>
+              <h1 className="text-lg font-black text-foreground leading-none">{shop.name}</h1>
+              <p className="text-xs font-bold text-muted-foreground mt-1">{products.length} products</p>
             </div>
           </div>
 
           {/* Banner & Profile Info */}
           <div className="relative">
-            <div className="h-48 bg-slate-100 relative overflow-hidden">
+            <div className="h-48 bg-muted relative overflow-hidden">
               {shop.banner && <img src={shop.banner} alt="Banner" className="w-full h-full object-cover" />}
               <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent" />
             </div>
             
             <div className="px-4 pb-6">
               <div className="relative flex justify-between items-end -mt-16 mb-4">
-                <div className="w-32 h-32 rounded-[2.5rem] border-4 border-white overflow-hidden bg-slate-100 shadow-xl">
+                <div className="w-32 h-32 rounded-[2.5rem] border-4 border-background overflow-hidden bg-muted shadow-xl">
                   <img 
                     src={shop.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${shop.name}`} 
                     alt={shop.name} 
@@ -243,7 +243,7 @@ const ShopProfilePage = () => {
                 <div className="flex gap-2 pb-2">
                   {!isMounted ? (
                     <button 
-                      className="px-6 py-2 rounded-full text-sm font-black transition-all bg-slate-900 text-white hover:bg-primary"
+                      className="px-6 py-2 rounded-full text-sm font-black transition-all bg-foreground text-background hover:bg-primary"
                     >
                       Follow
                     </button>
@@ -255,8 +255,8 @@ const ShopProfilePage = () => {
                           disabled={followMutation.isPending}
                           className={`px-6 py-2 rounded-full text-sm font-black transition-all ${
                             isFollowing 
-                              ? 'bg-slate-100 text-slate-900 hover:bg-red-50 hover:text-red-600 hover:border-red-100' 
-                              : 'bg-slate-900 text-white hover:bg-primary'
+                              ? 'bg-muted text-foreground hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/10 hover:border-red-100' 
+                              : 'bg-foreground text-background hover:bg-primary'
                           } ${followMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
                           {followMutation.isPending ? '...' : (isFollowing ? 'Following' : 'Follow')}
@@ -265,82 +265,82 @@ const ShopProfilePage = () => {
                       {!currentUser && (
                         <button 
                           onClick={handleFollowToggle}
-                          className="px-6 py-2 rounded-full text-sm font-black transition-all bg-slate-900 text-white hover:bg-primary"
+                          className="px-6 py-2 rounded-full text-sm font-black transition-all bg-foreground text-background hover:bg-primary"
                         >
                           Follow
                         </button>
                       )}
                     </>
                   )}
-                  <button className="p-2 border border-slate-200 rounded-full hover:bg-slate-50 transition-all">
-                    <Share2 className="w-4 h-4 text-slate-600" />
+                  <button className="p-2 border border-border rounded-full hover:bg-muted transition-all">
+                    <Share2 className="w-4 h-4 text-muted-foreground" />
                   </button>
-                  <button className="p-2 border border-slate-200 rounded-full hover:bg-slate-50 transition-all">
-                    <MoreHorizontal className="w-4 h-4 text-slate-600" />
+                  <button className="p-2 border border-border rounded-full hover:bg-muted transition-all">
+                    <MoreHorizontal className="w-4 h-4 text-muted-foreground" />
                   </button>
                 </div>
               </div>
 
               <div className="space-y-1">
                 <div className="flex items-center gap-1.5">
-                  <h2 className="text-xl font-black text-slate-900">{shop.name}</h2>
+                  <h2 className="text-xl font-black text-foreground">{shop.name}</h2>
                   {shop.isVerified && <CheckCircle2 className="w-5 h-5 text-primary fill-primary/10" />}
                 </div>
                 <div className="flex items-center gap-3">
-                  <p className="text-sm font-bold text-slate-500">{shop.username ? `@${shop.username}` : `@${shop.name.toLowerCase().replace(/\s+/g, "_")}`}</p>
-                  <div className="w-1 h-1 rounded-full bg-slate-300" />
+                  <p className="text-sm font-bold text-muted-foreground">{shop.username ? `@${shop.username}` : `@${shop.name.toLowerCase().replace(/\s+/g, "_")}`}</p>
+                  <div className="w-1 h-1 rounded-full bg-border" />
                   <button 
                     onClick={() => setActiveSection('Followers')}
-                    className="text-sm font-bold text-slate-900 hover:underline"
+                    className="text-sm font-bold text-foreground hover:underline"
                   >
-                    {shop?.followersCount ?? shop?.followers?.length ?? 0} <span className="text-slate-500">Followers</span>
+                    {shop?.followersCount ?? shop?.followers?.length ?? 0} <span className="text-muted-foreground">Followers</span>
                   </button>
-                  <div className="w-1 h-1 rounded-full bg-slate-300" />
+                  <div className="w-1 h-1 rounded-full bg-border" />
                   <button 
                     onClick={() => setActiveSection('Following')}
-                    className="text-sm font-bold text-slate-900 hover:underline"
+                    className="text-sm font-bold text-foreground hover:underline"
                   >
-                    {shop?.followingCount ?? shop?.following?.length ?? 0} <span className="text-slate-500">Following</span>
+                    {shop?.followingCount ?? shop?.following?.length ?? 0} <span className="text-muted-foreground">Following</span>
                   </button>
-                  <div className="w-1 h-1 rounded-full bg-slate-300" />
+                  <div className="w-1 h-1 rounded-full bg-border" />
                   <button 
                     onClick={() => setActiveSection('Products')}
-                    className="text-sm font-bold text-slate-900 hover:underline"
+                    className="text-sm font-bold text-foreground hover:underline"
                   >
-                    {productsCount} <span className="text-slate-500">Products</span>
+                    {productsCount} <span className="text-muted-foreground">Products</span>
                   </button>
                 </div>
               </div>
 
-              <p className="mt-4 text-[13px] text-slate-600 font-medium leading-relaxed max-w-2xl">
+              <p className="mt-4 text-[13px] text-muted-foreground font-medium leading-relaxed max-w-2xl">
                 {shop.description}
               </p>
             </div>
           </div>
 
           {/* Main Feed Content */}
-          <div className="border-t border-slate-100">
+          <div className="border-t border-border">
             {activeSection === 'Products' ? (
               products.length === 0 ? (
-                <div className="p-20 flex flex-col items-center justify-center text-slate-400 gap-4 text-center">
+                <div className="p-20 flex flex-col items-center justify-center text-muted-foreground gap-4 text-center">
                   <ShoppingBag className="w-12 h-12 opacity-20" />
                   <div>
-                    <p className="font-black text-slate-900">No products found</p>
+                    <p className="font-black text-foreground">No products found</p>
                     <p className="text-sm">This shop hasn't posted any products yet.</p>
                   </div>
                 </div>
               ) : (
-                <div className="divide-y divide-slate-100">
+                <div className="divide-y divide-border">
                   {products.map((product: any) => (
                     <div 
                       key={product._id} 
                       onClick={() => router.push(`/shop/product/${product._id}`)}
-                      className="p-4 md:p-6 hover:bg-slate-50/50 transition-colors cursor-pointer"
+                      className="p-4 md:p-6 hover:bg-muted/50 transition-colors cursor-pointer"
                     >
                       <div className="flex gap-3 md:gap-4">
                         {/* Profile Image (Small in feed) */}
                         <div className="shrink-0">
-                          <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-100 bg-slate-50">
+                          <div className="w-10 h-10 rounded-full overflow-hidden border border-border bg-muted">
                             <img 
                               src={shop.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${shop.name}`} 
                               alt={shop.name} 
@@ -353,11 +353,11 @@ const ShopProfilePage = () => {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between gap-2 mb-1">
                             <div className="flex items-center gap-1.5 min-w-0">
-                              <span className="text-sm font-black text-slate-900 truncate flex items-center gap-1">
+                              <span className="text-sm font-black text-foreground truncate flex items-center gap-1">
                                 {shop.name}
                                 {shop.isVerified && <CheckCircle2 className="w-3.5 h-3.5 text-primary fill-primary/10" />}
                               </span>
-                              <span className="text-slate-500 text-xs truncate">{shop.username ? `@${shop.username}` : `@${shop.name.toLowerCase().replace(/\s+/g, "_")}`}</span>
+                              <span className="text-muted-foreground text-xs truncate">{shop.username ? `@${shop.username}` : `@${shop.name.toLowerCase().replace(/\s+/g, "_")}`}</span>
                             </div>
                             <div className="flex items-center gap-1">
                               <button 
@@ -370,7 +370,7 @@ const ShopProfilePage = () => {
                                     initialRating: product.rating
                                   });
                                 }}
-                                className="text-slate-300 hover:text-amber-500 p-1.5 rounded-full hover:bg-amber-50 transition-all"
+                                className="text-muted-foreground/30 hover:text-amber-500 p-1.5 rounded-full hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-all"
                                 title="Rate Product"
                               >
                                 <Star className="w-4 h-4" />
@@ -378,18 +378,18 @@ const ShopProfilePage = () => {
                             </div>
                           </div>
 
-                          <p className="text-slate-800 text-[13px] leading-relaxed mb-3 whitespace-pre-wrap">
+                          <p className="text-foreground text-[13px] leading-relaxed mb-3 whitespace-pre-wrap">
                             {product.description}
                           </p>
 
                           {product.image && (
-                            <div className="rounded-[1.25rem] overflow-hidden border border-slate-100 mb-3 bg-slate-50 relative aspect-square group/img flex items-center justify-center">
+                            <div className="rounded-[1.25rem] overflow-hidden border border-border mb-3 bg-muted relative aspect-square group/img flex items-center justify-center">
                               <img 
                                 src={product.image} 
                                 alt={product.name} 
                                 className="w-full h-full object-cover transition-transform duration-700 group-hover/img:scale-110" 
                               />
-                              <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl border border-slate-100 shadow-xl flex flex-col items-end">
+                              <div className="absolute bottom-3 right-3 bg-background/90 backdrop-blur-md px-4 py-2 rounded-2xl border border-border shadow-xl shadow-foreground/5 flex flex-col items-end">
                                 <span className="text-primary font-black text-sm">KES {product.price?.toLocaleString()}</span>
                                 {product.rating > 0 && (
                                   <div className="flex items-center gap-1 mt-0.5">
@@ -401,7 +401,7 @@ const ShopProfilePage = () => {
                             </div>
                           )}
 
-                          <div className="flex items-center justify-between max-w-md text-slate-500 -ml-2">
+                          <div className="flex items-center justify-between max-w-md text-muted-foreground -ml-2">
                             <button onClick={(e) => e.stopPropagation()} className="flex items-center gap-2 group hover:text-primary transition-colors">
                               <div className="p-2 rounded-full group-hover:bg-primary/10">
                                 <MessageCircle className="w-[18px] h-[18px]" />
@@ -464,25 +464,25 @@ const ShopProfilePage = () => {
                 </div>
               )
             ) : activeSection === 'Reviews' ? (
-              <div className="p-20 flex flex-col items-center justify-center text-slate-400 gap-4 text-center">
+              <div className="p-20 flex flex-col items-center justify-center text-muted-foreground gap-4 text-center">
                 <Star className="w-12 h-12 opacity-20" />
                 <div>
-                  <p className="font-black text-slate-900">No reviews yet</p>
+                  <p className="font-black text-foreground">No reviews yet</p>
                   <p className="text-sm">Customers haven't left any reviews for this shop yet.</p>
                 </div>
               </div>
             ) : activeSection === 'Followers' ? (
-              <div className="divide-y divide-slate-100">
+              <div className="divide-y divide-border">
                 {isListsLoading ? (
-                  <div className="p-20 flex flex-col items-center justify-center text-slate-400 gap-4">
+                  <div className="p-20 flex flex-col items-center justify-center text-muted-foreground gap-4">
                     <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin"></div>
                     <p className="font-bold text-sm">Loading followers...</p>
                   </div>
                 ) : listData.length === 0 ? (
-                  <div className="p-20 flex flex-col items-center justify-center text-slate-400 gap-4 text-center">
+                  <div className="p-20 flex flex-col items-center justify-center text-muted-foreground gap-4 text-center">
                     <Users className="w-12 h-12 opacity-20" />
                     <div>
-                      <p className="font-black text-slate-900">No followers yet</p>
+                      <p className="font-black text-foreground">No followers yet</p>
                       <p className="text-sm">This shop doesn't have any followers yet.</p>
                     </div>
                   </div>
@@ -490,7 +490,7 @@ const ShopProfilePage = () => {
                   (listData || []).map((follower: any) => (
                     <div key={follower._id || follower.id || Math.random()} className="p-4 md:p-6 flex items-center justify-between gap-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-full overflow-hidden bg-slate-100 shrink-0">
+                        <div className="w-12 h-12 rounded-full overflow-hidden bg-muted shrink-0">
                           <img 
                             src={follower.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${follower.name || 'user'}`} 
                             alt={follower.name || 'User'} 
@@ -498,8 +498,8 @@ const ShopProfilePage = () => {
                           />
                         </div>
                         <div>
-                          <p className="text-sm font-black text-slate-900 leading-none mb-1">{follower.name}</p>
-                          <p className="text-xs font-bold text-slate-400">{follower.username ? `@${follower.username}` : `@${(follower.name || 'user').toLowerCase().replace(/\s+/g, "_")}`}</p>
+                          <p className="text-sm font-black text-foreground leading-none mb-1">{follower.name}</p>
+                          <p className="text-xs font-bold text-muted-foreground/60">{follower.username ? `@${follower.username}` : `@${(follower.name || 'user').toLowerCase().replace(/\s+/g, "_")}`}</p>
                         </div>
                       </div>
                     </div>
@@ -507,17 +507,17 @@ const ShopProfilePage = () => {
                 )}
               </div>
             ) : activeSection === 'Following' ? (
-              <div className="divide-y divide-slate-100">
+              <div className="divide-y divide-border">
                 {isListsLoading ? (
-                  <div className="p-20 flex flex-col items-center justify-center text-slate-400 gap-4">
+                  <div className="p-20 flex flex-col items-center justify-center text-muted-foreground gap-4">
                     <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin"></div>
                     <p className="font-bold text-sm">Loading following...</p>
                   </div>
                 ) : (listData || []).length === 0 ? (
-                  <div className="p-20 flex flex-col items-center justify-center text-slate-400 gap-4 text-center">
+                  <div className="p-20 flex flex-col items-center justify-center text-muted-foreground gap-4 text-center">
                     <Users className="w-12 h-12 opacity-20" />
                     <div>
-                      <p className="font-black text-slate-900">Not following anyone</p>
+                      <p className="font-black text-foreground">Not following anyone</p>
                       <p className="text-sm">This shop isn't following anyone yet.</p>
                     </div>
                   </div>
@@ -526,10 +526,10 @@ const ShopProfilePage = () => {
                     <div 
                       key={followedShop._id || followedShop.id || Math.random()} 
                       onClick={() => (followedShop._id || followedShop.id) && router.push(`/shop/${followedShop._id || followedShop.id}`)}
-                      className="p-4 md:p-6 flex items-center justify-between gap-4 hover:bg-slate-50 cursor-pointer transition-colors"
+                      className="p-4 md:p-6 flex items-center justify-between gap-4 hover:bg-muted/50 cursor-pointer transition-colors"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-full overflow-hidden bg-slate-100 shrink-0">
+                        <div className="w-12 h-12 rounded-full overflow-hidden bg-muted shrink-0">
                           <img 
                             src={followedShop.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${followedShop.name || 'shop'}`} 
                             alt={followedShop.name || 'Shop'} 
@@ -538,13 +538,13 @@ const ShopProfilePage = () => {
                         </div>
                         <div>
                           <div className="flex items-center gap-1">
-                            <p className="font-black text-slate-900 text-sm">{followedShop.name || 'Unknown Shop'}</p>
+                            <p className="font-black text-foreground text-sm">{followedShop.name || 'Unknown Shop'}</p>
                             {followedShop.isVerified && <CheckCircle2 className="w-3 h-3 text-primary fill-primary/10" />}
                           </div>
-                          <p className="text-xs font-bold text-slate-400">{followedShop.username ? `@${followedShop.username}` : `@${(followedShop.name || 'shop').toLowerCase().replace(/\s+/g, "_")}`}</p>
+                          <p className="text-xs font-bold text-muted-foreground/60">{followedShop.username ? `@${followedShop.username}` : `@${(followedShop.name || 'shop').toLowerCase().replace(/\s+/g, "_")}`}</p>
                         </div>
                       </div>
-                      <button className="px-4 py-1.5 bg-slate-100 text-slate-900 rounded-full text-xs font-black hover:bg-slate-200 transition-all">
+                      <button className="px-4 py-1.5 bg-muted text-foreground rounded-full text-xs font-black hover:bg-muted/80 transition-all">
                         View Shop
                       </button>
                     </div>
@@ -554,45 +554,45 @@ const ShopProfilePage = () => {
             ) : (
               <div className="p-8 md:p-12 space-y-8">
                 <div>
-                  <h3 className="text-lg font-black text-slate-900 mb-4">About {shop.name}</h3>
-                  <p className="text-slate-600 leading-relaxed font-medium">
+                  <h3 className="text-lg font-black text-foreground mb-4">About {shop.name}</h3>
+                  <p className="text-muted-foreground leading-relaxed font-medium">
                     {shop.description || "No description provided."}
                   </p>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100">
-                    <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Contact Details</h4>
+                  <div className="p-6 bg-muted/50 rounded-2xl border border-border">
+                    <h4 className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-4">Contact Details</h4>
                     <div className="space-y-3">
-                      <div className="flex items-center gap-3 text-sm font-bold text-slate-700">
+                      <div className="flex items-center gap-3 text-sm font-bold text-foreground/80">
                         <Phone className="w-4 h-4 text-primary" />
                         {shop.phone}
                       </div>
-                      <div className="flex items-center gap-3 text-sm font-bold text-slate-700">
+                      <div className="flex items-center gap-3 text-sm font-bold text-foreground/80">
                         <Mail className="w-4 h-4 text-primary" />
                         {shop.email}
                       </div>
-                      <div className="flex items-center gap-3 text-sm font-bold text-slate-700">
+                      <div className="flex items-center gap-3 text-sm font-bold text-foreground/80">
                         <MapPin className="w-4 h-4 text-primary" />
                         {shop.address}
                       </div>
                     </div>
                   </div>
                   
-                  <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100">
-                    <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Store Stats</h4>
+                  <div className="p-6 bg-muted/50 rounded-2xl border border-border">
+                    <h4 className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-4">Store Stats</h4>
                     <div className="space-y-3">
                       <div className="flex justify-between items-center text-sm font-bold">
-                        <span className="text-slate-500">Member Since</span>
-                        <span className="text-slate-900">{new Date(shop.createdAt).toLocaleDateString()}</span>
+                        <span className="text-muted-foreground">Member Since</span>
+                        <span className="text-foreground">{new Date(shop.createdAt).toLocaleDateString()}</span>
                       </div>
                       <div className="flex justify-between items-center text-sm font-bold">
-                        <span className="text-slate-500">Total Products</span>
-                        <span className="text-slate-900">{products.length}</span>
+                        <span className="text-muted-foreground">Total Products</span>
+                        <span className="text-foreground">{products.length}</span>
                       </div>
                       <div className="flex justify-between items-center text-sm font-bold">
-                        <span className="text-slate-500">Verified</span>
-                        <span className={shop.isVerified ? "text-green-600" : "text-slate-400"}>
+                        <span className="text-muted-foreground">Verified</span>
+                        <span className={shop.isVerified ? "text-green-600" : "text-muted-foreground/60"}>
                           {shop.isVerified ? "Yes" : "No"}
                         </span>
                       </div>
@@ -628,42 +628,42 @@ const ShopProfilePage = () => {
           <aside className="fixed top-[128px] w-[320px] h-[calc(100vh-128px)] overflow-y-auto custom-scrollbar px-6 py-6 pb-24 space-y-8">
             {/* Store Stats */}
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-slate-50/50 p-4 rounded-2xl border border-slate-100 text-center">
-                <p className="text-lg font-black text-slate-900">0.0</p>
+              <div className="bg-muted/50 p-4 rounded-2xl border border-border text-center">
+                <p className="text-lg font-black text-foreground">0.0</p>
                 <div className="flex justify-center gap-0.5 my-1">
-                  {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-2.5 h-2.5 text-slate-200" />)}
+                  {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-2.5 h-2.5 text-muted-foreground/20" />)}
                 </div>
-                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Rating</p>
+                <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Rating</p>
               </div>
-              <div className="bg-slate-50/50 p-4 rounded-2xl border border-slate-100 text-center">
-                <p className="text-lg font-black text-slate-900">{shop?.followersCount ?? shop?.followers?.length ?? 0}</p>
-                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-2">Followers</p>
+              <div className="bg-muted/50 p-4 rounded-2xl border border-border text-center">
+                <p className="text-lg font-black text-foreground">{shop?.followersCount ?? shop?.followers?.length ?? 0}</p>
+                <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mt-2">Followers</p>
               </div>
             </div>
 
             {/* Contact Information */}
             <div className="space-y-4">
-              <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Information</h3>
-              <div className="bg-slate-50/50 rounded-2xl border border-slate-100 p-4 space-y-4">
+              <h3 className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em] px-2">Information</h3>
+              <div className="bg-muted/50 rounded-2xl border border-border p-4 space-y-4">
                 <div className="flex items-start gap-3">
-                  <MapPin className="w-4 h-4 text-slate-400 mt-0.5" />
+                  <MapPin className="w-4 h-4 text-muted-foreground mt-0.5" />
                   <div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-tight mb-0.5">Location</p>
-                    <p className="text-xs font-bold text-slate-700 leading-snug">{shop.address}</p>
+                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-tight mb-0.5">Location</p>
+                    <p className="text-xs font-bold text-foreground leading-snug">{shop.address}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <Phone className="w-4 h-4 text-slate-400 mt-0.5" />
+                  <Phone className="w-4 h-4 text-muted-foreground mt-0.5" />
                   <div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-tight mb-0.5">Phone</p>
-                    <p className="text-xs font-bold text-slate-700">{shop.phone}</p>
+                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-tight mb-0.5">Phone</p>
+                    <p className="text-xs font-bold text-foreground">{shop.phone}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <Mail className="w-4 h-4 text-slate-400 mt-0.5" />
+                  <Mail className="w-4 h-4 text-muted-foreground mt-0.5" />
                   <div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-tight mb-0.5">Email</p>
-                    <p className="text-xs font-bold text-slate-700 truncate">{shop.email}</p>
+                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-tight mb-0.5">Email</p>
+                    <p className="text-xs font-bold text-foreground truncate">{shop.email}</p>
                   </div>
                 </div>
               </div>
@@ -671,7 +671,7 @@ const ShopProfilePage = () => {
 
             {/* Popular Stores */}
             <div className="space-y-4">
-              <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Popular Stores</h3>
+              <h3 className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em] px-2">Popular Stores</h3>
               <div className="space-y-1">
                 {popularShops
                   .filter((s: any) => s.id !== id) // Filter out the current shop
@@ -680,25 +680,25 @@ const ShopProfilePage = () => {
                   <div 
                     key={vendor.id} 
                     onClick={() => router.push(`/shop/${vendor.id}`)}
-                    className="p-3 hover:bg-slate-50 transition-all cursor-pointer flex items-center justify-between gap-3 rounded-xl group"
+                    className="p-3 hover:bg-muted transition-all cursor-pointer flex items-center justify-between gap-3 rounded-xl group"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-10 aspect-square rounded-full overflow-hidden bg-slate-100 border border-slate-100 shrink-0">
+                      <div className="w-10 aspect-square rounded-full overflow-hidden bg-muted border border-border shrink-0">
                         <img src={vendor.avatar} alt={vendor.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-1">
-                          <p className="font-bold text-slate-900 text-sm truncate">{vendor.name}</p>
+                          <p className="font-bold text-foreground text-sm truncate">{vendor.name}</p>
                           {vendor.verified && <CheckCircle2 className="w-3 h-3 text-primary fill-primary/10" />}
                         </div>
                         <div className="flex items-center gap-2">
-                          <p className="text-slate-400 text-[11px] truncate">{vendor.handle}</p>
-                          <span className="text-slate-300">·</span>
-                          <p className="text-slate-400 text-[11px] font-bold">{vendor.followers} followers</p>
+                          <p className="text-muted-foreground text-[11px] truncate">{vendor.handle}</p>
+                          <span className="text-muted-foreground/30">·</span>
+                          <p className="text-muted-foreground text-[11px] font-bold">{vendor.followers} followers</p>
                         </div>
                       </div>
                     </div>
-                    <button className="bg-slate-900 text-white text-[11px] font-black px-4 py-1.5 rounded-full hover:bg-primary transition-all shrink-0">
+                    <button className="bg-foreground text-background text-[11px] font-black px-4 py-1.5 rounded-full hover:bg-primary hover:text-white transition-all shrink-0">
                       View
                     </button>
                   </div>

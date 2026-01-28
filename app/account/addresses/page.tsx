@@ -153,7 +153,7 @@ const AddressesPage = () => {
 
   if (!isMounted || userLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="w-10 h-10 text-primary animate-spin" />
       </div>
     );
@@ -162,24 +162,24 @@ const AddressesPage = () => {
   const addresses = (user?.addresses || []) as Address[];
 
   return (
-    <div className="min-h-screen bg-slate-50 pt-12 pb-32 lg:pb-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-background pt-12 pb-32 lg:pb-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
           <div>
             <button 
               onClick={() => router.push("/account")}
-              className="flex items-center gap-2 text-slate-500 hover:text-slate-900 font-bold mb-4 transition-colors group"
+              className="flex items-center gap-2 text-muted-foreground hover:text-foreground font-bold mb-4 transition-colors group"
             >
               <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
               Back to Account
             </button>
-            <h1 className="text-4xl font-black text-slate-900 tracking-tight uppercase">My Addresses</h1>
-            <p className="text-slate-500 font-medium mt-2">Manage your delivery and billing addresses.</p>
+            <h1 className="text-4xl font-black text-foreground tracking-tight uppercase">My Addresses</h1>
+            <p className="text-muted-foreground font-medium mt-2">Manage your delivery and billing addresses.</p>
           </div>
           <button 
             onClick={() => { resetForm(); setShowAddModal(true); }}
-            className="flex items-center justify-center gap-3 px-8 py-4 bg-primary text-white rounded-2xl font-bold hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 active:scale-95"
+            className="flex items-center justify-center gap-3 px-8 py-4 bg-primary text-primary-foreground rounded-2xl font-bold hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 active:scale-95"
           >
             <Plus className="w-5 h-5" />
             Add New Address
@@ -192,8 +192,8 @@ const AddressesPage = () => {
             addresses.map((address) => (
               <div 
                 key={address._id}
-                className={`bg-white rounded-[2rem] p-8 border-2 transition-all relative group ${
-                  address.isDefault ? "border-primary shadow-xl shadow-primary/5" : "border-slate-100 hover:border-slate-200"
+                className={`bg-card rounded-[2rem] p-8 border-2 transition-all relative group ${
+                  address.isDefault ? "border-primary shadow-xl shadow-primary/5" : "border-border hover:border-primary/20"
                 }`}
               >
                 {address.isDefault && (
@@ -205,15 +205,15 @@ const AddressesPage = () => {
                 
                 <div className="flex items-start gap-4 mb-6">
                   <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 ${
-                    address.type === "home" ? "bg-blue-50 text-blue-500" : 
-                    address.type === "work" ? "bg-amber-50 text-amber-500" : "bg-purple-50 text-purple-500"
+                    address.type === "home" ? "bg-blue-500/10 text-blue-500" : 
+                    address.type === "work" ? "bg-amber-500/10 text-amber-500" : "bg-purple-500/10 text-purple-500"
                   }`}>
                     {address.type === "home" ? <Home className="w-7 h-7" /> : 
                      address.type === "work" ? <Briefcase className="w-7 h-7" /> : <MapPin className="w-7 h-7" />}
                   </div>
                   <div>
-                    <h3 className="text-xl font-black text-slate-900 mb-1">{address.name}</h3>
-                    <div className="flex items-center gap-2 text-slate-400">
+                    <h3 className="text-xl font-black text-foreground mb-1">{address.name}</h3>
+                    <div className="flex items-center gap-2 text-muted-foreground">
                       <Phone className="w-3 h-3" />
                       <span className="text-xs font-bold">{address.phone}</span>
                     </div>
@@ -221,26 +221,26 @@ const AddressesPage = () => {
                 </div>
 
                 <div className="space-y-2 mb-8">
-                  <p className="text-slate-600 font-bold flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-slate-300" />
+                  <p className="text-foreground/80 font-bold flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-muted-foreground/50" />
                     {address.city}
                   </p>
-                  <p className="text-slate-500 text-sm font-medium leading-relaxed pl-6">
+                  <p className="text-muted-foreground text-sm font-medium leading-relaxed pl-6">
                     {address.street}
                   </p>
                 </div>
 
-                <div className="flex items-center gap-3 pt-6 border-t border-slate-50">
+                <div className="flex items-center gap-3 pt-6 border-t border-border">
                   <button 
                     onClick={() => openEditModal(address)}
-                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-xl font-bold text-xs transition-colors"
+                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-muted hover:bg-muted/80 text-foreground/70 rounded-xl font-bold text-xs transition-colors"
                   >
                     <Edit2 className="w-3.5 h-3.5" />
                     Edit
                   </button>
                   <button 
                     onClick={() => handleDeleteAddress(address._id)}
-                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-red-50 hover:bg-red-100 text-red-500 rounded-xl font-bold text-xs transition-colors"
+                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-xl font-bold text-xs transition-colors"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                     Delete
@@ -248,7 +248,7 @@ const AddressesPage = () => {
                   {!address.isDefault && (
                     <button 
                       onClick={() => setDefaultAddress(address._id)}
-                      className="p-3 bg-slate-50 hover:bg-primary/5 text-slate-400 hover:text-primary rounded-xl transition-colors"
+                      className="p-3 bg-muted hover:bg-primary/5 text-muted-foreground hover:text-primary rounded-xl transition-colors"
                       title="Set as Default"
                     >
                       <CheckCircle2 className="w-4 h-4" />
@@ -258,15 +258,15 @@ const AddressesPage = () => {
               </div>
             ))
           ) : (
-            <div className="col-span-full bg-white rounded-[2.5rem] p-16 text-center border-2 border-dashed border-slate-200">
-              <div className="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                <MapPin className="w-10 h-10 text-slate-300" />
+            <div className="col-span-full bg-card rounded-[2.5rem] p-16 text-center border-2 border-dashed border-border">
+              <div className="w-20 h-20 bg-muted rounded-3xl flex items-center justify-center mx-auto mb-6">
+                <MapPin className="w-10 h-10 text-muted-foreground/50" />
               </div>
-              <h3 className="text-2xl font-black text-slate-900 mb-2 uppercase">No Addresses Found</h3>
-              <p className="text-slate-500 font-medium mb-8">You haven't added any delivery addresses yet.</p>
+              <h3 className="text-2xl font-black text-foreground mb-2 uppercase">No Addresses Found</h3>
+              <p className="text-muted-foreground font-medium mb-8">You haven't added any delivery addresses yet.</p>
               <button 
                 onClick={() => setShowAddModal(true)}
-                className="inline-flex items-center gap-3 px-8 py-4 bg-primary text-white rounded-2xl font-bold hover:bg-primary/90 transition-all shadow-xl shadow-primary/20"
+                className="inline-flex items-center gap-3 px-8 py-4 bg-primary text-primary-foreground rounded-2xl font-bold hover:bg-primary/90 transition-all shadow-xl shadow-primary/20"
               >
                 <Plus className="w-5 h-5" />
                 Add Your First Address
@@ -276,15 +276,15 @@ const AddressesPage = () => {
         </div>
 
         {/* Info Card */}
-        <div className="mt-12 p-8 bg-indigo-900 rounded-[2.5rem] text-white relative overflow-hidden shadow-2xl shadow-indigo-200">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl"></div>
+        <div className="mt-12 p-8 bg-primary rounded-[2.5rem] text-primary-foreground relative overflow-hidden shadow-2xl shadow-primary/20">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary-foreground/10 rounded-full -mr-32 -mt-32 blur-3xl"></div>
           <div className="relative z-10 flex flex-col md:flex-row items-center gap-6">
-            <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-md shrink-0">
+            <div className="w-16 h-16 bg-primary-foreground/10 rounded-2xl flex items-center justify-center backdrop-blur-md shrink-0">
               <Info className="w-8 h-8" />
             </div>
             <div>
               <h4 className="text-lg font-black uppercase tracking-tight">Pro Tip</h4>
-              <p className="text-indigo-100 text-sm font-medium mt-1 leading-relaxed">
+              <p className="text-primary-foreground/90 text-sm font-medium mt-1 leading-relaxed">
                 Set a default address to speed up your checkout process. You can always change the delivery address during the final step of your order.
               </p>
             </div>
@@ -295,21 +295,21 @@ const AddressesPage = () => {
         {showAddModal && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <div 
-              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
+              className="absolute inset-0 bg-background/80 backdrop-blur-sm transition-opacity"
               onClick={() => setShowAddModal(false)}
             />
-            <div className="relative w-full max-w-lg max-h-[90vh] flex flex-col bg-white rounded-[2.5rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
-              <div className="bg-slate-900 p-8 text-white relative shrink-0">
+            <div className="relative w-full max-w-lg max-h-[90vh] flex flex-col bg-card border border-border rounded-[2.5rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+              <div className="bg-muted p-8 text-foreground relative shrink-0">
                 <button 
                   onClick={() => setShowAddModal(false)}
-                  className="absolute top-8 right-8 text-slate-400 hover:text-white transition-colors"
+                  className="absolute top-8 right-8 text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <X className="w-6 h-6" />
                 </button>
                 <h3 className="text-2xl font-black uppercase tracking-tight">
                   {editingAddress ? "Edit Address" : "New Address"}
                 </h3>
-                <p className="text-slate-400 text-sm font-medium mt-1">
+                <p className="text-muted-foreground text-sm font-medium mt-1">
                   Fill in the details for your delivery location.
                 </p>
               </div>
@@ -317,7 +317,7 @@ const AddressesPage = () => {
               <form onSubmit={editingAddress ? handleEditAddress : handleAddAddress} className="p-8 space-y-6 overflow-y-auto flex-1">
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Address Label</label>
+                    <label className="text-xs font-black text-muted-foreground uppercase tracking-widest ml-1">Address Label</label>
                     <div className="relative">
                       <input
                         type="text"
@@ -326,20 +326,20 @@ const AddressesPage = () => {
                         placeholder="e.g. Home, Office, Aunt's Place"
                         value={formData.name}
                         onChange={handleInputChange}
-                        className="w-full pl-12 pr-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 transition-all font-bold text-slate-900"
+                        className="w-full pl-12 pr-6 py-4 bg-muted/50 border border-border rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 transition-all font-bold text-foreground placeholder:text-muted-foreground/50"
                       />
-                      <Tag className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300" />
+                      <Tag className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/50" />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Type</label>
+                      <label className="text-xs font-black text-muted-foreground uppercase tracking-widest ml-1">Type</label>
                       <select
                         name="type"
                         value={formData.type}
                         onChange={handleInputChange}
-                        className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 transition-all font-bold text-slate-900 appearance-none"
+                        className="w-full px-6 py-4 bg-muted/50 border border-border rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 transition-all font-bold text-foreground appearance-none"
                       >
                         <option value="home">Home</option>
                         <option value="work">Work</option>
@@ -347,7 +347,7 @@ const AddressesPage = () => {
                       </select>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Phone Number</label>
+                      <label className="text-xs font-black text-muted-foreground uppercase tracking-widest ml-1">Phone Number</label>
                       <div className="relative">
                         <input
                           type="tel"
@@ -356,15 +356,15 @@ const AddressesPage = () => {
                           placeholder="+254..."
                           value={formData.phone}
                           onChange={handleInputChange}
-                          className="w-full pl-12 pr-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 transition-all font-bold text-slate-900"
+                          className="w-full pl-12 pr-6 py-4 bg-muted/50 border border-border rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 transition-all font-bold text-foreground placeholder:text-muted-foreground/50"
                         />
-                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300" />
+                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/50" />
                       </div>
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">City / Town</label>
+                    <label className="text-xs font-black text-muted-foreground uppercase tracking-widest ml-1">City / Town</label>
                     <div className="relative">
                       <input
                         type="text"
@@ -373,14 +373,14 @@ const AddressesPage = () => {
                         placeholder="Nairobi, Mombasa, etc."
                         value={formData.city}
                         onChange={handleInputChange}
-                        className="w-full pl-12 pr-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 transition-all font-bold text-slate-900"
+                        className="w-full pl-12 pr-6 py-4 bg-muted/50 border border-border rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 transition-all font-bold text-foreground placeholder:text-muted-foreground/50"
                       />
-                      <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300" />
+                      <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/50" />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Street Address / Landmark</label>
+                    <label className="text-xs font-black text-muted-foreground uppercase tracking-widest ml-1">Street Address / Landmark</label>
                     <input
                       type="text"
                       name="street"
@@ -388,19 +388,19 @@ const AddressesPage = () => {
                       placeholder="Street name, building, floor, room number..."
                       value={formData.street}
                       onChange={handleInputChange}
-                      className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 transition-all font-bold text-slate-900"
+                      className="w-full px-6 py-4 bg-muted/50 border border-border rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 transition-all font-bold text-foreground placeholder:text-muted-foreground/50"
                     />
                   </div>
 
-                  <label className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl cursor-pointer hover:bg-slate-100 transition-colors">
+                  <label className="flex items-center gap-3 p-4 bg-muted/50 rounded-2xl cursor-pointer hover:bg-muted/80 transition-colors">
                     <input
                       type="checkbox"
                       name="isDefault"
                       checked={formData.isDefault}
                       onChange={handleInputChange}
-                      className="w-5 h-5 rounded-lg border-slate-300 text-primary focus:ring-primary"
+                      className="w-5 h-5 rounded-lg border-border text-primary focus:ring-primary"
                     />
-                    <span className="text-sm font-bold text-slate-700">Set as default delivery address</span>
+                    <span className="text-sm font-bold text-foreground/70">Set as default delivery address</span>
                   </label>
                 </div>
 
@@ -408,14 +408,14 @@ const AddressesPage = () => {
                   <button
                     type="button"
                     onClick={() => setShowAddModal(false)}
-                    className="flex-1 px-8 py-4 bg-slate-100 text-slate-600 rounded-2xl font-bold hover:bg-slate-200 transition-all"
+                    className="flex-1 px-8 py-4 bg-muted text-foreground/70 rounded-2xl font-bold hover:bg-muted/80 transition-all"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="flex-1 px-8 py-4 bg-primary text-white rounded-2xl font-bold hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 px-8 py-4 bg-primary text-primary-foreground rounded-2xl font-bold hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSubmitting ? (
                       <Loader2 className="w-5 h-5 animate-spin mx-auto" />

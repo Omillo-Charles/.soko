@@ -144,58 +144,58 @@ const SecurityPage = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="w-10 h-10 text-primary animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50/50 pb-20">
+    <div className="min-h-screen bg-background pb-20">
       <div className="max-w-2xl mx-auto px-4 pt-8 md:pt-12">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
           <button 
             onClick={() => router.back()}
-            className="p-2 hover:bg-white rounded-full transition-colors group shadow-sm md:shadow-none"
+            className="p-2 hover:bg-card rounded-full transition-colors group shadow-sm md:shadow-none border border-transparent hover:border-border"
           >
-            <ChevronLeft className="w-6 h-6 text-slate-600 group-hover:text-primary transition-colors" />
+            <ChevronLeft className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
           </button>
           <div>
-            <h1 className="text-2xl font-black text-slate-900">Security Settings</h1>
-            <p className="text-slate-500 text-sm font-medium">Manage your password and account status</p>
+            <h1 className="text-2xl font-black text-foreground">Security Settings</h1>
+            <p className="text-muted-foreground text-sm font-medium">Manage your password and account status</p>
           </div>
         </div>
 
         <div className="space-y-6">
           {/* Password Section */}
-          <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-slate-50 flex items-center gap-3">
+          <div className="bg-card rounded-3xl border border-border shadow-sm overflow-hidden">
+            <div className="p-6 border-b border-border flex items-center gap-3">
               <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
                 <Lock className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="font-black text-slate-900">Change Password</h2>
-                <p className="text-xs text-slate-500 font-medium">Keep your account secure with a strong password</p>
+                <h2 className="font-black text-foreground">Change Password</h2>
+                <p className="text-xs text-muted-foreground font-medium">Keep your account secure with a strong password</p>
               </div>
             </div>
 
             <form onSubmit={handleChangePassword} className="p-6 space-y-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-black text-slate-400 uppercase tracking-wider ml-1">Current Password</label>
+                <label className="text-xs font-black text-muted-foreground uppercase tracking-wider ml-1">Current Password</label>
                 <div className="relative">
                   <input 
                     type={showCurrentPassword ? "text" : "password"}
                     required
                     value={passwords.currentPassword}
                     onChange={(e) => setPasswords({...passwords, currentPassword: e.target.value})}
-                    className="w-full bg-slate-50 border-none rounded-2xl py-3 px-4 text-sm font-bold focus:ring-2 focus:ring-primary/20 transition-all"
+                    className="w-full bg-muted/50 border border-border rounded-2xl py-3 px-4 text-sm font-bold focus:ring-2 focus:ring-primary/20 transition-all text-foreground placeholder:text-muted-foreground/50"
                     placeholder="••••••••"
                   />
                   <button 
                     type="button"
                     onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {showCurrentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -204,20 +204,20 @@ const SecurityPage = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-black text-slate-400 uppercase tracking-wider ml-1">New Password</label>
+                  <label className="text-xs font-black text-muted-foreground uppercase tracking-wider ml-1">New Password</label>
                   <div className="relative">
                     <input 
                       type={showNewPassword ? "text" : "password"}
                       required
                       value={passwords.newPassword}
                       onChange={(e) => setPasswords({...passwords, newPassword: e.target.value})}
-                      className="w-full bg-slate-50 border-none rounded-2xl py-3 px-4 text-sm font-bold focus:ring-2 focus:ring-primary/20 transition-all"
+                      className="w-full bg-muted/50 border border-border rounded-2xl py-3 px-4 text-sm font-bold focus:ring-2 focus:ring-primary/20 transition-all text-foreground placeholder:text-muted-foreground/50"
                       placeholder="••••••••"
                     />
                     <button 
                       type="button"
                       onClick={() => setShowNewPassword(!showNewPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                     >
                       {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -225,13 +225,13 @@ const SecurityPage = () => {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-black text-slate-400 uppercase tracking-wider ml-1">Confirm New Password</label>
+                  <label className="text-xs font-black text-muted-foreground uppercase tracking-wider ml-1">Confirm New Password</label>
                   <input 
                     type={showNewPassword ? "text" : "password"}
                     required
                     value={passwords.confirmPassword}
                     onChange={(e) => setPasswords({...passwords, confirmPassword: e.target.value})}
-                    className="w-full bg-slate-50 border-none rounded-2xl py-3 px-4 text-sm font-bold focus:ring-2 focus:ring-primary/20 transition-all"
+                    className="w-full bg-muted/50 border border-border rounded-2xl py-3 px-4 text-sm font-bold focus:ring-2 focus:ring-primary/20 transition-all text-foreground placeholder:text-muted-foreground/50"
                     placeholder="••••••••"
                   />
                 </div>
@@ -241,7 +241,7 @@ const SecurityPage = () => {
                 <button 
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full md:w-auto px-8 py-3 bg-primary text-white rounded-2xl text-sm font-bold shadow-lg shadow-primary/20 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+                  className="w-full md:w-auto px-8 py-3 bg-primary text-primary-foreground rounded-2xl text-sm font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
                   Update Password
@@ -251,29 +251,29 @@ const SecurityPage = () => {
           </div>
 
           {/* Danger Zone */}
-          <div className="bg-white rounded-3xl border border-red-50 shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-red-50 flex items-center gap-3">
-              <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center text-red-500">
+          <div className="bg-card rounded-3xl border border-destructive/20 shadow-sm overflow-hidden">
+            <div className="p-6 border-b border-destructive/20 flex items-center gap-3">
+              <div className="w-10 h-10 bg-destructive/10 rounded-xl flex items-center justify-center text-destructive">
                 <AlertTriangle className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="font-black text-red-500">Danger Zone</h2>
-                <p className="text-xs text-slate-500 font-medium">Irreversible actions for your account</p>
+                <h2 className="font-black text-destructive">Danger Zone</h2>
+                <p className="text-xs text-muted-foreground font-medium">Irreversible actions for your account</p>
               </div>
             </div>
 
             <div className="p-6 space-y-6">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl bg-red-50/30 border border-red-50">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl bg-destructive/5 border border-destructive/10">
                 <div className="space-y-1">
-                  <h3 className="text-sm font-black text-slate-900">Delete Account</h3>
-                  <p className="text-xs text-slate-500 font-medium max-w-sm">
+                  <h3 className="text-sm font-black text-foreground">Delete Account</h3>
+                  <p className="text-xs text-muted-foreground font-medium max-w-sm">
                     Once you delete your account, there is no going back. All your data including your shop and products will be permanently removed.
                   </p>
                 </div>
                 <button 
                   onClick={handleDeleteAccount}
                   disabled={isDeleting}
-                  className="shrink-0 px-6 py-3 bg-red-500 text-white rounded-2xl text-sm font-bold shadow-lg shadow-red-500/20 hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+                  className="shrink-0 px-6 py-3 bg-destructive text-destructive-foreground rounded-2xl text-sm font-bold shadow-lg shadow-destructive/20 hover:bg-destructive/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
                 >
                   {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
                   Delete Permanently
@@ -283,11 +283,11 @@ const SecurityPage = () => {
           </div>
 
           {/* Security Info */}
-          <div className="p-4 rounded-2xl bg-blue-50/50 border border-blue-100 flex gap-3">
-            <ShieldCheck className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
+          <div className="p-4 rounded-2xl bg-primary/10 border border-primary/20 flex gap-3">
+            <ShieldCheck className="w-5 h-5 text-primary shrink-0 mt-0.5" />
             <div className="space-y-1">
-              <h4 className="text-[11px] font-black text-blue-900 uppercase tracking-wider">Account Protection</h4>
-              <p className="text-[11px] text-blue-800/70 font-bold leading-relaxed">
+              <h4 className="text-[11px] font-black text-primary uppercase tracking-wider">Account Protection</h4>
+              <p className="text-[11px] text-primary/70 font-bold leading-relaxed">
                 We use industry-standard encryption to protect your data. Make sure to use a unique password that you don't use on other sites.
               </p>
             </div>

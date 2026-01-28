@@ -70,17 +70,17 @@ const ShareModal = ({ isOpen, onClose, url, title }: ShareModalProps) => {
 
   return (
     <div 
-      className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300"
+      className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-background/60 backdrop-blur-sm animate-in fade-in duration-300"
       onClick={onClose}
     >
       <div 
-        className="bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300"
+        className="bg-background w-full max-w-sm rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 border border-border"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="relative p-8">
           <button
             onClick={onClose}
-            className="absolute top-6 right-6 p-2 rounded-full hover:bg-slate-100 text-slate-400 transition-colors"
+            className="absolute top-6 right-6 p-2 rounded-full hover:bg-muted text-muted-foreground transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -91,11 +91,11 @@ const ShareModal = ({ isOpen, onClose, url, title }: ShareModalProps) => {
             </div>
 
             <div className="space-y-2">
-              <h3 className="text-xl font-black text-slate-900 leading-tight">
+              <h3 className="text-xl font-black text-foreground leading-tight">
                 Share Product
               </h3>
-              <p className="text-slate-500 font-medium text-sm px-4 line-clamp-2">
-                Share <span className="text-slate-900 font-bold">"{title}"</span> with your friends
+              <p className="text-muted-foreground font-medium text-sm px-4 line-clamp-2">
+                Share <span className="text-foreground font-bold">"{title}"</span> with your friends
               </p>
             </div>
 
@@ -105,12 +105,12 @@ const ShareModal = ({ isOpen, onClose, url, title }: ShareModalProps) => {
                 <div key={social.name} className="flex flex-col items-center gap-2">
                   <button
                     onClick={() => handleShare(social.url)}
-                    className={`${social.color} ${social.hoverColor} w-12 h-12 rounded-2xl flex items-center justify-center text-white transition-all hover:scale-110 active:scale-95 shadow-lg shadow-slate-200`}
+                    className={`${social.color} ${social.hoverColor} w-12 h-12 rounded-2xl flex items-center justify-center text-primary-foreground transition-all hover:scale-110 active:scale-95 shadow-lg shadow-primary/10`}
                     title={`Share on ${social.name}`}
                   >
                     {social.icon}
                   </button>
-                  <span className="text-[10px] font-bold text-slate-500">{social.name}</span>
+                  <span className="text-[10px] font-bold text-muted-foreground">{social.name}</span>
                 </div>
               ))}
             </div>
@@ -121,11 +121,11 @@ const ShareModal = ({ isOpen, onClose, url, title }: ShareModalProps) => {
                   type="text" 
                   readOnly 
                   value={url}
-                  className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-3 px-4 pr-12 text-sm text-slate-500 font-medium outline-none focus:border-primary/30 transition-colors"
+                  className="w-full bg-muted border border-border rounded-2xl py-3 px-4 pr-12 text-sm text-muted-foreground font-medium outline-none focus:border-primary/30 transition-colors"
                 />
                 <button
                   onClick={handleCopy}
-                  className="absolute right-2 p-2 bg-white rounded-xl shadow-sm border border-slate-100 text-slate-600 hover:text-primary transition-all active:scale-90"
+                  className="absolute right-2 p-2 bg-background rounded-xl shadow-sm border border-border text-muted-foreground hover:text-primary transition-all active:scale-90"
                 >
                   {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
                 </button>

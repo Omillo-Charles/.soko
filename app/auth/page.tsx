@@ -244,11 +244,11 @@ const AuthContent = () => {
         return (
           <div className="space-y-6">
             <div className="text-center">
-              <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-slate-900">
+              <CheckCircle2 className="w-16 h-16 text-emerald-500 dark:text-emerald-400 mx-auto mb-4" />
+              <h2 className="text-2xl font-bold text-foreground">
                 Verify Your Email
               </h2>
-              <p className="text-slate-500 mt-2">
+              <p className="text-muted-foreground mt-2">
                 We sent a verification code to <strong>{pendingEmail}</strong>
               </p>
             </div>
@@ -262,7 +262,7 @@ const AuthContent = () => {
                   value={formData.otp}
                   onChange={handleInputChange}
                   placeholder="Enter verification code"
-                  className="w-full px-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-center text-lg tracking-widest"
+                  className="w-full px-4 py-4 bg-muted border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-center text-lg tracking-widest text-foreground placeholder:text-muted-foreground/50"
                   maxLength={6}
                 />
               </div>
@@ -270,10 +270,10 @@ const AuthContent = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-primary text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-blue-700 transition-all shadow-xl shadow-primary/20 disabled:opacity-70 disabled:cursor-not-allowed group"
+                className="w-full bg-primary text-primary-foreground py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 disabled:opacity-70 disabled:cursor-not-allowed group"
               >
                 {isLoading ? (
-                  <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <div className="w-6 h-6 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin"></div>
                 ) : (
                   <>
                     Verify Email
@@ -299,17 +299,17 @@ const AuthContent = () => {
         return (
           <div className="space-y-6">
             <div className="text-center">
-              <h2 className="text-2xl font-bold text-slate-900">
+              <h2 className="text-2xl font-bold text-foreground">
                 Forgot Password
               </h2>
-              <p className="text-slate-500 mt-2">
+              <p className="text-muted-foreground mt-2">
                 Enter your email and we'll send you a reset link
               </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="relative group">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary transition-colors" />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
                 <input
                   type="email"
                   name="email"
@@ -317,17 +317,17 @@ const AuthContent = () => {
                   value={formData.email}
                   onChange={handleInputChange}
                   placeholder="Email Address"
-                  className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
+                  className="w-full pl-12 pr-4 py-4 bg-muted border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-foreground placeholder:text-muted-foreground/50"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-primary text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-blue-700 transition-all shadow-xl shadow-primary/20 disabled:opacity-70 disabled:cursor-not-allowed group"
+                className="w-full bg-primary text-primary-foreground py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 disabled:opacity-70 disabled:cursor-not-allowed group"
               >
                 {isLoading ? (
-                  <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <div className="w-6 h-6 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin"></div>
                 ) : (
                   <>
                     Send Reset Link
@@ -353,17 +353,17 @@ const AuthContent = () => {
         return (
           <div className="space-y-6">
             <div className="text-center">
-              <h2 className="text-2xl font-bold text-slate-900">
+              <h2 className="text-2xl font-bold text-foreground">
                 Reset Password
               </h2>
-              <p className="text-slate-500 mt-2">
+              <p className="text-muted-foreground mt-2">
                 Enter your new password below
               </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="relative group">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary transition-colors" />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
@@ -371,12 +371,12 @@ const AuthContent = () => {
                   value={formData.password}
                   onChange={handleInputChange}
                   placeholder="New Password"
-                  className="w-full pl-12 pr-12 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
+                  className="w-full pl-12 pr-12 py-4 bg-muted border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-foreground placeholder:text-muted-foreground/50"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                 >
                   {showPassword ? (
                     <EyeOff className="w-5 h-5" />
@@ -389,10 +389,10 @@ const AuthContent = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-primary text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-blue-700 transition-all shadow-xl shadow-primary/20 disabled:opacity-70 disabled:cursor-not-allowed group"
+                className="w-full bg-primary text-primary-foreground py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 disabled:opacity-70 disabled:cursor-not-allowed group"
               >
                 {isLoading ? (
-                  <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <div className="w-6 h-6 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin"></div>
                 ) : (
                   <>
                     Reset Password
@@ -408,10 +408,10 @@ const AuthContent = () => {
         return (
           <div className="space-y-6">
             <div className="mb-10 text-center md:text-left">
-              <h2 className="text-3xl font-bold text-slate-900 tracking-tight">
+              <h2 className="text-3xl font-bold text-foreground tracking-tight">
                 {mode === "login" ? "Welcome Back" : "Create Account"}
               </h2>
-              <p className="text-slate-500 mt-2 font-medium">
+              <p className="text-muted-foreground mt-2 font-medium">
                 {mode === "login"
                   ? "Enter your details to access your account"
                   : "Create an account to start your journey"}
@@ -419,13 +419,13 @@ const AuthContent = () => {
             </div>
 
             {/* Tab Switcher */}
-            <div className="flex p-1 bg-slate-100 rounded-2xl mb-8">
+            <div className="flex p-1 bg-muted rounded-2xl mb-8">
               <button
                 onClick={() => switchMode("login")}
                 className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all ${
                   mode === "login"
-                    ? "bg-white text-primary shadow-sm"
-                    : "text-slate-500 hover:text-slate-700"
+                    ? "bg-background text-primary shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 <LogIn className="w-4 h-4" /> Login
@@ -434,8 +434,8 @@ const AuthContent = () => {
                 onClick={() => switchMode("register")}
                 className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all ${
                   mode === "register"
-                    ? "bg-white text-primary shadow-sm"
-                    : "text-slate-500 hover:text-slate-700"
+                    ? "bg-background text-primary shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 <UserPlus className="w-4 h-4" /> Register
@@ -445,7 +445,7 @@ const AuthContent = () => {
             <form onSubmit={handleSubmit} className="space-y-5">
               {mode === "register" && (
                 <div className="relative group">
-                  <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary transition-colors" />
+                  <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
                   <input
                     type="text"
                     name="name"
@@ -453,13 +453,13 @@ const AuthContent = () => {
                     value={formData.name}
                     onChange={handleInputChange}
                     placeholder="Full Name"
-                    className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
+                    className="w-full pl-12 pr-4 py-4 bg-muted border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-foreground placeholder:text-muted-foreground/50"
                   />
                 </div>
               )}
 
               <div className="relative group">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary transition-colors" />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
                 <input
                   type="email"
                   name="email"
@@ -467,12 +467,12 @@ const AuthContent = () => {
                   value={formData.email}
                   onChange={handleInputChange}
                   placeholder="Email Address"
-                  className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
+                  className="w-full pl-12 pr-4 py-4 bg-muted border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-foreground placeholder:text-muted-foreground/50"
                 />
               </div>
 
               <div className="relative group">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary transition-colors" />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
@@ -480,12 +480,12 @@ const AuthContent = () => {
                   value={formData.password}
                   onChange={handleInputChange}
                   placeholder="Password"
-                  className="w-full pl-12 pr-12 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
+                  className="w-full pl-12 pr-12 py-4 bg-muted border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-foreground placeholder:text-muted-foreground/50"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground transition-colors"
                 >
                   {showPassword ? (
                     <EyeOff className="w-5 h-5" />
@@ -510,10 +510,10 @@ const AuthContent = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-primary text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-blue-700 transition-all shadow-xl shadow-primary/20 disabled:opacity-70 disabled:cursor-not-allowed group"
+                className="w-full bg-primary text-primary-foreground py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 disabled:opacity-70 disabled:cursor-not-allowed group"
               >
                 {isLoading ? (
-                  <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <div className="w-6 h-6 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin"></div>
                 ) : (
                   <>
                     {mode === "login" ? "Sign In" : "Create Account"}
@@ -525,18 +525,18 @@ const AuthContent = () => {
 
             {/* Divider */}
             <div className="my-8 flex items-center gap-4">
-              <div className="flex-1 h-px bg-slate-100"></div>
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+              <div className="flex-1 h-px bg-border"></div>
+              <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
                 Or continue with
               </span>
-              <div className="flex-1 h-px bg-slate-100"></div>
+              <div className="flex-1 h-px bg-border"></div>
             </div>
 
             {/* Social Auth */}
             <div className="grid grid-cols-2 gap-4">
               <button
                 onClick={() => handleSocialAuth("google")}
-                className="flex items-center justify-center gap-3 py-4 border border-slate-200 rounded-2xl font-bold text-slate-700 hover:bg-slate-50 transition-all group"
+                className="flex items-center justify-center gap-3 py-4 border border-border rounded-2xl font-bold text-foreground hover:bg-muted transition-all group"
               >
                 <div className="group-hover:scale-110 transition-transform">
                   <GoogleIcon />
@@ -545,14 +545,14 @@ const AuthContent = () => {
               </button>
               <button
                 onClick={() => handleSocialAuth("github")}
-                className="flex items-center justify-center gap-3 py-4 border border-slate-200 rounded-2xl font-bold text-slate-700 hover:bg-slate-50 transition-all group"
+                className="flex items-center justify-center gap-3 py-4 border border-border rounded-2xl font-bold text-foreground hover:bg-muted transition-all group"
               >
-                <Github className="w-5 h-5 group-hover:scale-110 transition-transform text-slate-900" />
+                <Github className="w-5 h-5 group-hover:scale-110 transition-transform text-foreground" />
                 Github
               </button>
             </div>
 
-            <p className="mt-10 text-center text-slate-500 text-sm font-medium">
+            <p className="mt-10 text-center text-muted-foreground text-sm font-medium">
               By signing up, you agree to our{" "}
               <Link
                 href="/terms"
@@ -574,12 +574,12 @@ const AuthContent = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-128px)] flex items-center justify-center bg-slate-50 p-4 md:py-4 md:px-8">
-      <div className="max-w-5xl w-full grid md:grid-cols-2 bg-white rounded-[2rem] shadow-2xl overflow-hidden border border-slate-100">
+    <div className="min-h-[calc(100vh-128px)] flex items-center justify-center bg-muted p-4 md:py-4 md:px-8">
+      <div className="max-w-5xl w-full grid md:grid-cols-2 bg-background rounded-[2rem] shadow-2xl overflow-hidden border border-border">
         {/* Left Side: Creative Brand Section */}
-        <div className="hidden md:flex flex-col justify-between bg-primary p-12 text-white relative overflow-hidden">
+        <div className="hidden md:flex flex-col justify-between bg-primary p-12 text-primary-foreground relative overflow-hidden">
           {/* Abstract background shapes */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl"></div>
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary-foreground/10 rounded-full -mr-32 -mt-32 blur-3xl"></div>
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary/20 rounded-full -ml-32 -mb-32 blur-3xl"></div>
 
           <div className="relative z-10">
@@ -589,81 +589,81 @@ const AuthContent = () => {
 
             <div className="mt-12 space-y-6">
               <div className="flex items-start gap-4">
-                <div className="p-3 bg-white/10 rounded-2xl shrink-0">
+                <div className="p-3 bg-primary-foreground/10 rounded-2xl shrink-0">
                   <Zap className="w-6 h-6 text-secondary" />
                 </div>
                 <div>
                   <h3 className="font-bold text-lg leading-tight">
                     Fastest Delivery
                   </h3>
-                  <p className="text-blue-100/70 text-xs mt-1">
+                  <p className="text-primary-foreground/70 text-xs mt-1">
                     Get your products delivered to your doorstep in record time.
                   </p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="p-3 bg-white/10 rounded-2xl shrink-0">
+                <div className="p-3 bg-primary-foreground/10 rounded-2xl shrink-0">
                   <ShieldCheck className="w-6 h-6 text-secondary" />
                 </div>
                 <div>
                   <h3 className="font-bold text-lg leading-tight">
                     Secure Shopping
                   </h3>
-                  <p className="text-blue-100/70 text-xs mt-1">
+                  <p className="text-primary-foreground/70 text-xs mt-1">
                     Your data and payments are protected by military-grade
                     security.
                   </p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="p-3 bg-white/10 rounded-2xl shrink-0">
+                <div className="p-3 bg-primary-foreground/10 rounded-2xl shrink-0">
                   <Headphones className="w-6 h-6 text-secondary" />
                 </div>
                 <div>
                   <h3 className="font-bold text-lg leading-tight">
                     24/7 Support
                   </h3>
-                  <p className="text-blue-100/70 text-xs mt-1">
+                  <p className="text-primary-foreground/70 text-xs mt-1">
                     Our dedicated team is always here to help you anytime.
                   </p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="p-3 bg-white/10 rounded-2xl shrink-0">
+                <div className="p-3 bg-primary-foreground/10 rounded-2xl shrink-0">
                   <RefreshCw className="w-6 h-6 text-secondary" />
                 </div>
                 <div>
                   <h3 className="font-bold text-lg leading-tight">
                     Easy Returns
                   </h3>
-                  <p className="text-blue-100/70 text-xs mt-1">
+                  <p className="text-primary-foreground/70 text-xs mt-1">
                     Not satisfied? Return any product within 30 days, no
                     questions asked.
                   </p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="p-3 bg-white/10 rounded-2xl shrink-0">
+                <div className="p-3 bg-primary-foreground/10 rounded-2xl shrink-0">
                   <Tag className="w-6 h-6 text-secondary" />
                 </div>
                 <div>
                   <h3 className="font-bold text-lg leading-tight">
                     Best Prices
                   </h3>
-                  <p className="text-blue-100/70 text-xs mt-1">
+                  <p className="text-primary-foreground/70 text-xs mt-1">
                     We guarantee the most competitive prices in the market.
                   </p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="p-3 bg-white/10 rounded-2xl shrink-0">
+                <div className="p-3 bg-primary-foreground/10 rounded-2xl shrink-0">
                   <Trophy className="w-6 h-6 text-secondary" />
                 </div>
                 <div>
                   <h3 className="font-bold text-lg leading-tight">
                     Quality Products
                   </h3>
-                  <p className="text-blue-100/70 text-xs mt-1">
+                  <p className="text-primary-foreground/70 text-xs mt-1">
                     Every product is verified for quality and authenticity.
                   </p>
                 </div>
@@ -672,16 +672,16 @@ const AuthContent = () => {
           </div>
 
           <div className="relative z-10">
-            <div className="p-6 bg-white/5 rounded-3xl border border-white/10 backdrop-blur-sm">
-              <p className="italic text-blue-50 text-sm">
+            <div className="p-6 bg-primary-foreground/5 rounded-3xl border border-primary-foreground/10 backdrop-blur-sm">
+              <p className="italic text-primary-foreground/90 text-sm">
                 &quot;The best shopping experience I&apos;ve ever had. Simple,
                 fast, and reliable!&quot;
               </p>
               <div className="mt-4 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-slate-300"></div>
+                <div className="w-10 h-10 rounded-full bg-primary-foreground/20"></div>
                 <div>
                   <p className="font-bold text-xs">Sarah Jenkins</p>
-                  <p className="text-[10px] text-blue-200">Verified Customer</p>
+                  <p className="text-[10px] text-primary-foreground/60">Verified Customer</p>
                 </div>
               </div>
             </div>

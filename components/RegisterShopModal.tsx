@@ -180,23 +180,23 @@ export const RegisterShopModal = ({ isOpen, onClose, onSuccess }: RegisterShopMo
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-      <div className="bg-slate-50 w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-[3rem] shadow-2xl animate-in zoom-in-95 duration-300 custom-scrollbar">
-        <div className="sticky top-0 z-10 bg-slate-50/80 backdrop-blur-md px-8 py-6 flex items-center justify-between border-b border-slate-200/50">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/60 backdrop-blur-sm animate-in fade-in duration-300">
+      <div className="bg-background w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-[3rem] shadow-2xl animate-in zoom-in-95 duration-300 custom-scrollbar border border-border">
+        <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-md px-8 py-6 flex items-center justify-between border-b border-border">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
-              <Store className="w-5 h-5 text-white" />
+              <Store className="w-5 h-5 text-primary-foreground" />
             </div>
             <div>
-              <h2 className="text-xl font-black text-slate-900 tracking-tight">Register Your Shop</h2>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Establish your brand identity</p>
+              <h2 className="text-xl font-black text-foreground tracking-tight">Register Your Shop</h2>
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Establish your brand identity</p>
             </div>
           </div>
           <button 
             onClick={onClose}
-            className="p-2 hover:bg-white hover:shadow-lg rounded-xl transition-all active:scale-95 group"
+            className="p-2 hover:bg-muted hover:shadow-lg rounded-xl transition-all active:scale-95 group"
           >
-            <X className="w-6 h-6 text-slate-400 group-hover:text-primary transition-colors" />
+            <X className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
           </button>
         </div>
 
@@ -205,25 +205,25 @@ export const RegisterShopModal = ({ isOpen, onClose, onSuccess }: RegisterShopMo
           <section className="space-y-6">
             <div className="flex items-center gap-4 ml-2">
               <div className="w-1.5 h-6 bg-primary rounded-full" />
-              <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.2em]">Branding & Visuals</h3>
+              <h3 className="text-xs font-black text-foreground uppercase tracking-[0.2em]">Branding & Visuals</h3>
             </div>
             
-            <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/40 overflow-hidden">
+            <div className="bg-background rounded-[2.5rem] border border-border shadow-xl shadow-primary/5 overflow-hidden">
               <div className="p-6 md:p-8 space-y-8">
-                <div className="relative rounded-[2rem] overflow-hidden border-2 border-slate-50 bg-slate-50 aspect-[21/9] group/banner">
+                <div className="relative rounded-[2rem] overflow-hidden border-2 border-border bg-muted aspect-[21/9] group/banner">
                   {bannerPreview ? (
                     <>
                       <img src={bannerPreview} alt="Banner" className="w-full h-full object-cover" />
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/banner:opacity-100 transition-all flex items-center justify-center backdrop-blur-sm">
                         <div className="flex gap-4">
-                          <label className="w-10 h-10 bg-white text-slate-900 rounded-xl flex items-center justify-center transition-all cursor-pointer shadow-xl hover:scale-110">
+                          <label className="w-10 h-10 bg-background text-foreground rounded-xl flex items-center justify-center transition-all cursor-pointer shadow-xl hover:scale-110">
                             <input type="file" accept="image/*" onChange={handleBannerChange} className="hidden" />
                             <Camera className="w-5 h-5" />
                           </label>
                           <button 
                             type="button"
                             onClick={() => { setBannerFile(null); setBannerPreview(null); }}
-                            className="w-10 h-10 bg-white text-red-500 rounded-xl flex items-center justify-center transition-all shadow-xl hover:scale-110"
+                            className="w-10 h-10 bg-background text-red-500 rounded-xl flex items-center justify-center transition-all shadow-xl hover:scale-110"
                           >
                             <Trash2 className="w-5 h-5" />
                           </button>
@@ -231,29 +231,29 @@ export const RegisterShopModal = ({ isOpen, onClose, onSuccess }: RegisterShopMo
                       </div>
                     </>
                   ) : (
-                    <label className="flex flex-col items-center justify-center w-full h-full border-2 border-dashed border-slate-200 rounded-[2rem] bg-slate-50 hover:bg-white hover:border-primary/30 transition-all cursor-pointer group/upload">
+                    <label className="flex flex-col items-center justify-center w-full h-full border-2 border-dashed border-border rounded-[2rem] bg-muted hover:bg-background hover:border-primary/30 transition-all cursor-pointer group/upload">
                       <input type="file" accept="image/*" onChange={handleBannerChange} className="hidden" />
-                      <ImageIcon className="w-8 h-8 text-slate-300 mb-2 group-hover/upload:text-primary transition-colors" />
-                      <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest">Upload Banner</p>
+                      <ImageIcon className="w-8 h-8 text-muted-foreground/50 mb-2 group-hover/upload:text-primary transition-colors" />
+                      <p className="text-[10px] font-black text-foreground uppercase tracking-widest">Upload Banner</p>
                     </label>
                   )}
 
                   <div className="absolute bottom-4 left-6">
-                    <div className="relative w-20 aspect-square rounded-2xl border-4 border-white shadow-xl overflow-hidden bg-white group/logo">
+                    <div className="relative w-20 aspect-square rounded-2xl border-4 border-background shadow-xl overflow-hidden bg-background group/logo">
                       {logoPreview ? (
                         <>
                           <img src={logoPreview} alt="Logo" className="w-full h-full object-cover" />
                           <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/logo:opacity-100 transition-all flex items-center justify-center backdrop-blur-sm">
-                            <label className="w-8 h-8 bg-white text-slate-900 rounded-lg flex items-center justify-center cursor-pointer hover:scale-110 transition-all">
+                            <label className="w-8 h-8 bg-background text-foreground rounded-lg flex items-center justify-center cursor-pointer hover:scale-110 transition-all">
                               <input type="file" accept="image/*" onChange={handleLogoChange} className="hidden" />
                               <Camera className="w-4 h-4" />
                             </label>
                           </div>
                         </>
                       ) : (
-                        <label className="flex flex-col items-center justify-center w-full h-full bg-slate-50 cursor-pointer hover:bg-white transition-all group/logo-upload">
+                        <label className="flex flex-col items-center justify-center w-full h-full bg-muted cursor-pointer hover:bg-background transition-all group/logo-upload">
                           <input type="file" accept="image/*" onChange={handleLogoChange} className="hidden" />
-                          <Store className="w-5 h-5 text-slate-300 group-hover/logo-upload:text-primary transition-colors" />
+                          <Store className="w-5 h-5 text-muted-foreground/50 group-hover/logo-upload:text-primary transition-colors" />
                         </label>
                       )}
                     </div>
@@ -267,12 +267,12 @@ export const RegisterShopModal = ({ isOpen, onClose, onSuccess }: RegisterShopMo
           <section className="space-y-6">
             <div className="flex items-center gap-4 ml-2">
               <div className="w-1.5 h-6 bg-primary rounded-full" />
-              <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.2em]">Store Details</h3>
+              <h3 className="text-xs font-black text-foreground uppercase tracking-[0.2em]">Store Details</h3>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Shop Name</label>
+                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-4">Shop Name</label>
                 <input
                   type="text"
                   name="name"
@@ -280,12 +280,12 @@ export const RegisterShopModal = ({ isOpen, onClose, onSuccess }: RegisterShopMo
                   value={formData.name}
                   onChange={handleInputChange}
                   placeholder="e.g. Urban Threads Collective"
-                  className="w-full px-6 py-4 bg-white border border-slate-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 shadow-sm transition-all font-bold text-slate-900 placeholder:text-slate-300"
+                  className="w-full px-6 py-4 bg-background border border-border rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 shadow-sm transition-all font-bold text-foreground placeholder:text-muted-foreground/50"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 flex justify-between">
+                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-4 flex justify-between">
                   <span>Shop Handle</span>
                   {usernameStatus.loading && <Loader2 className="w-3 h-3 animate-spin text-primary" />}
                 </label>
@@ -293,7 +293,7 @@ export const RegisterShopModal = ({ isOpen, onClose, onSuccess }: RegisterShopMo
                   <AtSign className={`absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors ${
                     usernameStatus.error ? 'text-red-400' : 
                     usernameStatus.available ? 'text-emerald-400' : 
-                    'text-slate-400'
+                    'text-muted-foreground'
                   }`} />
                   <input
                     type="text"
@@ -302,10 +302,10 @@ export const RegisterShopModal = ({ isOpen, onClose, onSuccess }: RegisterShopMo
                     value={formData.username}
                     onChange={handleInputChange}
                     placeholder="your_shop_handle"
-                    className={`w-full pl-14 pr-6 py-4 bg-white border rounded-2xl focus:outline-none focus:ring-4 shadow-sm transition-all font-bold text-slate-900 placeholder:text-slate-300 ${
-                      usernameStatus.error ? 'border-red-100 focus:ring-red-500/5 focus:border-red-500/30' : 
-                      usernameStatus.available ? 'border-emerald-100 focus:ring-emerald-500/5 focus:border-emerald-500/30' : 
-                      'border-slate-100 focus:ring-primary/5 focus:border-primary/30'
+                    className={`w-full pl-14 pr-6 py-4 bg-background border rounded-2xl focus:outline-none focus:ring-4 shadow-sm transition-all font-bold text-foreground placeholder:text-muted-foreground/50 ${
+                      usernameStatus.error ? 'border-red-500/50 focus:ring-red-500/5 focus:border-red-500/30' : 
+                      usernameStatus.available ? 'border-emerald-500/50 focus:ring-emerald-500/5 focus:border-emerald-500/30' : 
+                      'border-border focus:ring-primary/5 focus:border-primary/30'
                     }`}
                   />
                 </div>
@@ -324,7 +324,7 @@ export const RegisterShopModal = ({ isOpen, onClose, onSuccess }: RegisterShopMo
               </div>
 
               <div className="space-y-2 col-span-full">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Description</label>
+                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-4">Description</label>
                 <textarea
                   name="description"
                   required
@@ -332,33 +332,33 @@ export const RegisterShopModal = ({ isOpen, onClose, onSuccess }: RegisterShopMo
                   onChange={handleInputChange}
                   placeholder="What makes your shop special?"
                   rows={3}
-                  className="w-full px-6 py-4 bg-white border border-slate-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 shadow-sm transition-all font-bold text-slate-700 placeholder:text-slate-300 resize-none"
+                  className="w-full px-6 py-4 bg-background border border-border rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 shadow-sm transition-all font-bold text-foreground placeholder:text-muted-foreground/50 resize-none"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Category</label>
+                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-4">Category</label>
                 <div className="relative group">
                   <select
                     name="category"
                     required
                     value={formData.category}
                     onChange={handleInputChange}
-                    className="w-full px-6 py-4 bg-white border border-slate-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 shadow-sm transition-all font-bold text-slate-900 appearance-none cursor-pointer"
+                    className="w-full px-6 py-4 bg-background border border-border rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 shadow-sm transition-all font-bold text-foreground appearance-none cursor-pointer"
                   >
                     <option value="">Select Category</option>
                     {categories.map(cat => (
                       <option key={cat.value} value={cat.value}>{cat.label}</option>
                     ))}
                   </select>
-                  <Package className="absolute right-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none group-hover:text-primary transition-colors" />
+                  <Package className="absolute right-6 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none group-hover:text-primary transition-colors" />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Business Email</label>
+                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-4">Business Email</label>
                 <div className="relative group">
-                  <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors" />
+                  <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                   <input
                     type="email"
                     name="email"
@@ -366,15 +366,15 @@ export const RegisterShopModal = ({ isOpen, onClose, onSuccess }: RegisterShopMo
                     value={formData.email}
                     onChange={handleInputChange}
                     placeholder="hello@yourshop.com"
-                    className="w-full pl-14 pr-6 py-4 bg-white border border-slate-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 shadow-sm transition-all font-bold text-slate-900 placeholder:text-slate-300"
+                    className="w-full pl-14 pr-6 py-4 bg-background border border-border rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 shadow-sm transition-all font-bold text-foreground placeholder:text-muted-foreground/50"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Phone Number</label>
+                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-4">Phone Number</label>
                 <div className="relative group">
-                  <Phone className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors" />
+                  <Phone className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                   <input
                     type="tel"
                     name="phone"
@@ -382,15 +382,15 @@ export const RegisterShopModal = ({ isOpen, onClose, onSuccess }: RegisterShopMo
                     value={formData.phone}
                     onChange={handleInputChange}
                     placeholder="+254 700 000 000"
-                    className="w-full pl-14 pr-6 py-4 bg-white border border-slate-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 shadow-sm transition-all font-bold text-slate-900 placeholder:text-slate-300"
+                    className="w-full pl-14 pr-6 py-4 bg-background border border-border rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 shadow-sm transition-all font-bold text-foreground placeholder:text-muted-foreground/50"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Physical Address</label>
+                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-4">Physical Address</label>
                 <div className="relative group">
-                  <MapPin className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors" />
+                  <MapPin className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                   <input
                     type="text"
                     name="address"
@@ -398,7 +398,7 @@ export const RegisterShopModal = ({ isOpen, onClose, onSuccess }: RegisterShopMo
                     value={formData.address}
                     onChange={handleInputChange}
                     placeholder="e.g. 1st Floor, Garden Plaza"
-                    className="w-full pl-14 pr-6 py-4 bg-white border border-slate-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 shadow-sm transition-all font-bold text-slate-900 placeholder:text-slate-300"
+                    className="w-full pl-14 pr-6 py-4 bg-background border border-border rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 shadow-sm transition-all font-bold text-foreground placeholder:text-muted-foreground/50"
                   />
                 </div>
               </div>
@@ -406,11 +406,11 @@ export const RegisterShopModal = ({ isOpen, onClose, onSuccess }: RegisterShopMo
           </section>
 
           <div className="pt-6 flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-3 p-3 bg-emerald-50 rounded-xl border border-emerald-100/50">
-              <CheckCircle2 className={`w-5 h-5 ${formData.name && formData.email ? 'text-emerald-500' : 'text-slate-300'}`} />
+            <div className="flex items-center gap-3 p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
+              <CheckCircle2 className={`w-5 h-5 ${formData.name && formData.email ? 'text-emerald-500' : 'text-muted-foreground/30'}`} />
               <div>
-                <p className="text-[9px] font-black uppercase tracking-widest text-slate-900">Ready to Launch</p>
-                <p className="text-[8px] font-bold text-slate-500">Your shop will be live instantly</p>
+                <p className="text-[9px] font-black uppercase tracking-widest text-foreground">Ready to Launch</p>
+                <p className="text-[8px] font-bold text-muted-foreground">Your shop will be live instantly</p>
               </div>
             </div>
 
@@ -418,14 +418,14 @@ export const RegisterShopModal = ({ isOpen, onClose, onSuccess }: RegisterShopMo
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 md:flex-none px-8 py-4 bg-slate-100 text-slate-600 rounded-2xl text-sm font-black uppercase tracking-widest hover:bg-slate-200 transition-all active:scale-95"
+                className="flex-1 md:flex-none px-8 py-4 bg-muted text-muted-foreground rounded-2xl text-sm font-black uppercase tracking-widest hover:bg-accent hover:text-foreground transition-all active:scale-95"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isLoading || !formData.name || !formData.category || !formData.username || usernameStatus.available === false}
-                className="flex-1 md:flex-none px-12 py-4 bg-primary text-white rounded-2xl text-sm font-black uppercase tracking-widest shadow-xl shadow-primary/20 hover:bg-blue-700 transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
+                className="flex-1 md:flex-none px-12 py-4 bg-primary text-primary-foreground rounded-2xl text-sm font-black uppercase tracking-widest shadow-xl shadow-primary/20 hover:bg-blue-700 transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
               >
                 {isLoading ? "Registering..." : "Launch Shop"}
               </button>

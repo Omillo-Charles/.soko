@@ -143,10 +143,10 @@ const Categories = () => {
   };
 
   return (
-    <section className="bg-white">
+    <section className="bg-background">
       <div className="w-full px-4 md:px-8 pt-6 md:pt-1 pb-8">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl md:text-2xl font-bold">Shop by Category</h2>
+          <h2 className="text-xl md:text-2xl font-bold text-foreground">Shop by Category</h2>
           <div className="flex items-center gap-4">
             <Link 
               href="/categories" 
@@ -159,7 +159,7 @@ const Categories = () => {
                 type="button"
                 aria-label="Scroll left"
                 onClick={() => scroll("left")}
-                className="p-2 border border-slate-300 rounded hover:bg-slate-50"
+                className="p-2 border border-border rounded hover:bg-muted text-foreground"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
@@ -167,7 +167,7 @@ const Categories = () => {
                 type="button"
                 aria-label="Scroll right"
                 onClick={() => scroll("right")}
-                className="p-2 border border-slate-300 rounded hover:bg-slate-50"
+                className="p-2 border border-border rounded hover:bg-muted text-foreground"
               >
                 <ChevronRight className="w-5 h-5" />
               </button>
@@ -190,9 +190,9 @@ const Categories = () => {
             <Link
               key={item.name}
               href={item.href}
-              className="group min-w-[220px] md:min-w-[260px] border border-slate-200 rounded-[1.25rem] overflow-hidden hover:shadow-sm transition"
+              className="group min-w-[220px] md:min-w-[260px] border border-border rounded-[1.25rem] overflow-hidden hover:shadow-sm transition bg-background"
             >
-              <div className="relative aspect-square bg-slate-50 flex items-center justify-center">
+              <div className="relative aspect-square bg-muted flex items-center justify-center">
                 <Image
                   src={item.image}
                   alt={item.name}
@@ -203,7 +203,7 @@ const Categories = () => {
                 />
               </div>
               <div className="p-3 md:p-4">
-                <div className="font-medium group-hover:text-primary">{item.name}</div>
+                <div className="font-medium text-foreground group-hover:text-primary transition-colors">{item.name}</div>
               </div>
             </Link>
           ))}

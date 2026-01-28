@@ -51,23 +51,23 @@ const CookiePolicyPage = () => {
   ];
 
   return (
-    <main className="flex flex-col pb-24 lg:pb-0 bg-slate-50/30">
-      <section className="bg-white border-b border-slate-100">
+    <main className="flex flex-col pb-24 lg:pb-0 bg-muted/30">
+      <section className="bg-background border-b border-border">
         <div className="container mx-auto px-4 md:px-8 py-12 md:py-16">
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/5 text-primary rounded-full text-xs font-bold mb-4">
               <Cookie className="w-3.5 h-3.5" />
               Your Privacy Choice
             </div>
-            <h1 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight">
+            <h1 className="text-3xl md:text-5xl font-black text-foreground tracking-tight">
               Cookie Policy
             </h1>
-            <p className="mt-4 text-slate-600 text-lg leading-relaxed">
+            <p className="mt-4 text-muted-foreground text-lg leading-relaxed">
               This policy explains how <span className="text-secondary">.</span>Soko uses cookies and similar technologies to 
               recognize you when you visit our marketplace. It explains what these 
               technologies are and why we use them.
             </p>
-            <div className="mt-6 flex items-center gap-4 text-sm text-slate-400">
+            <div className="mt-6 flex items-center gap-4 text-sm text-muted-foreground">
               <span className="flex items-center gap-1.5">
                 <FileText className="w-4 h-4" />
                 Version 1.0
@@ -86,16 +86,16 @@ const CookiePolicyPage = () => {
           {/* Main Content */}
           <div className="lg:col-span-8 space-y-12">
             {sections.map((section, idx) => (
-              <div key={idx} className="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm">
+              <div key={idx} className="bg-background border border-border rounded-2xl p-6 md:p-8 shadow-sm">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-10 h-10 bg-primary/5 rounded-xl flex items-center justify-center text-primary">
                     {section.icon}
                   </div>
-                  <h2 className="text-xl font-bold text-slate-900">{section.title}</h2>
+                  <h2 className="text-xl font-bold text-foreground">{section.title}</h2>
                 </div>
                 <ul className="space-y-4">
                   {section.content.map((item, i) => (
-                    <li key={i} className="flex gap-3 text-slate-600 leading-relaxed">
+                    <li key={i} className="flex gap-3 text-muted-foreground leading-relaxed">
                       <div className="mt-2 w-1.5 h-1.5 rounded-full bg-primary/30 shrink-0" />
                       {item}
                     </li>
@@ -104,7 +104,7 @@ const CookiePolicyPage = () => {
               </div>
             ))}
 
-            <div className="p-8 bg-slate-900 rounded-3xl text-white relative overflow-hidden">
+            <div className="p-8 bg-slate-900 dark:bg-slate-900/50 rounded-3xl text-slate-50 relative overflow-hidden border border-border/50">
               <div className="relative z-10">
                 <div className="flex items-center gap-3 mb-4">
                   <Clock className="w-6 h-6 text-primary" />
@@ -130,26 +130,26 @@ const CookiePolicyPage = () => {
           {/* Sidebar */}
           <div className="lg:col-span-4 space-y-6">
             <div className="sticky top-[128px]">
-              <div className="bg-white border border-slate-200 rounded-2xl p-6 mb-6">
-                <h3 className="font-bold text-slate-900 mb-4">Cookie Support</h3>
-                <p className="text-sm text-slate-600 mb-6 leading-relaxed">
+              <div className="bg-background border border-border rounded-2xl p-6 mb-6">
+                <h3 className="font-bold text-foreground mb-4">Cookie Support</h3>
+                <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
                   Have questions about how we use cookies or want to exercise your right to opt-out? 
                   Our technical privacy team is ready to help.
                 </p>
                 <a 
                   href="mailto:privacy@dotsoko.com"
-                  className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors group"
+                  className="flex items-center gap-3 p-4 bg-muted rounded-xl hover:bg-muted/80 transition-colors group"
                 >
                   <Mail className="w-5 h-5 text-primary" />
                   <div>
-                    <div className="text-xs text-slate-400">Technical Support</div>
-                    <div className="text-sm font-bold text-slate-900">privacy@dotsoko.com</div>
+                    <div className="text-xs text-muted-foreground">Technical Support</div>
+                    <div className="text-sm font-bold text-foreground">privacy@dotsoko.com</div>
                   </div>
                 </a>
               </div>
 
-              <div className="bg-slate-50 rounded-2xl p-6">
-                <h4 className="font-bold text-slate-900 text-sm mb-4">Related Policies</h4>
+              <div className="bg-muted rounded-2xl p-6">
+                <h4 className="font-bold text-foreground text-sm mb-4">Related Policies</h4>
                 <nav className="space-y-3">
                   {[
                     { name: 'Privacy Policy', href: '/privacy' },
@@ -160,7 +160,7 @@ const CookiePolicyPage = () => {
                     <Link 
                       key={item.name}
                       href={item.href} 
-                      className="block text-sm text-slate-500 hover:text-primary transition-colors"
+                      className="block text-sm text-muted-foreground hover:text-primary transition-colors"
                     >
                       {item.name}
                     </Link>

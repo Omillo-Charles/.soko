@@ -364,14 +364,14 @@ const SellerSettingsPage = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="w-10 h-10 text-primary animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col lg:flex-row">
+    <div className="min-h-screen bg-background flex flex-col lg:flex-row">
       <RegisterShopModal 
         isOpen={showRegisterModal}
         onClose={() => router.push("/account")}
@@ -383,30 +383,30 @@ const SellerSettingsPage = () => {
         onConfirm={confirmLogout} 
       />
       {/* Sidebar (Consistent with Seller Center) */}
-      <div className="hidden lg:block w-72 shrink-0 border-r border-slate-100">
-        <aside className="fixed w-72 h-screen bg-white flex flex-col overflow-y-auto custom-scrollbar">
-          <div className="p-8 border-b border-slate-50">
+      <div className="hidden lg:block w-72 shrink-0 border-r border-border">
+        <aside className="fixed w-72 h-screen bg-background flex flex-col overflow-y-auto custom-scrollbar">
+          <div className="p-8 border-b border-border">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
-                <Store className="w-6 h-6 text-white" />
+                <Store className="w-6 h-6 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="font-black text-xl text-slate-900 tracking-tight">Seller Center</h1>
+                <h1 className="font-black text-xl text-foreground tracking-tight">Seller Center</h1>
                 <p className="text-[10px] text-primary font-bold uppercase tracking-widest">Settings</p>
               </div>
             </div>
           </div>
 
           <nav className="flex-1 p-6 space-y-2">
-            <Link href="/account/seller" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-xl font-medium transition-all group">
+            <Link href="/account/seller" className="flex items-center gap-3 px-4 py-3 text-muted-foreground hover:bg-muted hover:text-foreground rounded-xl font-medium transition-all group">
               <BarChart3 className="w-5 h-5 group-hover:text-primary" />
               Overview
             </Link>
-            <Link href="/account/seller/products" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-xl font-medium transition-all group">
+            <Link href="/account/seller/products" className="flex items-center gap-3 px-4 py-3 text-muted-foreground hover:bg-muted hover:text-foreground rounded-xl font-medium transition-all group">
               <ShoppingBag className="w-5 h-5 group-hover:text-primary" />
               Products
             </Link>
-            <Link href="/account/seller/orders" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-xl font-medium transition-all group">
+            <Link href="/account/seller/orders" className="flex items-center gap-3 px-4 py-3 text-muted-foreground hover:bg-muted hover:text-foreground rounded-xl font-medium transition-all group">
               <Package className="w-5 h-5 group-hover:text-primary" />
               Orders
             </Link>
@@ -416,8 +416,8 @@ const SellerSettingsPage = () => {
             </Link>
           </nav>
 
-          <div className="p-6 border-t border-slate-50 space-y-3">
-            <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl font-bold transition-all">
+          <div className="p-6 border-t border-border space-y-3">
+            <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl font-bold transition-all">
               <LogOut className="w-5 h-5" />
               Sign Out
             </button>
@@ -430,32 +430,32 @@ const SellerSettingsPage = () => {
         <div className="max-w-4xl mx-auto space-y-8">
           {/* Header */}
           <div className="flex items-center gap-4">
-            <Link href="/account/seller" className="p-2 hover:bg-white rounded-xl transition-colors text-slate-400 hover:text-slate-600 shadow-sm">
+            <Link href="/account/seller" className="p-2 hover:bg-muted rounded-xl transition-colors text-muted-foreground hover:text-foreground shadow-sm">
               <ArrowLeft className="w-6 h-6" />
             </Link>
             <div>
-              <h2 className="text-3xl font-black text-slate-900 tracking-tight uppercase">Shop Settings</h2>
-              <p className="text-slate-500 font-medium">Manage your store identity and account preferences.</p>
+              <h2 className="text-3xl font-black text-foreground tracking-tight uppercase">Shop Settings</h2>
+              <p className="text-muted-foreground font-medium">Manage your store identity and account preferences.</p>
             </div>
           </div>
 
           {/* Tabs */}
-          <div className="flex p-1 bg-white border border-slate-100 rounded-2xl w-full max-w-md shadow-sm">
+          <div className="flex p-1 bg-background border border-border rounded-2xl w-full max-w-md shadow-sm">
             <button 
               onClick={() => setActiveTab("profile")}
-              className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === "profile" ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-slate-500 hover:text-slate-900"}`}
+              className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === "profile" ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "text-muted-foreground hover:text-foreground"}`}
             >
               Shop Profile
             </button>
             <button 
               onClick={() => setActiveTab("branding")}
-              className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === "branding" ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-slate-500 hover:text-slate-900"}`}
+              className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === "branding" ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "text-muted-foreground hover:text-foreground"}`}
             >
               Branding
             </button>
             <button 
               onClick={() => setActiveTab("danger")}
-              className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === "danger" ? "bg-red-500 text-white shadow-lg shadow-red-500/20" : "text-slate-500 hover:text-red-500"}`}
+              className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === "danger" ? "bg-red-500 text-white shadow-lg shadow-red-500/20" : "text-muted-foreground hover:text-red-500"}`}
             >
               Danger Zone
             </button>
@@ -464,30 +464,30 @@ const SellerSettingsPage = () => {
           {/* Tab Content */}
           <div className="space-y-6">
             {activeTab === "profile" && (
-              <form onSubmit={handleUpdateShop} className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden p-8 md:p-10 space-y-8">
+              <form onSubmit={handleUpdateShop} className="bg-background rounded-[2.5rem] border border-border shadow-sm overflow-hidden p-8 md:p-10 space-y-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-2">
-                    <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Shop Name</label>
+                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Shop Name</label>
                     <input 
                       type="text" 
                       value={formData.name}
                       onChange={(e) => setFormData({...formData, name: e.target.value})}
-                      className="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 transition-all font-bold text-slate-900"
+                      className="w-full px-5 py-4 bg-muted border-none rounded-2xl focus:ring-2 focus:ring-primary/20 transition-all font-bold text-foreground"
                       placeholder="Your Shop Name"
                       required
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Shop Username (Handle)</label>
+                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Shop Username (Handle)</label>
                     <div className="relative">
-                      <span className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 font-bold">@</span>
+                      <span className="absolute left-5 top-1/2 -translate-y-1/2 text-muted-foreground font-bold">@</span>
                       <input 
                         type="text" 
                         value={formData.username}
                         onChange={(e) => setFormData({...formData, username: e.target.value.toLowerCase()})}
-                        className={`w-full pl-10 pr-5 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 transition-all font-bold text-slate-900 ${
-                          usernameStatus.error ? 'focus:ring-red-500/20 text-red-600' : 
-                          usernameStatus.available ? 'focus:ring-emerald-500/20 text-emerald-600' : 
+                        className={`w-full pl-10 pr-5 py-4 bg-muted border-none rounded-2xl focus:ring-2 transition-all font-bold text-foreground ${
+                          usernameStatus.error ? 'focus:ring-red-500/20 text-red-600 dark:text-red-400' : 
+                          usernameStatus.available ? 'focus:ring-emerald-500/20 text-emerald-600 dark:text-emerald-400' : 
                           'focus:ring-primary/20'
                         }`}
                         placeholder="adidas"
@@ -496,7 +496,7 @@ const SellerSettingsPage = () => {
                     {formData.username && (
                       <div className="flex items-center gap-2 ml-1">
                         {usernameStatus.loading ? (
-                          <Loader2 className="w-3 h-3 text-slate-400 animate-spin" />
+                          <Loader2 className="w-3 h-3 text-muted-foreground animate-spin" />
                         ) : usernameStatus.error ? (
                           <p className="text-[10px] font-bold text-red-500 uppercase">{usernameStatus.error}</p>
                         ) : usernameStatus.available ? (
@@ -506,11 +506,11 @@ const SellerSettingsPage = () => {
                     )}
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Category</label>
+                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Category</label>
                     <select 
                       value={formData.category}
                       onChange={(e) => setFormData({...formData, category: e.target.value})}
-                      className="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 transition-all font-bold text-slate-900 appearance-none"
+                      className="w-full px-5 py-4 bg-muted border-none rounded-2xl focus:ring-2 focus:ring-primary/20 transition-all font-bold text-foreground appearance-none"
                     >
                       <option value="">Select Category</option>
                       <option value="electronics">Electronics</option>
@@ -521,42 +521,42 @@ const SellerSettingsPage = () => {
                     </select>
                   </div>
                   <div className="md:col-span-2 space-y-2">
-                    <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Description</label>
+                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Description</label>
                     <textarea 
                       rows={4}
                       value={formData.description}
                       onChange={(e) => setFormData({...formData, description: e.target.value})}
-                      className="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 transition-all font-bold text-slate-900 resize-none"
+                      className="w-full px-5 py-4 bg-muted border-none rounded-2xl focus:ring-2 focus:ring-primary/20 transition-all font-bold text-foreground resize-none"
                       placeholder="Describe what you sell..."
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Location / Address</label>
+                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Location / Address</label>
                     <input 
                       type="text" 
                       value={formData.address}
                       onChange={(e) => setFormData({...formData, address: e.target.value})}
-                      className="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 transition-all font-bold text-slate-900"
+                      className="w-full px-5 py-4 bg-muted border-none rounded-2xl focus:ring-2 focus:ring-primary/20 transition-all font-bold text-foreground"
                       placeholder="e.g. Nairobi, Kenya"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Phone Number</label>
+                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Phone Number</label>
                     <input 
                       type="tel" 
                       value={formData.phone}
                       onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                      className="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 transition-all font-bold text-slate-900"
+                      className="w-full px-5 py-4 bg-muted border-none rounded-2xl focus:ring-2 focus:ring-primary/20 transition-all font-bold text-foreground"
                       placeholder="+254..."
                     />
                   </div>
                 </div>
 
-                <div className="pt-6 border-t border-slate-50 flex justify-end">
+                <div className="pt-6 border-t border-border flex justify-end">
                   <button 
                     type="submit"
                     disabled={isUpdating}
-                    className="flex items-center gap-2 bg-primary text-white px-8 py-4 rounded-2xl font-black text-sm hover:bg-blue-700 transition-all shadow-lg shadow-primary/20 disabled:opacity-50"
+                    className="flex items-center gap-2 bg-primary text-primary-foreground px-8 py-4 rounded-2xl font-black text-sm hover:bg-blue-700 transition-all shadow-lg shadow-primary/20 disabled:opacity-50"
                   >
                     {isUpdating ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
                     SAVE PROFILE CHANGES
@@ -566,16 +566,16 @@ const SellerSettingsPage = () => {
             )}
 
             {activeTab === "branding" && (
-              <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden p-8 md:p-10 space-y-10">
+              <div className="bg-background rounded-[2.5rem] border border-border shadow-sm overflow-hidden p-8 md:p-10 space-y-10">
                 {/* Banner Section */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">Shop Banner</h3>
+                  <h3 className="text-lg font-black text-foreground uppercase tracking-tight">Shop Banner</h3>
                   <div className="relative group">
-                    <div className="h-48 w-full bg-slate-100 rounded-3xl overflow-hidden border border-slate-100">
+                    <div className="h-48 w-full bg-muted rounded-3xl overflow-hidden border border-border">
                       {bannerPreview ? (
                         <img src={bannerPreview} alt="Banner" className="w-full h-full object-cover" />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-slate-400">
+                        <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                           <TrendingUp className="w-12 h-12 opacity-20" />
                         </div>
                       )}
@@ -600,14 +600,14 @@ const SellerSettingsPage = () => {
 
                 {/* Avatar Section */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">Shop Avatar</h3>
+                  <h3 className="text-lg font-black text-foreground uppercase tracking-tight">Shop Avatar</h3>
                   <div className="flex items-center gap-8">
                     <div className="relative group shrink-0">
-                      <div className="w-32 h-32 bg-slate-100 rounded-[2.5rem] overflow-hidden border-4 border-white shadow-xl">
+                      <div className="w-32 h-32 bg-muted rounded-[2.5rem] overflow-hidden border-4 border-background shadow-xl">
                         {avatarPreview ? (
                           <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-slate-400">
+                          <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                             <Store className="w-10 h-10 opacity-20" />
                           </div>
                         )}
@@ -623,8 +623,8 @@ const SellerSettingsPage = () => {
                       </label>
                     </div>
                     <div className="flex-1 space-y-2">
-                      <p className="text-sm font-bold text-slate-700">Upload Shop Avatar</p>
-                      <p className="text-[10px] text-slate-400 font-bold">Square images (e.g. 512x512) work best for avatars.</p>
+                      <p className="text-sm font-bold text-foreground">Upload Shop Avatar</p>
+                      <p className="text-[10px] text-muted-foreground font-bold">Square images (e.g. 512x512) work best for avatars.</p>
                       {avatarFile && (
                         <p className="text-xs text-primary font-bold">Selected: {avatarFile.name}</p>
                       )}
@@ -632,11 +632,11 @@ const SellerSettingsPage = () => {
                   </div>
                 </div>
 
-                <div className="pt-6 border-t border-slate-50 flex justify-end">
+                <div className="pt-6 border-t border-border flex justify-end">
                   <button 
                     onClick={handleUpdateBranding}
                     disabled={isUpdating}
-                    className="flex items-center gap-2 bg-primary text-white px-8 py-4 rounded-2xl font-black text-sm hover:bg-blue-700 transition-all shadow-lg shadow-primary/20 disabled:opacity-50"
+                    className="flex items-center gap-2 bg-primary text-primary-foreground px-8 py-4 rounded-2xl font-black text-sm hover:bg-blue-700 transition-all shadow-lg shadow-primary/20 disabled:opacity-50"
                   >
                     {isUpdating ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
                     SAVE BRANDING CHANGES
@@ -648,21 +648,21 @@ const SellerSettingsPage = () => {
             {activeTab === "danger" && (
               <div className="space-y-6">
                 {/* Delete Shop Card */}
-                <div className="bg-white rounded-[2.5rem] border border-red-100 shadow-sm overflow-hidden">
+                <div className="bg-background rounded-[2.5rem] border border-red-100 dark:border-red-500/20 shadow-sm overflow-hidden">
                   <div className="p-8 md:p-10 flex flex-col md:flex-row items-center gap-8">
-                    <div className="w-20 h-20 bg-red-50 rounded-3xl flex items-center justify-center shrink-0">
+                    <div className="w-20 h-20 bg-red-50 dark:bg-red-500/10 rounded-3xl flex items-center justify-center shrink-0">
                       <Store className="w-10 h-10 text-red-500" />
                     </div>
                     <div className="flex-1 text-center md:text-left">
-                      <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">Delete Shop</h3>
-                      <p className="text-slate-500 font-medium mt-1">
+                      <h3 className="text-xl font-black text-foreground uppercase tracking-tight">Delete Shop</h3>
+                      <p className="text-muted-foreground font-medium mt-1">
                         This will remove your store, products, and sales history. Your buyer account will remain active.
                       </p>
                     </div>
                     <button 
                       onClick={handleDeleteShop}
                       disabled={isDeleting !== null}
-                      className="w-full md:w-auto px-8 py-4 bg-red-50 text-red-600 rounded-2xl font-black text-sm hover:bg-red-100 transition-all disabled:opacity-50"
+                      className="w-full md:w-auto px-8 py-4 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 rounded-2xl font-black text-sm hover:bg-red-100 dark:hover:bg-red-500/20 transition-all disabled:opacity-50"
                     >
                       {isDeleting === "shop" ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "DELETE SHOP"}
                     </button>
@@ -670,32 +670,32 @@ const SellerSettingsPage = () => {
                 </div>
 
                 {/* Delete Account Card */}
-                <div className="bg-slate-900 rounded-[2.5rem] shadow-xl overflow-hidden">
+                <div className="bg-foreground rounded-[2.5rem] shadow-xl overflow-hidden">
                   <div className="p-8 md:p-10 flex flex-col md:flex-row items-center gap-8">
-                    <div className="w-20 h-20 bg-white/10 rounded-3xl flex items-center justify-center shrink-0">
-                      <Trash2 className="w-10 h-10 text-white" />
+                    <div className="w-20 h-20 bg-background/10 rounded-3xl flex items-center justify-center shrink-0">
+                      <Trash2 className="w-10 h-10 text-background" />
                     </div>
                     <div className="flex-1 text-center md:text-left">
-                      <h3 className="text-xl font-black text-white uppercase tracking-tight">Delete Account</h3>
-                      <p className="text-slate-400 font-medium mt-1">
+                      <h3 className="text-xl font-black text-background uppercase tracking-tight">Delete Account</h3>
+                      <p className="text-background/60 font-medium mt-1">
                         Permanently remove your account and all associated data. This action is irreversible.
                       </p>
                     </div>
                     <button 
                       onClick={handleDeleteAccount}
                       disabled={isDeleting !== null}
-                      className="w-full md:w-auto px-8 py-4 bg-white text-slate-900 rounded-2xl font-black text-sm hover:bg-red-500 hover:text-white transition-all disabled:opacity-50"
+                      className="w-full md:w-auto px-8 py-4 bg-background text-foreground rounded-2xl font-black text-sm hover:bg-red-500 hover:text-white transition-all disabled:opacity-50"
                     >
                       {isDeleting === "account" ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "DELETE ACCOUNT"}
                     </button>
                   </div>
                 </div>
 
-                <div className="p-6 bg-amber-50 rounded-3xl border border-amber-100 flex items-start gap-4">
+                <div className="p-6 bg-amber-50 dark:bg-amber-500/10 rounded-3xl border border-amber-100 dark:border-amber-500/20 flex items-start gap-4">
                   <AlertTriangle className="w-6 h-6 text-amber-600 shrink-0 mt-1" />
                   <div>
-                    <h4 className="font-black text-amber-900 text-sm uppercase tracking-tight">Warning</h4>
-                    <p className="text-amber-800 text-xs font-bold leading-relaxed mt-1">
+                    <h4 className="font-black text-amber-900 dark:text-amber-400 text-sm uppercase tracking-tight">Warning</h4>
+                    <p className="text-amber-800 dark:text-amber-500/80 text-xs font-bold leading-relaxed mt-1">
                       Destructive actions cannot be undone. Please ensure you have backed up any important data or completed pending orders before proceeding.
                     </p>
                   </div>

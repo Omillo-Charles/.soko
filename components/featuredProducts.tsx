@@ -68,7 +68,7 @@ const FeaturedProducts = () => {
     <section className="bg-muted">
       <div className="w-full px-4 md:px-8 py-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl md:text-2xl font-bold">Featured Products</h2>
+          <h2 className="text-xl md:text-2xl font-bold text-foreground">Featured Products</h2>
           <Link href="/shop" className="text-primary flex items-center gap-1 font-medium">
             View All
             <ChevronRight className="w-4 h-4" />
@@ -76,8 +76,8 @@ const FeaturedProducts = () => {
         </div>
         <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-6">
           {(products || []).map((p: any) => (
-            <div key={p._id || Math.random()} className="bg-white border border-slate-200 rounded-[1.25rem] overflow-hidden group">
-              <div className="relative aspect-square bg-slate-50 cursor-pointer flex items-center justify-center overflow-hidden border-b border-slate-100" onClick={() => p._id && router.push(`/shop/product/${p._id}`)}>
+            <div key={p._id || Math.random()} className="bg-background border border-border rounded-[1.25rem] overflow-hidden group">
+              <div className="relative aspect-square bg-muted cursor-pointer flex items-center justify-center overflow-hidden border-b border-border" onClick={() => p._id && router.push(`/shop/product/${p._id}`)}>
                 <Image
                   src={p.image || "/placeholder-product.jpg"}
                   alt={p.name || "Product"}
@@ -90,10 +90,10 @@ const FeaturedProducts = () => {
                     e.stopPropagation();
                     p._id && addToCart(p._id);
                   }}
-                  className="absolute top-2 left-2 bg-white/80 hover:bg-white rounded-full p-2 shadow transition-all hover:scale-110 active:scale-95 z-10"
+                  className="absolute top-2 left-2 bg-background/80 hover:bg-background rounded-full p-2 shadow transition-all hover:scale-110 active:scale-95 z-10"
                   title="Add to Cart"
                 >
-                  <ShoppingCart className="w-4 h-4 text-slate-700" />
+                  <ShoppingCart className="w-4 h-4 text-foreground" />
                 </button>
                 <button 
                   onClick={(e) => {
@@ -107,7 +107,7 @@ const FeaturedProducts = () => {
                       });
                     }
                   }}
-                  className="absolute bottom-2 left-2 bg-white/80 hover:bg-white rounded-full p-2 shadow transition-all hover:scale-110 z-10 text-slate-700"
+                  className="absolute bottom-2 left-2 bg-background/80 hover:bg-background rounded-full p-2 shadow transition-all hover:scale-110 z-10 text-foreground"
                   title="Share Product"
                 >
                   <Share2 className="w-4 h-4" />
@@ -124,7 +124,7 @@ const FeaturedProducts = () => {
                       });
                     }
                   }}
-                  className="absolute top-2 right-2 bg-white/80 hover:bg-white rounded-full p-2 shadow transition-all hover:scale-110 z-10 text-amber-500"
+                  className="absolute top-2 right-2 bg-background/80 hover:bg-background rounded-full p-2 shadow transition-all hover:scale-110 z-10 text-amber-500"
                   title="Rate Product"
                 >
                   <Star className="w-4 h-4" />
@@ -140,7 +140,7 @@ const FeaturedProducts = () => {
                       });
                     }
                   }}
-                  className="absolute bottom-2 right-2 bg-white/80 hover:bg-white rounded-full p-2 shadow transition-all hover:scale-110 z-10 text-primary"
+                  className="absolute bottom-2 right-2 bg-background/80 hover:bg-background rounded-full p-2 shadow transition-all hover:scale-110 z-10 text-primary"
                   title="Comment on Product"
                 >
                   <MessageSquare className="w-4 h-4" />
@@ -154,21 +154,28 @@ const FeaturedProducts = () => {
                       className={`w-3 h-3 ${
                         (p.rating || 0) >= s 
                           ? "fill-yellow-400 text-yellow-400" 
-                          : "text-slate-200 fill-slate-100"
+                          : "text-muted-foreground/20 fill-muted"
                       }`} 
                     />
                   ))}
-                  <span className="text-[10px] text-slate-400 ml-1">({p.rating?.toFixed(1) || "0.0"})</span>
+                  <span className="text-[10px] text-muted-foreground ml-1">({p.rating?.toFixed(1) || "0.0"})</span>
                 </div>
-                <h3 className="font-semibold text-slate-900 text-sm md:text-base line-clamp-1 group-hover:text-primary transition-colors cursor-pointer" onClick={() => p._id && router.push(`/shop/product/${p._id}`)}>
+                <h3 className="font-semibold text-foreground text-sm md:text-base line-clamp-1 group-hover:text-primary transition-colors cursor-pointer" onClick={() => p._id && router.push(`/shop/product/${p._id}`)}>
                   {p.name || "Untitled Product"}
                 </h3>
-                <p className="text-xs text-slate-500 line-clamp-2 mt-1 min-h-[32px]">
-                  {p.description || "No description available for this featured product."}
+                <p className="text-xs text-muted-foreground line-clamp-2 mt-1 min-h-[32px]">
+                  {p.description || "No description available"}
                 </p>
-                <div className="mt-2 flex items-center justify-between">
-                  <span className="font-bold text-slate-900">KES {(p.price || 0).toLocaleString()}</span>
-                  <span className="text-[10px] text-slate-400 line-through">KES {((p.price || 0) * 1.2).toLocaleString()}</span>
+                <div className="mt-3 flex items-center justify-between">
+                  <span className="text-lg font-black text-primary">
+                    KES {p.price?.toLocaleString()}
+                  </span>
+                  <button 
+                    onClick={() => p._id && router.push(`/shop/product/${p._id}`)}
+                    className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
             </div>

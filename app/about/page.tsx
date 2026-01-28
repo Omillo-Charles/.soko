@@ -59,19 +59,19 @@ const AboutPage = () => {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-slate-50/30">
+    <div className="flex flex-col min-h-screen bg-muted/30">
       {/* Header Section */}
-      <section className="bg-white border-b border-slate-100">
+      <section className="bg-background border-b border-border">
         <div className="container mx-auto px-4 md:px-8 py-8 md:py-10">
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/5 text-primary rounded-full text-xs font-bold mb-4">
               <Info className="w-3.5 h-3.5" />
               About Us
             </div>
-            <h1 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight">
+            <h1 className="text-3xl md:text-5xl font-black text-foreground tracking-tight">
               Empowering Digital Commerce
             </h1>
-            <p className="mt-4 text-slate-600 text-lg leading-relaxed">
+            <p className="mt-4 text-muted-foreground text-lg leading-relaxed">
               Welcome to <span className="text-secondary">.</span>Soko, the ultimate multivendor marketplace connecting buyers and sellers in a seamless, secure ecosystem.
             </p>
           </div>
@@ -87,31 +87,31 @@ const AboutPage = () => {
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
               {stats.map((stat) => (
-                <div key={stat.label} className="bg-white border border-slate-200 rounded-2xl p-6 text-center shadow-sm hover:shadow-md transition-shadow flex flex-col justify-center min-h-[120px]">
+                <div key={stat.label} className="bg-background border border-border rounded-2xl p-6 text-center shadow-sm hover:shadow-md transition-shadow flex flex-col justify-center min-h-[120px]">
                   {isStatsLoading ? (
                     <div className="flex justify-center py-2">
                       <Loader2 className="w-6 h-6 text-primary/30 animate-spin" />
                     </div>
                   ) : (
-                    <p className="text-2xl md:text-3xl font-black text-slate-900 mb-1">{stat.value}</p>
+                    <p className="text-2xl md:text-3xl font-black text-foreground mb-1">{stat.value}</p>
                   )}
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{stat.label}</p>
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{stat.label}</p>
                 </div>
               ))}
             </div>
 
             {/* Content Sections */}
             {sections.map((section, idx) => (
-              <div key={idx} className="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm">
+              <div key={idx} className="bg-background border border-border rounded-2xl p-6 md:p-8 shadow-sm">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-10 h-10 bg-primary/5 rounded-xl flex items-center justify-center text-primary">
                     {section.icon}
                   </div>
-                  <h2 className="text-xl font-bold text-slate-900">{section.title}</h2>
+                  <h2 className="text-xl font-bold text-foreground">{section.title}</h2>
                 </div>
                 <ul className="space-y-4">
                   {section.content.map((item, i) => (
-                    <li key={i} className="flex gap-3 text-slate-600 leading-relaxed">
+                    <li key={i} className="flex gap-3 text-muted-foreground leading-relaxed">
                       <div className="mt-2 w-1.5 h-1.5 rounded-full bg-primary/30 shrink-0" />
                       <div>{item}</div>
                     </li>
@@ -121,19 +121,19 @@ const AboutPage = () => {
             ))}
 
             {/* CTA Card */}
-            <div className="p-8 bg-slate-900 rounded-3xl text-white relative overflow-hidden">
+            <div className="p-8 bg-foreground rounded-3xl text-background relative overflow-hidden">
               <div className="relative z-10">
                 <div className="flex items-center gap-3 mb-4">
                   <Briefcase className="w-6 h-6 text-primary" />
                   <h3 className="text-2xl font-bold">Join Our Team</h3>
                 </div>
-                <p className="text-slate-300 leading-relaxed mb-6">
+                <p className="opacity-80 leading-relaxed mb-6">
                   We are always looking for passionate individuals to help us build the future of commerce. 
                   Check out our careers page for open positions.
                 </p>
                 <Link 
                   href="/careers" 
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-white text-slate-900 rounded-xl font-bold hover:bg-slate-100 transition-colors"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-background text-foreground rounded-xl font-bold hover:bg-muted transition-colors"
                 >
                   View Openings
                   <Briefcase className="w-4 h-4" />
@@ -148,26 +148,26 @@ const AboutPage = () => {
             <div className="sticky top-[128px]">
               
               {/* Contact Card */}
-              <div className="bg-white border border-slate-200 rounded-2xl p-6 mb-6">
-                <h3 className="font-bold text-slate-900 mb-4">Get in Touch</h3>
-                <p className="text-sm text-slate-600 mb-6 leading-relaxed">
+              <div className="bg-background border border-border rounded-2xl p-6 mb-6">
+                <h3 className="font-bold text-foreground mb-4">Get in Touch</h3>
+                <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
                   Have questions or want to partner with us? We'd love to hear from you.
                 </p>
                 <a 
                   href="mailto:hello@dotsoko.com"
-                  className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors group"
+                  className="flex items-center gap-3 p-4 bg-muted rounded-xl hover:bg-muted/80 transition-colors group"
                 >
                   <Mail className="w-5 h-5 text-primary" />
                   <div>
-                    <div className="text-xs text-slate-400">General Inquiries</div>
-                    <div className="text-sm font-bold text-slate-900">hello@dotsoko.com</div>
+                    <div className="text-xs text-muted-foreground/60">General Inquiries</div>
+                    <div className="text-sm font-bold text-foreground">hello@dotsoko.com</div>
                   </div>
                 </a>
               </div>
 
               {/* Quick Links */}
-              <div className="bg-slate-50 rounded-2xl p-6">
-                <h4 className="font-bold text-slate-900 text-sm mb-4">Company</h4>
+              <div className="bg-muted rounded-2xl p-6">
+                <h4 className="font-bold text-foreground text-sm mb-4">Company</h4>
                 <nav className="space-y-3">
                   {[
                     { name: 'Shop', href: '/shop' },
@@ -178,7 +178,7 @@ const AboutPage = () => {
                     <Link 
                       key={item.name}
                       href={item.href} 
-                      className="block text-sm text-slate-500 hover:text-primary transition-colors"
+                      className="block text-sm text-muted-foreground hover:text-primary transition-colors"
                     >
                       {item.name}
                     </Link>
@@ -187,17 +187,17 @@ const AboutPage = () => {
               </div>
 
               {/* Seller CTA */}
-              <div className="mt-6 bg-gradient-to-br from-primary to-blue-600 rounded-2xl p-6 text-white shadow-xl shadow-primary/20">
-                <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center mb-4">
-                  <Users className="w-5 h-5 text-white" />
+              <div className="mt-6 bg-gradient-to-br from-primary to-blue-600 rounded-2xl p-6 text-primary-foreground shadow-xl shadow-primary/20">
+                <div className="w-10 h-10 bg-primary-foreground/20 rounded-xl flex items-center justify-center mb-4">
+                  <Users className="w-5 h-5 text-primary-foreground" />
                 </div>
                 <h3 className="font-bold text-lg mb-2">Become a Seller</h3>
-                <p className="text-sm text-white/80 mb-6 leading-relaxed">
+                <p className="text-sm text-primary-foreground/80 mb-6 leading-relaxed">
                   Start your business journey with .Soko today and reach millions of customers.
                 </p>
                 <Link 
                   href="/auth"
-                  className="block w-full text-center py-3 bg-white text-primary rounded-xl font-bold hover:bg-slate-50 transition-colors"
+                  className="block w-full text-center py-3 bg-primary-foreground text-primary rounded-xl font-bold hover:bg-primary-foreground/90 transition-colors"
                 >
                   Get Started
                 </Link>

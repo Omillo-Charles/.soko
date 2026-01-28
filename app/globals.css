@@ -35,6 +35,29 @@
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
+.dark {
+  --background: #020617; /* Slate 950 */
+  --foreground: #f8fafc; /* Slate 50 */
+  --primary: #3b82f6;
+  --primary-foreground: #ffffff;
+  --secondary: #f97316;
+  --secondary-foreground: #ffffff;
+  --muted: #0f172a; /* Slate 900 */
+  --muted-foreground: #94a3b8; /* Slate 400 */
+  --accent: #1e293b; /* Slate 800 */
+  --accent-foreground: #f8fafc;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #1e293b; /* Slate 800 */
+  --input: #1e293b;
+  --ring: #3b82f6;
+  
+  --brand-light: #020617;
+  --brand-soft-blue: #0f172a;
+  --brand-soft-indigo: #1e1b4b;
+  --brand-deep: #f8fafc;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
