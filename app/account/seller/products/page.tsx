@@ -340,11 +340,11 @@ const SellerProductsPage = () => {
                 className="bg-white rounded-[2rem] border border-slate-100 p-4 md:p-6 flex flex-col md:flex-row items-center gap-6 group hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300"
               >
                 {/* Image */}
-                <div className="w-full md:w-32 h-48 md:h-32 rounded-2xl overflow-hidden bg-slate-50 shrink-0 relative">
+                <div className="w-full md:w-32 aspect-square rounded-2xl overflow-hidden bg-slate-50 shrink-0 relative">
                   <img 
                     src={product.image} 
                     alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
                   {product.stock <= 5 && product.stock > 0 && (
                     <div className="absolute top-2 left-2 bg-amber-500 text-white text-[10px] font-black px-2 py-1 rounded-lg uppercase">
@@ -466,10 +466,10 @@ const SellerProductsPage = () => {
                             <div 
                               key={index} 
                               className={`relative group bg-slate-50 border border-slate-100 overflow-hidden ${
-                                imagePreviews.length === 3 && index === 0 ? 'row-span-2 h-full' : 'aspect-video'
+                                imagePreviews.length === 3 && index === 0 ? 'row-span-2 h-full' : 'aspect-square'
                               }`}
                             >
-                              <img src={preview} alt={`Preview ${index + 1}`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                              <img src={preview} alt={`Preview ${index + 1}`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                               <div className="absolute top-2 right-2 flex gap-2">
                                 <button 
                                   type="button"
@@ -483,7 +483,7 @@ const SellerProductsPage = () => {
                           ))}
                         </div>
                       ) : (
-                        <label className="flex flex-col items-center justify-center w-full aspect-video border-2 border-dashed border-slate-200 rounded-[2rem] bg-slate-50 hover:bg-white hover:border-primary/30 transition-all cursor-pointer group">
+                        <label className="flex flex-col items-center justify-center w-full aspect-square border-2 border-dashed border-slate-200 rounded-[2rem] bg-slate-50 hover:bg-white hover:border-primary/30 transition-all cursor-pointer group">
                           <input type="file" accept="image/*" multiple onChange={handleImageChange} className="hidden" />
                           <div className="w-16 h-16 bg-white rounded-3xl shadow-sm border border-slate-100 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:shadow-xl transition-all duration-500">
                             <ImageIcon className="w-6 h-6 text-slate-400 group-hover:text-primary transition-colors" />
@@ -625,7 +625,7 @@ const SellerProductsPage = () => {
                                   <img 
                                     src={preview} 
                                     alt="Preview" 
-                                    className="w-full h-full object-cover"
+                                    className="w-full h-full object-cover rounded-xl transition-transform duration-700 group-hover:scale-110"
                                   />
                                 </div>
                               ))}

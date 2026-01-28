@@ -86,12 +86,12 @@ const WishlistPage = () => {
                 {/* Product Image */}
                 <div 
                     onClick={() => router.push(`/shop/product/${product._id}`)}
-                    className="relative w-32 h-32 rounded-[1.25rem] overflow-hidden bg-slate-50 border border-slate-100 shrink-0 cursor-pointer flex items-center justify-center"
+                    className="relative w-32 aspect-square rounded-[1.25rem] overflow-hidden bg-slate-50 border border-slate-100 shrink-0 cursor-pointer flex items-center justify-center"
                   >
                   <img 
                     src={product.image} 
                     alt={product.name}
-                    className="max-w-[90%] max-h-[90%] object-contain group-hover:scale-110 transition-transform duration-700"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
                 </div>
 

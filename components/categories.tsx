@@ -192,13 +192,13 @@ const Categories = () => {
               href={item.href}
               className="group min-w-[220px] md:min-w-[260px] border border-slate-200 rounded-[1.25rem] overflow-hidden hover:shadow-sm transition"
             >
-              <div className="relative h-28 md:h-36 bg-slate-50 flex items-center justify-center">
+              <div className="relative aspect-square bg-slate-50 flex items-center justify-center">
                 <Image
                   src={item.image}
                   alt={item.name}
                   fill
                   sizes="(max-width: 768px) 220px, 260px"
-                  className="object-contain p-2"
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
                   priority
                 />
               </div>

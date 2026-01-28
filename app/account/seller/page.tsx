@@ -257,7 +257,7 @@ const SellerDashboard = () => {
           <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden flex flex-col md:flex-row">
             <div className="w-full md:w-1/3 h-48 md:h-auto bg-slate-100 relative shrink-0">
               {shop?.banner ? (
-                <img src={shop.banner} alt="Shop Banner" className="w-full h-full object-cover" />
+                <img src={shop.banner} alt="Shop Banner" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
               ) : (
                 <div className="w-full h-full bg-gradient-to-br from-primary to-indigo-600" />
               )}
@@ -266,7 +266,7 @@ const SellerDashboard = () => {
                 <div className="w-24 h-24 bg-white rounded-[2rem] p-1.5 shadow-2xl relative z-10">
                   <div className="w-full h-full bg-slate-50 rounded-[1.5rem] flex items-center justify-center overflow-hidden">
                     {shop?.avatar ? (
-                      <img src={shop.avatar} alt="Shop Logo" className="w-full h-full object-cover" />
+                      <img src={shop.avatar} alt="Shop Logo" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                     ) : (
                       <Store className="w-10 h-10 text-slate-300" />
                     )}
@@ -387,8 +387,8 @@ const SellerDashboard = () => {
                   <div className="space-y-4">
                     {products.slice(0, 5).map((product: any) => (
                       <div key={product._id} className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 group hover:bg-white hover:shadow-md transition-all">
-                        <div className="w-16 h-16 rounded-xl overflow-hidden bg-white shrink-0">
-                          <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                        <div className="w-16 aspect-square rounded-xl overflow-hidden bg-white shrink-0">
+                          <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <h4 className="font-bold text-slate-900 truncate">{product.name}</h4>

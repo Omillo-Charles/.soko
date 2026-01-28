@@ -202,11 +202,11 @@ const ProductDetailsPage = () => {
 
                 {/* 2. Photo Section */}
                 <div className="px-4 md:px-8 py-2 space-y-4">
-                  <div className="aspect-video w-full max-h-[450px] rounded-[1.25rem] overflow-hidden bg-slate-50/50 border border-slate-100/50 group relative flex items-center justify-center">
+                  <div className="aspect-square w-full max-h-[550px] rounded-[1.25rem] overflow-hidden bg-slate-50/50 border border-slate-100/50 group relative flex items-center justify-center cursor-zoom-in">
                     <img 
                       src={productImages[activeImageIndex] || product.image} 
                       alt={product.name}
-                      className="max-w-full max-h-full object-contain group-hover:scale-[1.01] transition-transform duration-700"
+                      className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                     />
                     <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-200 shadow-xl shadow-slate-900/5 flex flex-col items-end">
                       <span className="text-primary font-black text-xs">{formatPrice(product.price)}</span>
@@ -219,11 +219,11 @@ const ProductDetailsPage = () => {
                         <button
                           key={idx}
                           onClick={() => setActiveImageIndex(idx)}
-                          className={`relative w-20 h-20 rounded-xl overflow-hidden border-2 transition-all shrink-0 ${
+                          className={`relative w-20 aspect-square rounded-xl overflow-hidden border-2 transition-all shrink-0 group ${
                             activeImageIndex === idx ? 'border-primary shadow-lg shadow-primary/10' : 'border-slate-100 hover:border-slate-300'
                           }`}
                         >
-                          <img src={img} alt="" className="w-full h-full object-cover" />
+                          <img src={img} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                         </button>
                       ))}
                     </div>
@@ -342,8 +342,8 @@ const ProductDetailsPage = () => {
                     className="p-4 hover:bg-slate-50/50 transition-colors cursor-pointer group"
                   >
                     <div className="flex gap-4 md:gap-5">
-                      <div className="w-24 h-16 md:w-32 md:h-20 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 shrink-0 flex items-center justify-center">
-                        <img src={p.image} alt={p.name} className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-500" />
+                      <div className="w-24 aspect-square md:w-32 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 shrink-0 flex items-center justify-center">
+                        <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                       </div>
                       <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
                         <div>

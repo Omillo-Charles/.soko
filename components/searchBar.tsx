@@ -134,8 +134,8 @@ const SearchBar = () => {
                   onClick={() => handleSuggestionClick(product)}
                   className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors text-left group"
                 >
-                  <div className="w-10 h-10 rounded-lg overflow-hidden bg-slate-100 shrink-0 border border-slate-100">
-                    <img src={product.image} alt="" className="w-full h-full object-cover" />
+                  <div className="w-10 aspect-square rounded-lg overflow-hidden bg-slate-100 shrink-0 border border-slate-100">
+                    <img src={product.image} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-bold text-slate-900 truncate group-hover:text-primary transition-colors">

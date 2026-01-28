@@ -239,7 +239,7 @@ export const RegisterShopModal = ({ isOpen, onClose, onSuccess }: RegisterShopMo
                   )}
 
                   <div className="absolute bottom-4 left-6">
-                    <div className="relative w-20 h-20 rounded-2xl border-4 border-white shadow-xl overflow-hidden bg-white group/logo">
+                    <div className="relative w-20 aspect-square rounded-2xl border-4 border-white shadow-xl overflow-hidden bg-white group/logo">
                       {logoPreview ? (
                         <>
                           <img src={logoPreview} alt="Logo" className="w-full h-full object-cover" />

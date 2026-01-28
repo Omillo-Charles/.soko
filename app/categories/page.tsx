@@ -165,7 +165,7 @@ const CategoriesPage = () => {
                 className="group relative bg-white rounded-3xl overflow-hidden border border-slate-100 hover:border-primary/20 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 flex flex-col h-full"
               >
                 {/* Image Container */}
-                <div className="relative h-48 w-full overflow-hidden bg-slate-100">
+                <div className="relative aspect-square w-full overflow-hidden bg-slate-100">
                   <Image 
                     src={meta.image} 
                     alt={category.label}

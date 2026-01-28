@@ -383,11 +383,11 @@ const ShopProfilePage = () => {
                           </p>
 
                           {product.image && (
-                            <div className="rounded-[1.25rem] overflow-hidden border border-slate-100 mb-3 bg-slate-50 relative aspect-video group/img flex items-center justify-center">
+                            <div className="rounded-[1.25rem] overflow-hidden border border-slate-100 mb-3 bg-slate-50 relative aspect-square group/img flex items-center justify-center">
                               <img 
                                 src={product.image} 
                                 alt={product.name} 
-                                className="max-w-full max-h-full object-contain group-hover/img:scale-[1.02] transition-transform duration-500" 
+                                className="w-full h-full object-cover transition-transform duration-700 group-hover/img:scale-110" 
                               />
                               <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl border border-slate-100 shadow-xl flex flex-col items-end">
                                 <span className="text-primary font-black text-sm">KES {product.price?.toLocaleString()}</span>
@@ -683,8 +683,8 @@ const ShopProfilePage = () => {
                     className="p-3 hover:bg-slate-50 transition-all cursor-pointer flex items-center justify-between gap-3 rounded-xl group"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-10 h-10 rounded-full overflow-hidden bg-slate-100 border border-slate-100 shrink-0">
-                        <img src={vendor.avatar} alt={vendor.name} className="w-full h-full object-cover" />
+                      <div className="w-10 aspect-square rounded-full overflow-hidden bg-slate-100 border border-slate-100 shrink-0">
+                        <img src={vendor.avatar} alt={vendor.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-1">
