@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { calculateShippingFee } from "@/lib/shipping";
 
 const CheckoutPage = () => {
   const router = useRouter();
@@ -141,7 +142,7 @@ const CheckoutPage = () => {
     );
   }
 
-  const shippingFee = subtotal > 6500 ? 0 : 500;
+  const shippingFee = calculateShippingFee(subtotal);
   const total = subtotal + shippingFee;
 
   const formatPrice = (price: number) => {

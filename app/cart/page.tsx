@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
+import { calculateShippingFee } from '@/lib/shipping';
 import { 
   Trash2, 
   Plus, 
@@ -29,9 +30,7 @@ const CartPage = () => {
     setIsMounted(true);
   }, []);
 
-  const shippingThreshold = 6500;
-  const shippingFee = 500;
-  const shipping = subtotal > shippingThreshold ? 0 : shippingFee;
+  const shipping = calculateShippingFee(subtotal);
   const total = subtotal + shipping;
 
   const formatPrice = (price: number) => {
@@ -229,13 +228,6 @@ const CartPage = () => {
                     {shipping === 0 ? "FREE" : formatPrice(shipping)}
                   </span>
                 </div>
-                {shipping > 0 && (
-                  <div className="bg-primary/5 p-3 rounded-xl border border-primary/10">
-                    <p className="text-[10px] text-primary font-bold leading-tight">
-                      Add {formatPrice(shippingThreshold - subtotal)} more for FREE shipping!
-                    </p>
-                  </div>
-                )}
                 <div className="pt-6 border-t border-border flex justify-between items-center">
                   <span className="text-foreground font-bold">Total</span>
                   <div className="text-right">

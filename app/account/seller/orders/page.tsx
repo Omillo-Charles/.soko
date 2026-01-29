@@ -18,6 +18,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { useSellerOrders } from '@/hooks/useSellerOrders';
+import { calculateShippingFee } from '@/lib/shipping';
 
 const statusColors = {
   pending: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400',
@@ -170,10 +171,31 @@ export default function SellerOrdersPage() {
                       ))}
                     </div>
 
-                    <div className="mt-6 pt-6 border-t border-border flex justify-between items-center">
-                      <p className="text-sm text-muted-foreground">Total for items</p>
-                      <p className="text-lg font-bold text-foreground">KES {order.totalAmount.toLocaleString()}</p>
-                    </div>
+                      <div className="mt-6 pt-6 border-t border-border space-y-2">
+                        <div className="flex justify-between items-center text-sm">
+                          <p className="text-muted-foreground">Subtotal</p>
+                          <p className="font-semibold text-foreground">
+                            KES {(() => {
+                              const subtotal = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                              return subtotal.toLocaleString();
+                            })()}
+                          </p>
+                        </div>
+                        <div className="flex justify-between items-center text-sm">
+                           <p className="text-muted-foreground">Shipping Fee</p>
+                           <p className="font-semibold text-foreground">
+                             KES {(() => {
+                               const subtotal = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                               const shippingFee = order.shippingFee ?? calculateShippingFee(subtotal);
+                               return shippingFee.toLocaleString();
+                             })()}
+                           </p>
+                         </div>
+                        <div className="flex justify-between items-center pt-2">
+                          <p className="font-bold text-foreground">Order Total</p>
+                          <p className="text-lg font-bold text-primary">KES {order.totalAmount.toLocaleString()}</p>
+                        </div>
+                      </div>
                   </div>
 
                   {/* Delivery & Actions */}

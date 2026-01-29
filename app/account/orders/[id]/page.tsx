@@ -16,6 +16,7 @@ import {
   CreditCard,
   Calendar
 } from "lucide-react";
+import { calculateShippingFee } from "@/lib/shipping";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -164,11 +165,26 @@ export default function OrderDetailsPage() {
               <div className="bg-accent/20 p-6 space-y-3">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground font-medium">Subtotal</span>
-                  <span className="text-foreground font-semibold">KES {order.totalAmount.toLocaleString()}</span>
+                  <span className="text-foreground font-semibold">
+                    KES {(() => {
+                      const subtotal = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                      return subtotal.toLocaleString();
+                    })()}
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground font-medium">Shipping</span>
-                  <span className="text-green-600 dark:text-green-400 font-bold">FREE</span>
+                  <span className={(() => {
+                    const subtotal = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                    const shippingFee = order.shippingFee ?? calculateShippingFee(subtotal);
+                    return shippingFee <= 0;
+                  })() ? "text-green-600 dark:text-green-400 font-bold" : "text-foreground font-semibold"}>
+                    {(() => {
+                      const subtotal = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                      const shippingFee = order.shippingFee ?? calculateShippingFee(subtotal);
+                      return shippingFee <= 0 ? "FREE" : `KES ${shippingFee.toLocaleString()}`;
+                    })()}
+                  </span>
                 </div>
                 <div className="pt-3 border-t border-border flex justify-between items-center">
                   <span className="font-bold text-foreground">Total</span>

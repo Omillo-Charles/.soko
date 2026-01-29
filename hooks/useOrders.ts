@@ -24,6 +24,8 @@ export interface Order {
   _id: string;
   user: any;
   items: OrderItem[];
+  subtotal?: number;
+  shippingFee?: number;
   totalAmount: number;
   shippingAddress: ShippingAddress;
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';

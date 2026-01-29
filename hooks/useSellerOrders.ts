@@ -21,6 +21,8 @@ export interface Order {
     email: string;
   };
   items: OrderItem[];
+  subtotal?: number;
+  shippingFee?: number;
   totalAmount: number;
   shippingAddress: {
     name: string;
