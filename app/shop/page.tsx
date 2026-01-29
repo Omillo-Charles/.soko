@@ -28,7 +28,7 @@ import { useWishlist } from "@/context/WishlistContext";
 import { categories as allCategories } from "@/constants/categories";
 import { toast } from "sonner";
 
-import { useProducts } from "@/hooks/useProducts";
+import { useProducts, useLimitedProducts } from "@/hooks/useProducts";
 import { usePopularShops, useFollowShop, useMyShop } from "@/hooks/useShop";
 import { useUser } from "@/hooks/useUser";
 import RatingModal from "@/components/RatingModal";
@@ -48,6 +48,7 @@ const ShopPage = () => {
   const { user: currentUser } = useUser();
   const { data: myShop } = useMyShop();
   const { data: popularShopsData, isLoading: isShopsLoading } = usePopularShops();
+  const { data: flashDealsData } = useLimitedProducts(3);
   const followMutation = useFollowShop();
 
   const [isMounted, setIsMounted] = useState(false);
@@ -107,10 +108,10 @@ const ShopPage = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
-  const { data: productsData, isLoading: isProductsLoading, error: productsError } = useProducts({
+  const { data: productsData, isLoading: isProductsLoading, error: productsError } = useLimitedProducts(3, {
     q: query,
     cat: cat !== 'all' ? cat : undefined,
-    following: activeTab === 'following' ? 'true' : undefined
+    following: activeTab === 'following' ? 'true' : undefined,
   });
 
   const products = productsData || [];
@@ -696,26 +697,52 @@ const ShopPage = () => {
             <div className="space-y-4">
               <h3 className="text-[11px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] px-2">Flash Deals</h3>
               <div className="space-y-4 px-2">
-                {[1, 2].map((i) => (
+                {flashDealsData ? flashDealsData.map((product: any, i: number) => (
                   <Link 
-                    key={i} 
-                    href="/deals"
+                    key={product._id || i} 
+                    href={`/shop/product/${product._id}`}
                     className="flex gap-3 group cursor-pointer"
                   >
                     <div className="w-16 h-16 rounded-xl bg-muted overflow-hidden border border-border shrink-0">
-                      <div className="w-full h-full bg-muted-foreground/10 animate-pulse"></div>
+                      {product.images?.[0] || product.image ? (
+                        <img 
+                          src={product.images?.[0] || product.image} 
+                          alt={product.name}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-muted-foreground/10 flex items-center justify-center">
+                          <ShoppingBag className="w-6 h-6 text-muted-foreground/20" />
+                        </div>
+                      )}
                     </div>
                     <div className="min-w-0 flex-1 py-1">
-                      <p className="font-bold text-sm text-foreground line-clamp-1 group-hover:text-primary transition-colors">Premium Item {i}</p>
+                      <p className="font-bold text-sm text-foreground line-clamp-1 group-hover:text-primary transition-colors">
+                        {product.name}
+                      </p>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="text-primary font-black text-sm">KES {i * 1500}</span>
+                        <span className="text-primary font-black text-sm">KES {product.price?.toLocaleString()}</span>
+                        {product.oldPrice && (
+                          <span className="text-[10px] text-muted-foreground/60 line-through">KES {product.oldPrice.toLocaleString()}</span>
+                        )}
                       </div>
                       <div className="w-full h-1 bg-muted rounded-full mt-2 overflow-hidden">
-                        <div className="h-full bg-primary rounded-full" style={{ width: i === 1 ? '75%' : '40%' }}></div>
+                        <div className="h-full bg-primary rounded-full" style={{ width: i === 0 ? '75%' : '40%' }}></div>
                       </div>
                     </div>
                   </Link>
-                ))}
+                )) : (
+                  [1, 2, 3].map((i) => (
+                    <div key={i} className="flex gap-3 animate-pulse">
+                      <div className="w-16 h-16 rounded-xl bg-muted shrink-0" />
+                      <div className="flex-1 py-1 space-y-2">
+                        <div className="h-4 bg-muted rounded w-3/4" />
+                        <div className="h-4 bg-muted rounded w-1/2" />
+                        <div className="h-1 bg-muted rounded-full w-full" />
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
 

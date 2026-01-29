@@ -23,6 +23,8 @@ export const useComments = (productId?: string) => {
       queryClient.invalidateQueries({ queryKey: ['comments', productId] });
       queryClient.invalidateQueries({ queryKey: ['product', productId] });
       queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['products-limited'] });
+      queryClient.invalidateQueries({ queryKey: ['products-infinite'] });
       queryClient.invalidateQueries({ queryKey: ['featured-products'] });
       toast.success('Comment posted successfully');
     },
@@ -40,6 +42,8 @@ export const useComments = (productId?: string) => {
       queryClient.invalidateQueries({ queryKey: ['comments', productId] });
       queryClient.invalidateQueries({ queryKey: ['product', productId] });
       queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['products-limited'] });
+      queryClient.invalidateQueries({ queryKey: ['products-infinite'] });
       queryClient.invalidateQueries({ queryKey: ['featured-products'] });
       toast.success('Comment deleted successfully');
     },

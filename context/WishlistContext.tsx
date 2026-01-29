@@ -49,6 +49,8 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     onSuccess: (data, productId) => {
       queryClient.invalidateQueries({ queryKey: ['wishlist'] });
       queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['products-limited'] });
+      queryClient.invalidateQueries({ queryKey: ['products-infinite'] });
       queryClient.invalidateQueries({ queryKey: ['featured-products'] });
       queryClient.invalidateQueries({ queryKey: ['product', productId] });
       

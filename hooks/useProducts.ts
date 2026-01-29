@@ -12,6 +12,19 @@ export const useProducts = (params?: any) => {
   });
 };
 
+export const useLimitedProducts = (limit: number, otherParams?: any) => {
+  return useQuery({
+    queryKey: ['products-limited', limit, otherParams],
+    queryFn: async () => {
+      const response = await api.get('/products', { 
+        params: { ...otherParams, limit } 
+      });
+      return response.data.data;
+    },
+    staleTime: 1000 * 60 * 5,
+  });
+};
+
 export const useInfiniteProducts = (params?: any) => {
   return useInfiniteQuery({
     queryKey: ['products-infinite', params],

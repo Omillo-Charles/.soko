@@ -23,11 +23,13 @@ export const useMyShop = () => {
   });
 };
 
-export const useShopProducts = (id: string) => {
+export const useShopProducts = (id: string, limit?: number) => {
   return useQuery({
-    queryKey: ['shop-products', id],
+    queryKey: ['shop-products', id, limit],
     queryFn: async () => {
-      const response = await api.get(`/products/shop/${id}`);
+      const response = await api.get(`/products/shop/${id}`, {
+        params: limit ? { limit } : {}
+      });
       return response.data.data;
     },
     enabled: !!id && id !== 'undefined',
@@ -88,7 +90,9 @@ export const useFollowShop = () => {
 
       // Optimistically update to the new value
       const currentUser = JSON.parse(localStorage.getItem('user') || 'null');
+      
       if (currentUser) {
+        // Update individual shop query if it exists
         queryClient.setQueryData(['shop', shopId], (old: any) => {
           if (!old) return old;
           const isFollowing = old.followers?.some((f: any) => String(f._id || f) === String(currentUser._id));
@@ -99,6 +103,24 @@ export const useFollowShop = () => {
               : [...(old.followers || []), currentUser._id],
             followersCount: isFollowing ? (old.followersCount || 1) - 1 : (old.followersCount || 0) + 1
           };
+        });
+
+        // Update popular shops list query if it exists
+        queryClient.setQueryData(['popular-shops'], (old: any) => {
+          if (!old) return old;
+          return old.map((s: any) => {
+            if (String(s._id || s.id) === String(shopId)) {
+              const isFollowing = s.followers?.some((f: any) => String(f._id || f) === String(currentUser._id));
+              return {
+                ...s,
+                followers: isFollowing 
+                  ? s.followers.filter((f: any) => String(f._id || f) !== String(currentUser._id))
+                  : [...(s.followers || []), currentUser._id],
+                followersCount: isFollowing ? (s.followersCount || 1) - 1 : (s.followersCount || 0) + 1
+              };
+            }
+            return s;
+          });
         });
       }
 
