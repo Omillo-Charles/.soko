@@ -27,9 +27,10 @@ import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { toast } from "sonner";
-import { useShop, useShopProducts, usePopularShops, useFollowShop, useShopLists, useMyShop } from "@/hooks/useShop";
+import { useShop, useShopProducts, usePopularShops, useFollowShop, useShopLists, useMyShop, useShopReviews } from "@/hooks/useShop";
 import { useUser } from "@/hooks/useUser";
 import RatingModal from "@/components/RatingModal";
+import ShopRatingModal from "@/components/ShopRatingModal";
 import ShareModal from "@/components/ShareModal";
 
 const ShopProfilePage = () => {
@@ -67,6 +68,12 @@ const ShopProfilePage = () => {
     initialRating: 0
   });
 
+  const [shopRatingModal, setShopRatingModal] = useState({
+    isOpen: false,
+    shopId: "",
+    shopName: "",
+  });
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -75,6 +82,7 @@ const ShopProfilePage = () => {
   const { data: productsData = [], isLoading: isProductsLoading } = useShopProducts(id);
   const { data: popularShopsData = [] } = usePopularShops();
   const { data: listData = [], isLoading: isListsLoading } = useShopLists(id, activeSection as 'Followers' | 'Following');
+  const { data: reviewsData = [], isLoading: isReviewsLoading } = useShopReviews(id);
   const followMutation = useFollowShop();
 
   const products = React.useMemo(() => {
@@ -181,7 +189,7 @@ const ShopProfilePage = () => {
               <div className="space-y-1">
                 {[
                   { name: 'Products', icon: <ShoppingBag className="w-5 h-5" />, count: products.length },
-                  { name: 'Reviews', icon: <Star className="w-5 h-5" />, count: 0 },
+                  { name: 'Reviews', icon: <Star className="w-5 h-5" />, count: shop?.reviewsCount || reviewsData.length },
                   { name: 'About', icon: <Info className="w-5 h-5" /> },
                   { name: 'Followers', icon: <Users className="w-5 h-5" />, count: shop?.followersCount ?? shop?.followers?.length },
                   { name: 'Following', icon: <Users className="w-5 h-5" />, count: shop?.followingCount ?? shop?.following?.length },
@@ -468,12 +476,113 @@ const ShopProfilePage = () => {
                 </div>
               )
             ) : activeSection === 'Reviews' ? (
-              <div className="p-20 flex flex-col items-center justify-center text-muted-foreground gap-4 text-center">
-                <Star className="w-12 h-12 opacity-20" />
-                <div>
-                  <p className="font-black text-foreground">No reviews yet</p>
-                  <p className="text-sm">Customers haven't left any reviews for this shop yet.</p>
-                </div>
+              <div className="flex flex-col min-h-[400px]">
+                {isReviewsLoading ? (
+                  <div className="p-20 flex flex-col items-center justify-center text-muted-foreground gap-4">
+                    <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin"></div>
+                    <p className="font-bold text-sm">Loading reviews...</p>
+                  </div>
+                ) : reviewsData.length === 0 ? (
+                  <div className="p-20 flex flex-col items-center justify-center text-muted-foreground gap-6 text-center">
+                    <div className="w-20 h-20 bg-muted/50 rounded-full flex items-center justify-center">
+                      <Star className="w-10 h-10 opacity-20" />
+                    </div>
+                    <div className="space-y-2">
+                      <p className="font-black text-xl text-foreground">No reviews yet</p>
+                      <p className="text-sm max-w-[280px] mx-auto">Customers haven't left any reviews for this shop yet. Be the first to share your experience!</p>
+                    </div>
+                    {currentUser && shop?.owner !== currentUser?._id && (
+                      <button 
+                        onClick={() => setShopRatingModal({
+                          isOpen: true,
+                          shopId: id,
+                          shopName: shop.name
+                        })}
+                        className="px-8 py-3 bg-primary text-primary-foreground rounded-full font-black shadow-lg shadow-primary/20 hover:scale-105 transition-all active:scale-95"
+                      >
+                        Rate this Shop
+                      </button>
+                    )}
+                    {!currentUser && (
+                      <button 
+                        onClick={() => router.push("/auth?mode=login")}
+                        className="px-8 py-3 bg-foreground text-background rounded-full font-black shadow-lg hover:scale-105 transition-all active:scale-95"
+                      >
+                        Login to Rate
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <div className="divide-y divide-border">
+                    {/* Review Stats Header */}
+                    <div className="p-6 bg-muted/30 flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="text-4xl font-black text-foreground">{(shop?.rating || 0).toFixed(1)}</div>
+                        <div>
+                          <div className="flex gap-0.5 mb-1">
+                            {[1, 2, 3, 4, 5].map(i => (
+                              <Star key={i} className={`w-3.5 h-3.5 ${ (shop?.rating || 0) >= i ? "text-amber-500 fill-amber-500" : "text-muted-foreground/20"}`} />
+                            ))}
+                          </div>
+                          <p className="text-xs font-bold text-muted-foreground">Based on {shop?.reviewsCount || reviewsData.length} reviews</p>
+                        </div>
+                      </div>
+                      {currentUser && shop?.owner !== currentUser?._id && (
+                        <button 
+                          onClick={() => setShopRatingModal({
+                            isOpen: true,
+                            shopId: id,
+                            shopName: shop.name
+                          })}
+                          className="px-6 py-2 bg-primary text-primary-foreground rounded-full text-xs font-black shadow-lg shadow-primary/20 hover:scale-105 transition-all active:scale-95"
+                        >
+                          Write a Review
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Reviews List */}
+                    <div className="divide-y divide-border">
+                      {reviewsData.map((review: any) => (
+                        <div key={review._id} className="p-6 space-y-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-full overflow-hidden bg-muted">
+                                <img 
+                                  src={review.user?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${review.user?.name || 'user'}`} 
+                                  alt={review.user?.name} 
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                              <div>
+                                <p className="text-sm font-black text-foreground">{review.user?.name}</p>
+                                <p className="text-xs font-bold text-muted-foreground/60">
+                                  {review.user?.username ? `@${review.user.username}` : 'Customer'}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="flex gap-0.5 mb-1 justify-end">
+                                {[1, 2, 3, 4, 5].map(i => (
+                                  <Star key={i} className={`w-3 h-3 ${ review.rating >= i ? "text-amber-500 fill-amber-500" : "text-muted-foreground/20"}`} />
+                                ))}
+                              </div>
+                              <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-tighter">
+                                {new Date(review.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
+                              </p>
+                            </div>
+                          </div>
+                          
+                          {review.comment && (
+                            <p className="text-sm font-medium text-foreground/80 leading-relaxed bg-muted/20 p-4 rounded-2xl border border-border/50">
+                              {review.comment}
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             ) : activeSection === 'Followers' ? (
               <div className="divide-y divide-border">
@@ -627,16 +736,41 @@ const ShopProfilePage = () => {
           title={shareModal.title}
         />
 
+        <ShopRatingModal
+          isOpen={shopRatingModal.isOpen}
+          onClose={() => setShopRatingModal(prev => ({ ...prev, isOpen: false }))}
+          shopId={shopRatingModal.shopId}
+          shopName={shopRatingModal.shopName}
+        />
+
         {/* Right Sidebar */}
         <div className="hidden lg:block w-[320px] shrink-0">
           <aside className="fixed top-[128px] w-[320px] h-[calc(100vh-128px)] overflow-y-auto custom-scrollbar px-6 py-6 pb-24 space-y-8">
             {/* Store Stats */}
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-muted/50 p-4 rounded-2xl border border-border text-center">
-                <p className="text-lg font-black text-foreground">0.0</p>
-                <div className="flex justify-center gap-0.5 my-1">
-                  {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-2.5 h-2.5 text-muted-foreground/20" />)}
-                </div>
+                <p className="text-lg font-black text-foreground">
+                  {(shop?.rating || 0).toFixed(1)}
+                </p>
+                <button 
+                  onClick={() => setShopRatingModal({
+                    isOpen: true,
+                    shopId: id,
+                    shopName: shop.name
+                  })}
+                  className="flex justify-center gap-0.5 my-1 hover:scale-110 transition-transform cursor-pointer mx-auto"
+                >
+                  {[1, 2, 3, 4, 5].map(i => (
+                    <Star 
+                      key={i} 
+                      className={`w-2.5 h-2.5 ${
+                        (shop?.rating || 0) >= i 
+                          ? "text-amber-500 fill-amber-500" 
+                          : "text-muted-foreground/20"
+                      }`} 
+                    />
+                  ))}
+                </button>
                 <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Rating</p>
               </div>
               <div className="bg-muted/50 p-4 rounded-2xl border border-border text-center">

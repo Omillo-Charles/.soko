@@ -7,71 +7,75 @@ import api from "@/lib/api";
 import { useUser } from "@/hooks/useUser";
 import { useQueryClient } from "@tanstack/react-query";
 
-interface RatingModalProps {
+interface ShopRatingModalProps {
   isOpen: boolean;
   onClose: () => void;
-  productId: string;
-  productName: string;
-  initialRating?: number;
-  onRatingUpdate?: (newRating: number, newCount: number) => void;
+  shopId: string;
+  shopName: string;
+  onRatingUpdate?: (newRating: number) => void;
 }
 
-const RatingModal = ({
+const ShopRatingModal = ({
   isOpen,
   onClose,
-  productId,
-  productName,
-  initialRating = 0,
+  shopId,
+  shopName,
   onRatingUpdate,
-}: RatingModalProps) => {
+}: ShopRatingModalProps) => {
   const queryClient = useQueryClient();
   const { user } = useUser();
   const [hoverRating, setHoverRating] = useState(0);
   const [selectedRating, setSelectedRating] = useState(0);
+  const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleRate = async (rating: number) => {
+  const handleSubmit = async () => {
     if (!user) {
-      toast.error("Please login to rate this product");
+      toast.error("Please login to rate this shop");
+      return;
+    }
+
+    if (selectedRating === 0) {
+      toast.error("Please select a rating");
       return;
     }
 
     setIsSubmitting(true);
     try {
-      const response = await api.post(`/products/${productId}/rate`, { rating });
+      const response = await api.post(`/shops/${shopId}/rate`, { 
+        rating: selectedRating,
+        comment: comment.trim()
+      });
 
       if (response.data.success) {
-        toast.success("Thank you for your rating!");
-        setSelectedRating(rating);
+        toast.success("Thank you for your review!");
         
         // Invalidate queries to update the UI globally
-        queryClient.invalidateQueries({ queryKey: ['product', productId] });
-        queryClient.invalidateQueries({ queryKey: ['products'] });
-        queryClient.invalidateQueries({ queryKey: ['featured-products'] });
-        
-        // Also invalidate shop queries since product rating affects shop rating
-        if (response.data.data?.shop || response.data.data?.shopId) {
-          const shopId = response.data.data.shop?._id || response.data.data.shop || response.data.data.shopId;
-          queryClient.invalidateQueries({ queryKey: ['shop', String(shopId)] });
-        }
-        // Invalidate general shop lists as well
+        queryClient.invalidateQueries({ queryKey: ['shop', shopId] });
+        queryClient.invalidateQueries({ queryKey: ['shop-reviews', shopId] });
         queryClient.invalidateQueries({ queryKey: ['popular-shops'] });
 
         if (onRatingUpdate) {
-          onRatingUpdate(response.data.data.rating, response.data.data.reviewsCount);
+          onRatingUpdate(response.data.data.rating);
         }
         setTimeout(() => {
           onClose();
+          setSelectedRating(0);
+          setComment("");
         }, 1000);
       }
     } catch (error: any) {
-      console.error("Error rating product:", error);
+      console.error("Error rating shop:", error);
       toast.error(error.response?.data?.message || "Failed to submit rating. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleRate = (rating: number) => {
+    setSelectedRating(rating);
   };
 
   return (
@@ -89,16 +93,16 @@ const RatingModal = ({
           </button>
 
           <div className="flex flex-col items-center text-center space-y-6">
-            <div className="w-20 h-20 bg-amber-500/10 rounded-3xl flex items-center justify-center">
-              <Star className="w-10 h-10 text-amber-500 fill-amber-500" />
+            <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center">
+              <Star className="w-10 h-10 text-primary fill-primary" />
             </div>
 
             <div className="space-y-2">
               <h3 className="text-xl font-black text-foreground leading-tight">
-                Rate Product
+                Rate Shop
               </h3>
               <p className="text-muted-foreground font-medium text-sm px-4">
-                How was your experience with <span className="text-foreground font-bold">"{productName}"</span>?
+                How was your experience with <span className="text-foreground font-bold">"{shopName}"</span>?
               </p>
             </div>
 
@@ -116,7 +120,7 @@ const RatingModal = ({
                   <Star
                     className={`w-10 h-10 transition-colors ${
                       (hoverRating || selectedRating) >= star
-                        ? "fill-amber-400 text-amber-400"
+                        ? "fill-primary text-primary"
                         : "text-muted-foreground/20 fill-transparent"
                     }`}
                   />
@@ -124,16 +128,35 @@ const RatingModal = ({
               ))}
             </div>
 
-            {isSubmitting ? (
-              <div className="flex items-center gap-2 text-primary animate-pulse py-2">
-                <Loader2 className="w-5 h-5 animate-spin" />
-                <span className="text-sm font-black uppercase tracking-widest">Submitting...</span>
+            <div className="w-full space-y-4">
+              <div className="space-y-2">
+                <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest px-1">
+                  Your Review (Optional)
+                </label>
+                <textarea
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder="Tell us about your experience..."
+                  className="w-full min-h-[120px] p-4 rounded-2xl bg-muted/50 border border-border focus:border-primary focus:ring-1 focus:ring-primary transition-all resize-none text-sm font-medium"
+                  disabled={isSubmitting}
+                />
               </div>
-            ) : (
-              <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
-                Tap a star to rate
-              </p>
-            )}
+
+              <button
+                onClick={handleSubmit}
+                disabled={isSubmitting || selectedRating === 0}
+                className="w-full py-4 bg-primary text-primary-foreground rounded-2xl font-black shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-2"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    SUBMITTING...
+                  </>
+                ) : (
+                  "SUBMIT REVIEW"
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -141,4 +164,4 @@ const RatingModal = ({
   );
 };
 
-export default RatingModal;
+export default ShopRatingModal;

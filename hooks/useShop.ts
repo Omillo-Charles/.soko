@@ -70,6 +70,17 @@ export const useShopLists = (id: string, type: 'Followers' | 'Following') => {
   });
 };
 
+export const useShopReviews = (id: string) => {
+  return useQuery({
+    queryKey: ['shop-reviews', id],
+    queryFn: async () => {
+      const response = await api.get(`/shops/${id}/reviews`);
+      return response.data.data;
+    },
+    enabled: !!id && id !== 'undefined',
+  });
+};
+
 export const useFollowShop = () => {
   const queryClient = useQueryClient();
   
