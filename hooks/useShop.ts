@@ -23,12 +23,12 @@ export const useMyShop = () => {
   });
 };
 
-export const useShopProducts = (id: string, limit?: number) => {
+export const useShopProducts = (id: string, limit: number = -1) => {
   return useQuery({
     queryKey: ['shop-products', id, limit],
     queryFn: async () => {
       const response = await api.get(`/products/shop/${id}`, {
-        params: limit ? { limit } : {}
+        params: { limit }
       });
       return response.data.data;
     },

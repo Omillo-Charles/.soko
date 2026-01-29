@@ -48,6 +48,7 @@ const ProductDetailsPage = () => {
   
   const { data: product, isLoading, error } = useProduct(id as string);
   const [quantity, setQuantity] = useState(1);
+  const [selectedSize, setSelectedSize] = useState<string>("");
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
@@ -58,9 +59,13 @@ const ProductDetailsPage = () => {
 
   const productImages = React.useMemo(() => {
     if (!product) return [];
-    if (product.images && Array.isArray(product.images)) return product.images;
-    if (product.image) return [product.image];
-    return [];
+    if (product.variantOptions && product.variantOptions.length > 0) {
+      return product.variantOptions.map((v: any) => v.image);
+    }
+    if (product.images && Array.isArray(product.images) && product.images.length > 0) {
+      return product.images;
+    }
+    return product.image ? [product.image] : [];
   }, [product]);
 
   useEffect(() => {
@@ -245,6 +250,51 @@ const ProductDetailsPage = () => {
                         initialReviewsCount={product.reviewsCount}
                       />
                       
+                        {/* Variations Section */}
+                        <div className="space-y-4 max-w-md">
+                          {product.sizes && product.sizes.length > 0 && (
+                            <div className="space-y-2">
+                              <div className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.1em] ml-1">Select Size</div>
+                              <div className="flex flex-wrap gap-2">
+                                {product.sizes.map((size: string) => (
+                                  <button
+                                    key={size}
+                                    onClick={() => setSelectedSize(size)}
+                                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
+                                      selectedSize === size 
+                                        ? 'bg-primary border-primary text-primary-foreground shadow-md shadow-primary/20' 
+                                        : 'bg-background border-border text-foreground hover:border-primary/50'
+                                    }`}
+                                  >
+                                    {size}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {product.variantOptions && product.variantOptions.length > 1 && (
+                            <div className="space-y-2">
+                              <div className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.1em] ml-1">Select Variation</div>
+                              <div className="flex flex-wrap gap-2">
+                                {product.variantOptions.map((variant: any, index: number) => (
+                                  <button
+                                    key={index}
+                                    onClick={() => setActiveImageIndex(index)}
+                                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
+                                      activeImageIndex === index 
+                                        ? 'bg-primary border-primary text-primary-foreground shadow-md shadow-primary/20' 
+                                        : 'bg-background border-border text-foreground hover:border-primary/50'
+                                    }`}
+                                  >
+                                    {variant.name}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
                       <div className="flex items-center justify-between bg-muted rounded-xl p-3 border border-border max-w-md">
                         <div className="text-[10px] font-black text-foreground uppercase tracking-[0.1em]">Select Quantity</div>
                         <div className="flex items-center bg-background rounded-lg p-0.5 shadow-sm border border-border">
@@ -257,7 +307,16 @@ const ProductDetailsPage = () => {
 
                     <div className="space-y-4 max-w-md">
                       <button 
-                        onClick={() => addToCart(product._id, quantity)}
+                        onClick={() => {
+                          if (product.sizes?.length > 0 && !selectedSize) {
+                            alert("Please select a size");
+                            return;
+                          }
+                          const currentImage = productImages[activeImageIndex] || product.image;
+                          const variantName = product.variantOptions?.[activeImageIndex]?.name || `Option ${activeImageIndex + 1}`;
+                          // Pass selected variant image to cart. The variant is the image itself.
+                          addToCart(product._id, quantity, selectedSize, variantName, currentImage);
+                        }}
                         className="w-full bg-foreground text-background h-12 rounded-xl font-black text-xs flex items-center justify-center gap-3 hover:bg-primary hover:text-primary-foreground transition-all active:scale-[0.98] shadow-lg shadow-foreground/10"
                       >
                         <ShoppingCart className="w-4 h-4" />

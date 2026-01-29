@@ -433,7 +433,11 @@ const ShopProfilePage = () => {
                             <button 
                               onClick={(e) => {
                                 e.stopPropagation();
-                                addToCart(product._id);
+                                if (product.sizes?.length > 0 || product.colors?.length > 0) {
+                                  router.push(`/shop/product/${product._id}`);
+                                } else {
+                                  addToCart(product._id);
+                                }
                               }} 
                               className="flex items-center gap-2 group hover:text-primary transition-colors"
                             >

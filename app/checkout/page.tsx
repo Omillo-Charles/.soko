@@ -75,7 +75,7 @@ const CheckoutPage = () => {
           name: item.product.name,
           price: item.product.price,
           quantity: item.quantity,
-          image: item.product.image,
+          image: item.image || item.product.image,
           size: item.size,
           color: item.color
         }))
@@ -268,9 +268,10 @@ const CheckoutPage = () => {
                   <div key={item._id} className="flex gap-4">
                     <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-border flex-shrink-0">
                       <Image 
-                        src={item.product.image || "/placeholder-product.png"} 
+                        src={item.image || item.product.image || "/placeholder-product.png"} 
                         alt={item.product.name}
                         fill
+                        sizes="64px"
                         className="object-cover"
                       />
                       <span className="absolute -top-1 -right-1 bg-primary text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold shadow-sm">

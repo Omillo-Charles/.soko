@@ -129,6 +129,7 @@ export default function OrderDetailsPage() {
                         src={item.image || "/placeholder.png"}
                         alt={item.name}
                         fill
+                        sizes="80px"
                         className="object-cover"
                       />
                     </div>

@@ -5,7 +5,9 @@ export const useProducts = (params?: any) => {
   return useQuery({
     queryKey: ['products', params],
     queryFn: async () => {
-      const response = await api.get('/products', { params });
+      const response = await api.get('/products', { 
+        params: { ...params, limit: -1 } 
+      });
       return response.data.data;
     },
     staleTime: 1000 * 60 * 5, // 5 minutes

@@ -108,7 +108,7 @@ const ShopPage = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
-  const { data: productsData, isLoading: isProductsLoading, error: productsError } = useLimitedProducts(3, {
+  const { data: productsData, isLoading: isProductsLoading, error: productsError } = useProducts({
     q: query,
     cat: cat !== 'all' ? cat : undefined,
     following: activeTab === 'following' ? 'true' : undefined,
@@ -534,7 +534,11 @@ const ShopPage = () => {
                           <button 
                             onClick={(e) => { 
                               e.stopPropagation();
-                              addToCart(product.id);
+                              if (product.sizes?.length > 0 || product.colors?.length > 0) {
+                                router.push(`/shop/product/${product.id}`);
+                              } else {
+                                addToCart(product.id);
+                              }
                             }}
                             className="flex items-center gap-0 group transition-colors hover:text-primary"
                           >

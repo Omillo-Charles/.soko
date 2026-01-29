@@ -22,12 +22,13 @@ interface CartItem {
   quantity: number;
   size?: string;
   color?: string;
+  image?: string;
 }
 
 interface CartContextType {
   cartItems: CartItem[];
   isLoading: boolean;
-  addToCart: (productId: string, quantity?: number, size?: string, color?: string) => Promise<void>;
+  addToCart: (productId: string, quantity?: number, size?: string, color?: string, image?: string) => Promise<void>;
   removeFromCart: (itemId: string) => Promise<void>;
   updateQuantity: (itemId: string, quantity: number) => Promise<void>;
   clearCart: () => Promise<void>;
@@ -52,7 +53,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const cartItems = cartData?.items || [];
 
   const addMutation = useMutation({
-    mutationFn: async (payload: { productId: string, quantity: number, size?: string, color?: string }) => {
+    mutationFn: async (payload: { productId: string, quantity: number, size?: string, color?: string, image?: string }) => {
       const response = await api.post('/carts/add', payload);
       return response.data;
     },
@@ -98,13 +99,13 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     },
   });
 
-  const addToCart = async (productId: string, quantity = 1, size?: string, color?: string) => {
+  const addToCart = async (productId: string, quantity = 1, size?: string, color?: string, image?: string) => {
     const token = localStorage.getItem("accessToken");
     if (!token) {
       toast.error("Please login to add items to cart");
       return;
     }
-    await addMutation.mutateAsync({ productId, quantity, size, color });
+    await addMutation.mutateAsync({ productId, quantity, size, color, image });
   };
 
   const removeFromCart = async (itemId: string) => {

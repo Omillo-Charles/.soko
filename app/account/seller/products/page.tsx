@@ -51,6 +51,8 @@ const SellerProductsPage = () => {
     price: "",
     category: "",
     stock: "1",
+    sizes: "",
+    colors: "",
   });
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
@@ -175,6 +177,8 @@ const SellerProductsPage = () => {
       submitData.append("price", formData.price);
       submitData.append("category", formData.category);
       submitData.append("stock", formData.stock);
+      submitData.append("sizes", formData.sizes);
+      submitData.append("colors", formData.colors);
       
       imageFiles.forEach(file => {
         submitData.append("image", file);
@@ -210,6 +214,8 @@ const SellerProductsPage = () => {
       price: "",
       category: "",
       stock: "1",
+      sizes: "",
+      colors: "",
     });
     setImageFiles([]);
     setImagePreviews([]);
@@ -606,6 +612,37 @@ const SellerProductsPage = () => {
                         className="w-full px-6 py-4 bg-muted border border-border rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 focus:bg-background transition-all font-bold text-foreground placeholder:text-muted-foreground/50"
                       />
                     </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] ml-2">
+                      Sizes (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      name="sizes"
+                      value={formData.sizes}
+                      onChange={handleInputChange}
+                      placeholder="e.g. S, M, L, XL"
+                      className="w-full px-6 py-4 bg-muted border border-border rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 focus:bg-background transition-all font-bold text-foreground placeholder:text-muted-foreground/50"
+                    />
+                    <p className="text-[9px] text-muted-foreground ml-2 font-medium">Separate sizes with commas</p>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] ml-2">
+                      Colors (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      name="colors"
+                      value={formData.colors}
+                      onChange={handleInputChange}
+                      placeholder="e.g. Red, Blue, Black"
+                      className="w-full px-6 py-4 bg-muted border border-border rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 focus:bg-background transition-all font-bold text-foreground placeholder:text-muted-foreground/50"
+                    />
+                    <p className="text-[9px] text-muted-foreground ml-2 font-medium">Separate colors with commas</p>
                   </div>
                 </div>
               </div>

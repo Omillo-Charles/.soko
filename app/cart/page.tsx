@@ -100,7 +100,7 @@ const CartPage = () => {
                     className="relative w-full md:w-48 aspect-square rounded-[1.25rem] overflow-hidden bg-muted border border-border shrink-0 cursor-pointer flex items-center justify-center"
                   >
                     <img 
-                      src={item.product.image} 
+                      src={item.image || item.product.image} 
                       alt={item.product.name}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     />

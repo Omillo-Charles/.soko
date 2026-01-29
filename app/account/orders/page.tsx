@@ -156,6 +156,7 @@ const OrdersPage = () => {
                         src={item.image || "/placeholder-product.png"} 
                         alt={item.name}
                         fill
+                        sizes="64px"
                         className="object-cover"
                       />
                     </div>

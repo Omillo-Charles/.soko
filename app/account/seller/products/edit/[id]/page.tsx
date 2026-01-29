@@ -35,6 +35,8 @@ const EditProductPage = () => {
     price: "",
     category: "",
     stock: "",
+    sizes: "",
+    colors: "",
   });
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
@@ -60,6 +62,8 @@ const EditProductPage = () => {
             price: product.price.toString(),
             category: product.category,
             stock: product.stock.toString(),
+            sizes: Array.isArray(product.sizes) ? product.sizes.join(", ") : (product.sizes || ""),
+            colors: Array.isArray(product.colors) ? product.colors.join(", ") : (product.colors || ""),
           });
           if (product.images && Array.isArray(product.images)) {
             setImagePreviews(product.images);
@@ -140,6 +144,8 @@ const EditProductPage = () => {
       submitData.append("price", formData.price);
       submitData.append("category", formData.category);
       submitData.append("stock", formData.stock);
+      submitData.append("sizes", formData.sizes);
+      submitData.append("colors", formData.colors);
       
       // Handle images
       imageFiles.forEach(file => {
@@ -271,6 +277,33 @@ const EditProductPage = () => {
                       onChange={handleInputChange}
                       className="w-full pl-16 pr-5 py-4 bg-muted border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-foreground"
                     />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-muted-foreground ml-1">Sizes (Optional)</label>
+                    <input
+                      type="text"
+                      name="sizes"
+                      value={formData.sizes}
+                      onChange={handleInputChange}
+                      placeholder="e.g. S, M, L, XL"
+                      className="w-full px-5 py-4 bg-muted border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-foreground"
+                    />
+                    <p className="text-[10px] text-muted-foreground ml-2 font-medium">Separate sizes with commas</p>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-muted-foreground ml-1">Colors (Optional)</label>
+                    <input
+                      type="text"
+                      name="colors"
+                      value={formData.colors}
+                      onChange={handleInputChange}
+                      placeholder="e.g. Red, Blue, Black"
+                      className="w-full px-5 py-4 bg-muted border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-foreground"
+                    />
+                    <p className="text-[10px] text-muted-foreground ml-2 font-medium">Separate colors with commas</p>
                   </div>
                 </div>
 
