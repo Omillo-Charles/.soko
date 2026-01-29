@@ -203,7 +203,7 @@ const AccountPage = () => {
                 </button>
               </div>
             </div>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 w-full md:w-auto">
               <button 
                 onClick={handleLogout}
                 className="flex items-center gap-2 px-6 py-3 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-500/20 transition-colors rounded-2xl font-bold text-sm w-full md:w-auto justify-center"

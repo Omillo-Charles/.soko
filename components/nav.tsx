@@ -171,7 +171,7 @@ const Navbar = () => {
             </nav>
           </div>
           <div className="text-sm font-medium text-primary-foreground/90">
-            Free Shipping on Orders Over KES 6,500
+            Free Shipping on Orders Over KES 30,000
           </div>
         </div>
       </div>
