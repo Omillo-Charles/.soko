@@ -35,6 +35,7 @@ const AccountPage = () => {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [hasShop, setHasShop] = useState<boolean | null>(null);
 
   useEffect(() => {
     setIsMounted(true);
@@ -43,8 +44,29 @@ const AccountPage = () => {
     }
     if (user) {
       setAccountType(user.accountType || "buyer");
+      checkShopStatus();
     }
   }, [user, userLoading, router]);
+
+  const checkShopStatus = async () => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
+    const token = localStorage.getItem("accessToken");
+    
+    if (!token) return;
+
+    try {
+      const response = await fetch(`${apiUrl}/shops/my-shop`, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+      const data = await response.json();
+      setHasShop(data.success && !!data.data);
+    } catch (err) {
+      console.error("Error checking shop:", err);
+      setHasShop(false);
+    }
+  };
 
   const handleLogout = () => {
     setShowLogoutConfirm(true);
@@ -126,7 +148,7 @@ const AccountPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background pb-24 lg:pb-20 pt-8 px-4">
+    <div className="min-h-screen bg-background p-4 md:p-8 pb-28 lg:pb-8">
       <div className="max-w-6xl mx-auto">
         <LogoutConfirmation 
           isOpen={showLogoutConfirm} 
@@ -138,6 +160,7 @@ const AccountPage = () => {
           onClose={() => setShowRegisterModal(false)}
           onSuccess={() => {
             setShowRegisterModal(false);
+            setHasShop(true); // Update local state immediately
             window.location.href = "/account/seller";
           }}
         />
@@ -180,13 +203,22 @@ const AccountPage = () => {
                 </button>
               </div>
             </div>
-            <button 
-              onClick={handleLogout}
-              className="flex items-center gap-2 px-6 py-3 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-500/20 transition-colors rounded-2xl font-bold text-sm"
-            >
-              <LogOut className="w-4 h-4" />
-              Sign Out
-            </button>
+            <div className="flex flex-col gap-2">
+              <button 
+                onClick={handleLogout}
+                className="flex items-center gap-2 px-6 py-3 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-500/20 transition-colors rounded-2xl font-bold text-sm w-full md:w-auto justify-center"
+              >
+                <LogOut className="w-4 h-4" />
+                Sign Out
+              </button>
+              <button 
+                onClick={handleSellerCenterClick}
+                className="flex items-center gap-2 px-6 py-3 bg-primary/10 text-primary hover:bg-primary/20 transition-colors rounded-2xl font-bold text-sm w-full md:w-auto justify-center"
+              >
+                <Store className="w-4 h-4" />
+                {hasShop === null ? "Checking Shop..." : hasShop ? "View Shop" : "Create Shop"}
+              </button>
+            </div>
           </div>
         </div>
 
