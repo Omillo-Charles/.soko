@@ -24,6 +24,7 @@ import {
 import { useUser } from "@/hooks/useUser";
 import { useMyShop } from "@/hooks/useShop";
 import { useMyProducts } from "@/hooks/useProducts";
+import { useSellerOrders } from "@/hooks/useSellerOrders";
 import LogoutConfirmation from "@/components/LogoutConfirmation";
 import { RegisterShopModal } from "@/components/RegisterShopModal";
 
@@ -32,6 +33,7 @@ const SellerDashboard = () => {
   const { user, isLoading: isUserLoading, logout } = useUser();
   const { data: shop, isLoading: isShopLoading, error: shopError } = useMyShop();
   const { data: products = [], isLoading: isProductsLoading } = useMyProducts();
+  const { orders = [], isLoading: isOrdersLoading } = useSellerOrders();
 
   const [accountType, setAccountType] = useState<"seller" | "buyer">("seller");
   const [isMobile, setIsMobile] = useState(false);
@@ -56,7 +58,7 @@ const SellerDashboard = () => {
     }
   }, [user, isUserLoading, shop, isShopLoading, shopError, router]);
 
-  const isLoading = isUserLoading || isShopLoading || isProductsLoading;
+  const isLoading = isUserLoading || isShopLoading || isProductsLoading || isOrdersLoading;
 
   useEffect(() => {
     const checkMobile = () => {
@@ -114,9 +116,21 @@ const SellerDashboard = () => {
     );
   }
 
+  const activeOrders = orders.filter(order => ['pending', 'processing', 'shipped'].includes(order.status)).length;
+  
+  // Calculate total sales only for items belonging to this shop
+  const totalSales = orders
+    .filter(order => order.status !== 'cancelled')
+    .reduce((acc, order) => {
+      const shopItemsTotal = order.items
+        .filter(item => item.shop === shop?._id || (typeof item.shop === 'object' && (item.shop as any)._id === shop?._id))
+        .reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      return acc + shopItemsTotal;
+    }, 0);
+
   const stats = [
-    { label: "Total Sales", value: "KES 0", icon: <BarChart3 className="w-5 h-5" />, color: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400", trend: "+0%" },
-    { label: "Active Orders", value: "0", icon: <Package className="w-5 h-5" />, color: "bg-blue-500/10 text-blue-600 dark:text-blue-400", trend: "0" },
+    { label: "Total Sales", value: `KES ${totalSales.toLocaleString()}`, icon: <BarChart3 className="w-5 h-5" />, color: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400", trend: "+0%" },
+    { label: "Active Orders", value: activeOrders.toString(), icon: <Package className="w-5 h-5" />, color: "bg-blue-500/10 text-blue-600 dark:text-blue-400", trend: activeOrders > 0 ? `+${activeOrders}` : "0" },
     { label: "Total Products", value: products.length.toString(), icon: <ShoppingBag className="w-5 h-5" />, color: "bg-purple-500/10 text-purple-600 dark:text-purple-400", trend: products.length > 0 ? `+${products.length}` : "0" },
     { label: "Store Visits", value: "0", icon: <TrendingUp className="w-5 h-5" />, color: "bg-amber-500/10 text-amber-600 dark:text-amber-400", trend: "+0%" },
   ];
@@ -179,9 +193,16 @@ const SellerDashboard = () => {
             <ShoppingBag className="w-5 h-5 group-hover:text-primary" />
             Products
           </Link>
-          <Link href="/account/seller/orders" className="flex items-center gap-3 px-4 py-3 text-muted-foreground hover:bg-muted hover:text-foreground rounded-xl font-medium transition-all group">
-            <Package className="w-5 h-5 group-hover:text-primary" />
-            Orders
+          <Link href="/account/seller/orders" className="flex items-center justify-between px-4 py-3 text-muted-foreground hover:bg-muted hover:text-foreground rounded-xl font-medium transition-all group">
+            <div className="flex items-center gap-3">
+              <Package className="w-5 h-5 group-hover:text-primary" />
+              Orders
+            </div>
+            {activeOrders > 0 && (
+              <span className="bg-primary text-primary-foreground text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
+                {activeOrders}
+              </span>
+            )}
           </Link>
           <Link href="/account/seller/customers" className="flex items-center gap-3 px-4 py-3 text-muted-foreground hover:bg-muted hover:text-foreground rounded-xl font-medium transition-all group">
             <Users className="w-5 h-5 group-hover:text-primary" />
@@ -319,12 +340,22 @@ const SellerDashboard = () => {
                   </Link>
                   <Link href="/account/seller/orders" className="flex items-center justify-between p-3 hover:bg-muted rounded-xl transition-colors group">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-blue-500/10 rounded-lg flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
+                      <div className="w-8 h-8 bg-blue-500/10 rounded-lg flex items-center justify-center group-hover:bg-blue-500/20 transition-colors relative">
                         <Package className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                        {activeOrders > 0 && (
+                          <span className="absolute -top-1 -right-1 w-3 h-3 bg-blue-600 rounded-full border-2 border-background" />
+                        )}
                       </div>
                       <span className="font-bold text-sm text-foreground">Orders</span>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                    <div className="flex items-center gap-2">
+                      {activeOrders > 0 && (
+                        <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 px-1.5 py-0.5 rounded">
+                          {activeOrders}
+                        </span>
+                      )}
+                      <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                    </div>
                   </Link>
                   <Link href="/account/seller/settings" className="flex items-center justify-between p-3 hover:bg-muted rounded-xl transition-colors group">
                     <div className="flex items-center gap-3">
@@ -349,17 +380,56 @@ const SellerDashboard = () => {
                   View All
                 </Link>
               </div>
-              <div className="p-8 text-center py-20">
-                <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Package className="w-8 h-8 text-muted-foreground" />
-                </div>
-                <h4 className="font-bold text-foreground">No orders yet</h4>
-                <p className="text-muted-foreground text-sm max-w-xs mx-auto mt-2">
-                  When you start receiving orders, they will appear here for you to manage.
-                </p>
-                <button className="mt-6 px-6 py-2 bg-foreground text-background rounded-xl font-bold text-sm hover:opacity-90 transition-colors">
-                  Share Your Store
-                </button>
+              <div className="p-4">
+                {orders.length === 0 ? (
+                  <div className="text-center py-10">
+                    <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Package className="w-8 h-8 text-muted-foreground" />
+                    </div>
+                    <h4 className="font-bold text-foreground">No orders yet</h4>
+                    <p className="text-muted-foreground text-sm max-w-xs mx-auto mt-2">
+                      When you start receiving orders, they will appear here for you to manage.
+                    </p>
+                    <button className="mt-6 px-6 py-2 bg-foreground text-background rounded-xl font-bold text-sm hover:opacity-90 transition-colors">
+                      Share Your Store
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {orders.slice(0, 5).map((order) => (
+                      <Link 
+                        key={order._id}
+                        href={`/account/orders/${order._id}`}
+                        className="flex items-center justify-between p-4 bg-muted/30 hover:bg-muted/50 rounded-2xl border border-border transition-all group"
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 bg-background rounded-xl flex items-center justify-center border border-border shadow-sm">
+                            <Package className="w-6 h-6 text-muted-foreground" />
+                          </div>
+                          <div>
+                            <p className="font-bold text-foreground text-sm">Order #{order._id.slice(-6).toUpperCase()}</p>
+                            <p className="text-muted-foreground text-xs">{new Date(order.createdAt).toLocaleDateString()}</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-bold text-foreground text-sm">
+                            KES {order.items
+                              .filter(item => item.shop === shop?._id || (typeof item.shop === 'object' && (item.shop as any)._id === shop?._id))
+                              .reduce((sum, item) => sum + (item.price * item.quantity), 0)
+                              .toLocaleString()}
+                          </p>
+                          <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-lg ${
+                            order.status === 'delivered' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
+                            order.status === 'cancelled' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' :
+                            'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                          }`}>
+                            {order.status}
+                          </span>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
