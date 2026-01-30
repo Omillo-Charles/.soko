@@ -13,35 +13,87 @@ import {
   ArrowLeft,
   Calendar,
   Phone,
-  HelpCircle
+  HelpCircle,
+  XCircle,
+  ShoppingBag
 } from "lucide-react";
 import Link from "next/link";
+import api from "@/lib/api";
+import { toast } from "sonner";
 
 const TrackOrderPage = () => {
   const [orderId, setOrderId] = useState("");
   const [isSearching, setIsSearching] = useState(false);
-  const [showResult, setShowResult] = useState(false);
+  const [order, setOrder] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleTrack = (e: React.FormEvent) => {
+  const handleTrack = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!orderId) return;
+    
+    const trimmedId = orderId.trim().replace(/^#/, "");
+    if (!trimmedId) return;
     
     setIsSearching(true);
-    // Simulate API call
-    setTimeout(() => {
+    setError(null);
+    setOrder(null);
+
+    console.log(`Tracking order: ${trimmedId}`);
+    console.log(`API Base URL: ${api.defaults.baseURL}`);
+
+    try {
+      const response = await api.get(`/orders/track/${encodeURIComponent(trimmedId)}`);
+      if (response.data.success) {
+        setOrder(response.data.data);
+      } else {
+        setError(response.data.message || "Order not found");
+      }
+    } catch (err: any) {
+      console.error("Tracking error - Full Error Object:", err);
+      console.error("Tracking error - Response Data:", err.response?.data);
+      
+      const message = err.response?.data?.message || err.friendlyMessage || "Could not find an order with that ID. Please check the ID and try again.";
+      setError(message);
+      toast.error(message);
+    } finally {
       setIsSearching(false);
-      setShowResult(true);
-    }, 1200);
+    }
   };
 
-  const steps = [
-    { status: 'Order Placed', date: 'Jan 12, 2026', time: '10:30 AM', completed: true, current: false },
-    { status: 'Payment Confirmed', date: 'Jan 12, 2026', time: '10:45 AM', completed: true, current: false },
-    { status: 'Processing', date: 'Jan 13, 2026', time: '02:15 PM', completed: true, current: false },
-    { status: 'Shipped', date: 'Jan 14, 2026', time: '09:00 AM', completed: false, current: true },
-    { status: 'Out for Delivery', date: 'Pending', time: '-', completed: false, current: false },
-    { status: 'Delivered', date: 'Pending', time: '-', completed: false, current: false },
-  ];
+  const getStatusSteps = (currentStatus: string, createdAt: string, updatedAt: string) => {
+    const allStatuses = ['pending', 'processing', 'shipped', 'delivered'];
+    const statusLabels: Record<string, string> = {
+      pending: 'Order Placed',
+      processing: 'Processing',
+      shipped: 'Shipped',
+      delivered: 'Delivered'
+    };
+
+    const currentIndex = allStatuses.indexOf(currentStatus);
+    
+    return allStatuses.map((status, index) => {
+      const isCompleted = index <= currentIndex;
+      const isCurrent = index === currentIndex;
+      
+      let date = "Pending";
+      let time = "-";
+      
+      if (status === 'pending') {
+        date = new Date(createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        time = new Date(createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+      } else if (isCompleted && status === currentStatus) {
+        date = new Date(updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        time = new Date(updatedAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+      }
+
+      return {
+        status: statusLabels[status],
+        date,
+        time,
+        completed: isCompleted && !isCurrent,
+        current: isCurrent
+      };
+    });
+  };
 
   return (
     <main className="min-h-screen bg-muted/30 pb-24 lg:pb-12">
@@ -73,21 +125,26 @@ const TrackOrderPage = () => {
           <div className="lg:col-span-8 space-y-8">
             <div className="bg-background border border-border rounded-3xl p-6 md:p-8 shadow-sm">
               <form onSubmit={handleTrack} className="relative">
-                <div className="flex flex-col md:flex-row gap-4">
-                  <div className="relative flex-1">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                    <input 
-                      type="text" 
-                      placeholder="Enter Order ID (e.g. SK-8291-00X)"
-                      value={orderId}
-                      onChange={(e) => setOrderId(e.target.value)}
-                      className="w-full pl-12 pr-4 py-4 bg-muted border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-bold text-foreground"
-                    />
+                <div className="flex flex-col md:flex-row gap-4 items-start">
+                  <div className="flex-1 w-full">
+                    <div className="relative">
+                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                      <input 
+                        type="text" 
+                        placeholder="Enter Order ID (e.g. #29257B or full ID)"
+                        value={orderId}
+                        onChange={(e) => setOrderId(e.target.value)}
+                        className="w-full pl-12 pr-4 py-4 bg-muted border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-bold text-foreground"
+                      />
+                    </div>
+                    <p className="text-[10px] text-muted-foreground mt-2 ml-1 font-medium">
+                      Enter the 6-character code from your email (e.g. #29257B) or the full 24-character ID.
+                    </p>
                   </div>
                   <button 
                     type="submit"
                     disabled={isSearching}
-                    className="px-8 py-4 bg-primary text-primary-foreground rounded-2xl font-black shadow-xl shadow-primary/20 hover:bg-blue-700 transition-all disabled:opacity-50 flex items-center justify-center min-w-[160px]"
+                    className="w-full md:w-auto px-8 py-4 bg-primary text-primary-foreground rounded-2xl font-black shadow-xl shadow-primary/20 hover:bg-blue-700 transition-all disabled:opacity-50 flex items-center justify-center min-w-[160px] h-[58px]"
                   >
                     {isSearching ? (
                       <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
@@ -99,7 +156,7 @@ const TrackOrderPage = () => {
               </form>
             </div>
 
-            {showResult && (
+            {order && (
               <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-8">
                 {/* Order Status Card */}
                 <div className="bg-background border border-border rounded-3xl overflow-hidden shadow-sm">
@@ -109,12 +166,14 @@ const TrackOrderPage = () => {
                         <p className="text-muted-foreground text-xs font-bold uppercase tracking-widest mb-1">Current Status</p>
                         <h2 className="text-2xl font-black flex items-center gap-2">
                           <Truck className="w-6 h-6 text-primary" />
-                          In Transit
+                          <span className="capitalize">{order.status}</span>
                         </h2>
                       </div>
                       <div className="text-right">
-                        <p className="text-muted-foreground text-xs font-bold uppercase tracking-widest mb-1">Expected Delivery</p>
-                        <p className="text-xl font-black">Jan 16, 2026</p>
+                        <p className="text-muted-foreground text-xs font-bold uppercase tracking-widest mb-1">Order Date</p>
+                        <p className="text-xl font-black">
+                          {new Date(order.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -127,7 +186,7 @@ const TrackOrderPage = () => {
                         </div>
                         <div>
                           <p className="text-xs text-muted-foreground font-bold uppercase">Order ID</p>
-                          <p className="text-sm font-black text-foreground">{orderId}</p>
+                          <p className="text-sm font-black text-foreground">#{order._id.slice(-8).toUpperCase()}</p>
                         </div>
                       </div>
                       <div className="flex items-start gap-3">
@@ -136,16 +195,16 @@ const TrackOrderPage = () => {
                         </div>
                         <div>
                           <p className="text-xs text-muted-foreground font-bold uppercase">Destination</p>
-                          <p className="text-sm font-black text-foreground">Kampala, Uganda</p>
+                          <p className="text-sm font-black text-foreground">{order.shippingAddress.street}, {order.shippingAddress.city}</p>
                         </div>
                       </div>
                       <div className="flex items-start gap-3">
                         <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center text-green-600 shrink-0">
-                          <Clock className="w-5 h-5" />
+                          <ShoppingBag className="w-5 h-5" />
                         </div>
                         <div>
-                          <p className="text-xs text-muted-foreground font-bold uppercase">Last Update</p>
-                          <p className="text-sm font-black text-foreground">2 hours ago</p>
+                          <p className="text-xs text-muted-foreground font-bold uppercase">Items</p>
+                          <p className="text-sm font-black text-foreground">{order.items.length} product(s)</p>
                         </div>
                       </div>
                     </div>
@@ -153,7 +212,7 @@ const TrackOrderPage = () => {
                     {/* Timeline */}
                     <div className="space-y-0 relative">
                       <div className="absolute left-[19px] top-2 bottom-2 w-0.5 bg-border" />
-                      {steps.map((step, idx) => (
+                      {getStatusSteps(order.status, order.createdAt, order.updatedAt).map((step, idx) => (
                         <div key={idx} className="relative pl-12 pb-10 last:pb-0 group">
                           <div className={`absolute left-0 top-1 w-10 h-10 rounded-full border-4 border-background flex items-center justify-center z-10 transition-colors ${
                             step.completed ? 'bg-primary text-primary-foreground' : 
@@ -171,12 +230,59 @@ const TrackOrderPage = () => {
                         </div>
                       ))}
                     </div>
+
+                    {/* Order Items Preview */}
+                    <div className="mt-12 pt-12 border-t border-border">
+                      <h3 className="text-sm font-black text-foreground uppercase tracking-wider mb-6">Order Items</h3>
+                      <div className="space-y-4">
+                        {order.items.map((item: any, idx: number) => (
+                          <div key={idx} className="flex items-center gap-4 p-4 bg-muted/30 rounded-2xl border border-border/50">
+                            <div className="w-16 h-16 rounded-xl overflow-hidden bg-muted shrink-0 border border-border/50">
+                              <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-black text-foreground truncate">{item.name}</p>
+                              <p className="text-xs font-bold text-muted-foreground mt-1">Sold by {item.shopName}</p>
+                            </div>
+                            <div className="text-right shrink-0">
+                              <p className="text-sm font-black text-foreground">KES {item.price.toLocaleString()}</p>
+                              <p className="text-xs font-bold text-muted-foreground mt-1">Qty: {item.quantity}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="mt-6 flex justify-between items-center p-4 bg-primary/5 rounded-2xl border border-primary/10">
+                        <p className="text-sm font-bold text-muted-foreground">Total Amount</p>
+                        <p className="text-xl font-black text-primary">KES {order.totalAmount.toLocaleString()}</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             )}
 
-            {!showResult && !isSearching && (
+            {error && (
+              <div className="bg-red-50 dark:bg-red-500/10 border border-red-100 dark:border-red-500/20 rounded-3xl p-8 text-center animate-in zoom-in-95 duration-300">
+                <div className="w-16 h-16 bg-red-100 dark:bg-red-500/20 rounded-full flex items-center justify-center text-red-600 dark:text-red-400 mx-auto mb-4">
+                  <XCircle className="w-8 h-8" />
+                </div>
+                <h3 className="text-lg font-black text-red-900 dark:text-red-400 mb-2">Order Not Found</h3>
+                <p className="text-sm text-red-700 dark:text-red-400/80 mb-6 max-w-sm mx-auto">
+                  {error}
+                </p>
+                <button 
+                  onClick={() => {
+                    setError(null);
+                    setOrderId("");
+                  }}
+                  className="px-6 py-2 bg-red-600 text-white rounded-xl font-bold text-sm hover:bg-red-700 transition-colors"
+                >
+                  Try Again
+                </button>
+              </div>
+            )}
+
+            {!order && !error && !isSearching && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="p-6 bg-background border border-border rounded-3xl">
                   <div className="w-12 h-12 rounded-2xl bg-primary/5 flex items-center justify-center text-primary mb-4">
