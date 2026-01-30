@@ -13,7 +13,6 @@ import {
   ShoppingBag,
   Star,
   CheckCircle2,
-  MoreHorizontal,
   Share2,
   Heart,
   MessageCircle,
@@ -31,6 +30,7 @@ import { useShop, useShopProducts, usePopularShops, useFollowShop, useShopLists,
 import { useUser } from "@/hooks/useUser";
 import RatingModal from "@/components/RatingModal";
 import ShopRatingModal from "@/components/ShopRatingModal";
+import ShareShopModal from "@/components/ShareShopModal";
 import ShareModal from "@/components/ShareModal";
 
 const ShopProfilePage = () => {
@@ -50,6 +50,12 @@ const ShopProfilePage = () => {
     isOpen: false,
     url: "",
     title: ""
+  });
+
+  const [shareShopModal, setShareShopModal] = useState({
+    isOpen: false,
+    url: "",
+    shopName: ""
   });
 
   const [activeSection, setActiveSection] = useState('Products');
@@ -293,11 +299,25 @@ const ShopProfilePage = () => {
                       )}
                     </>
                   )}
-                  <button className="p-2 border border-border rounded-full hover:bg-muted transition-all">
+                  <button 
+                    onClick={() => setShareShopModal({
+                      isOpen: true,
+                      url: typeof window !== 'undefined' ? window.location.href : '',
+                      shopName: shop.name
+                    })}
+                    className="p-2 border border-border rounded-full hover:bg-muted transition-all"
+                  >
                     <Share2 className="w-4 h-4 text-muted-foreground" />
                   </button>
-                  <button className="p-2 border border-border rounded-full hover:bg-muted transition-all">
-                    <MoreHorizontal className="w-4 h-4 text-muted-foreground" />
+                  <button 
+                    onClick={() => setShopRatingModal({
+                      isOpen: true,
+                      shopId: id,
+                      shopName: shop.name
+                    })}
+                    className="p-2 border border-border rounded-full hover:bg-muted transition-all"
+                  >
+                    <Star className="w-4 h-4 text-muted-foreground" />
                   </button>
                 </div>
               </div>
@@ -747,6 +767,13 @@ const ShopProfilePage = () => {
           onClose={() => setShareModal(prev => ({ ...prev, isOpen: false }))}
           url={shareModal.url}
           title={shareModal.title}
+        />
+
+        <ShareShopModal 
+          isOpen={shareShopModal.isOpen}
+          onClose={() => setShareShopModal(prev => ({ ...prev, isOpen: false }))}
+          url={shareShopModal.url}
+          shopName={shareShopModal.shopName}
         />
 
         <ShopRatingModal
