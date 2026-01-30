@@ -301,7 +301,7 @@ const TrackOrderPage = () => {
                   <h3 className="font-bold text-foreground mb-2">Need Help?</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     If you're having trouble tracking your package, please contact 
-                    our 24/7 support team at support@dotsoko.com.
+                    our 24/7 support team at <a href="mailto:support@dotsoko.com" className="text-primary hover:underline">support@dotsoko.com</a>.
                   </p>
                 </div>
               </div>
@@ -318,12 +318,22 @@ const TrackOrderPage = () => {
                   your package on the go with the <span className="text-secondary">.</span>Soko mobile app.
                 </p>
                 <div className="space-y-3">
-                  <button className="w-full py-3 bg-background text-foreground rounded-xl font-bold text-sm hover:bg-muted transition-colors">
+                  <a 
+                    href="https://apps.apple.com" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block w-full py-3 bg-background text-foreground rounded-xl font-bold text-sm hover:bg-muted transition-colors text-center"
+                  >
                     App Store
-                  </button>
-                  <button className="w-full py-3 bg-background/10 text-primary-foreground border border-background/20 rounded-xl font-bold text-sm hover:bg-background/20 transition-colors">
+                  </a>
+                  <a 
+                    href="https://play.google.com" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block w-full py-3 bg-background/10 text-primary-foreground border border-background/20 rounded-xl font-bold text-sm hover:bg-background/20 transition-colors text-center"
+                  >
                     Google Play
-                  </button>
+                  </a>
                 </div>
               </div>
               <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-background/10 rounded-full blur-2xl" />
@@ -333,7 +343,7 @@ const TrackOrderPage = () => {
               <h4 className="font-black text-foreground text-sm mb-4 uppercase tracking-wider">Quick Support</h4>
               <div className="space-y-4">
                 {[
-                  { name: 'Shipping Policy', href: '#' },
+                  { name: 'Shipping Policy', href: '/help' },
                   { name: 'Refund Policy', href: '/returns' },
                   { name: 'FAQs', href: '/help' },
                 ].map((item) => (
