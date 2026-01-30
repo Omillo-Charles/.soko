@@ -54,6 +54,16 @@ const ShopPage = () => {
   const [isMounted, setIsMounted] = useState(false);
   const [showFab, setShowFab] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [priceRange, setPriceRange] = useState({ min: '', max: '' });
+  const [debouncedPriceRange, setDebouncedPriceRange] = useState({ min: '', max: '' });
+
+  // Debounce price range changes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedPriceRange(priceRange);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [priceRange]);
 
   // Rating Modal State
   const [ratingModal, setRatingModal] = useState<{
@@ -112,6 +122,8 @@ const ShopPage = () => {
     q: query,
     cat: cat !== 'all' ? cat : undefined,
     following: activeTab === 'following' ? 'true' : undefined,
+    minPrice: debouncedPriceRange.min ? parseFloat(debouncedPriceRange.min) : undefined,
+    maxPrice: debouncedPriceRange.max ? parseFloat(debouncedPriceRange.max) : undefined,
   });
 
   const products = productsData || [];
@@ -290,14 +302,38 @@ const ShopPage = () => {
 
             {/* Price Filter */}
             <div className="space-y-4">
-              <h3 className="text-[11px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] px-2">Price Range</h3>
+              <div className="flex items-center justify-between px-2">
+                <h3 className="text-[11px] font-black text-muted-foreground/60 uppercase tracking-[0.2em]">Price Range</h3>
+                {(priceRange.min || priceRange.max) && (
+                  <button 
+                    onClick={() => setPriceRange({ min: '', max: '' })}
+                    className="text-[10px] font-bold text-primary hover:underline"
+                  >
+                    Reset
+                  </button>
+                )}
+              </div>
               <div className="px-2 space-y-4">
                 <div className="flex gap-2">
-                  <div className="flex-1">
-                    <input type="number" placeholder="Min" className="w-full bg-muted border-none rounded-xl py-2 px-3 text-xs font-bold focus:ring-1 focus:ring-primary/20 text-foreground placeholder:text-muted-foreground/50" />
+                  <div className="relative flex-1">
+                    <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-muted-foreground/30">KES</span>
+                    <input 
+                      type="number" 
+                      value={priceRange.min}
+                      onChange={(e) => setPriceRange(prev => ({ ...prev, min: e.target.value }))}
+                      placeholder="Min" 
+                      className="w-full bg-muted border-none rounded-xl py-2 pl-8 pr-2 text-xs font-bold focus:ring-1 focus:ring-primary/20 text-foreground placeholder:text-muted-foreground/30 transition-all" 
+                    />
                   </div>
-                  <div className="flex-1">
-                    <input type="number" placeholder="Max" className="w-full bg-muted border-none rounded-xl py-2 px-3 text-xs font-bold focus:ring-1 focus:ring-primary/20 text-foreground placeholder:text-muted-foreground/50" />
+                  <div className="relative flex-1">
+                    <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-muted-foreground/30">KES</span>
+                    <input 
+                      type="number" 
+                      value={priceRange.max}
+                      onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))}
+                      placeholder="Max" 
+                      className="w-full bg-muted border-none rounded-xl py-2 pl-8 pr-2 text-xs font-bold focus:ring-1 focus:ring-primary/20 text-foreground placeholder:text-muted-foreground/30 transition-all" 
+                    />
                   </div>
                 </div>
               </div>

@@ -54,6 +54,16 @@ const ShopProfilePage = () => {
 
   const [activeSection, setActiveSection] = useState('Products');
   const [isMounted, setIsMounted] = useState(false);
+  const [priceRange, setPriceRange] = useState({ min: '', max: '' });
+  const [debouncedPriceRange, setDebouncedPriceRange] = useState({ min: '', max: '' });
+
+  // Debounce price range changes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedPriceRange(priceRange);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [priceRange]);
 
   // Rating Modal State
   const [ratingModal, setRatingModal] = useState<{
@@ -79,7 +89,10 @@ const ShopProfilePage = () => {
   }, []);
 
   const { data: shop, isLoading: isShopLoading, error: shopError } = useShop(id);
-  const { data: productsData = [], isLoading: isProductsLoading } = useShopProducts(id);
+  const { data: productsData = [], isLoading: isProductsLoading } = useShopProducts(id, {
+    minPrice: debouncedPriceRange.min ? parseFloat(debouncedPriceRange.min) : undefined,
+    maxPrice: debouncedPriceRange.max ? parseFloat(debouncedPriceRange.max) : undefined
+  });
   const { data: popularShopsData = [] } = usePopularShops();
   const { data: listData = [], isLoading: isListsLoading } = useShopLists(id, activeSection as 'Followers' | 'Following');
   const { data: reviewsData = [], isLoading: isReviewsLoading } = useShopReviews(id);
@@ -776,6 +789,53 @@ const ShopProfilePage = () => {
               <div className="bg-muted/50 p-4 rounded-2xl border border-border text-center">
                 <p className="text-lg font-black text-foreground">{shop?.followersCount ?? shop?.followers?.length ?? 0}</p>
                 <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mt-2">Followers</p>
+              </div>
+            </div>
+
+            {/* Contact Information */}
+            <div className="space-y-4">
+              <h3 className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em] px-2">Filters</h3>
+              <div className="bg-muted/50 rounded-2xl border border-border p-4 space-y-4">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-tight">Price Range</p>
+                    {(priceRange.min || priceRange.max) && (
+                      <button 
+                        onClick={() => setPriceRange({ min: '', max: '' })}
+                        className="text-[10px] font-bold text-primary hover:underline"
+                      >
+                        Reset
+                      </button>
+                    )}
+                  </div>
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-muted-foreground/50">KES</span>
+                      <input 
+                        type="number" 
+                        value={priceRange.min}
+                        onChange={(e) => setPriceRange(prev => ({ ...prev, min: e.target.value }))}
+                        placeholder="Min" 
+                        className="w-full bg-background border border-border rounded-xl py-2 pl-8 pr-2 text-xs font-bold focus:ring-1 focus:ring-primary/20 text-foreground placeholder:text-muted-foreground/30 transition-all" 
+                      />
+                    </div>
+                    <div className="relative flex-1">
+                      <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-muted-foreground/50">KES</span>
+                      <input 
+                        type="number" 
+                        value={priceRange.max}
+                        onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))}
+                        placeholder="Max" 
+                        className="w-full bg-background border border-border rounded-xl py-2 pl-8 pr-2 text-xs font-bold focus:ring-1 focus:ring-primary/20 text-foreground placeholder:text-muted-foreground/30 transition-all" 
+                      />
+                    </div>
+                  </div>
+                  {(priceRange.min || priceRange.max) && (
+                    <p className="text-[10px] font-medium text-muted-foreground px-1 italic">
+                      Showing products between {priceRange.min || '0'} and {priceRange.max || '∞'}
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
 
