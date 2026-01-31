@@ -34,6 +34,7 @@ import { useUser } from "@/hooks/useUser";
 import RatingModal from "@/components/RatingModal";
 import ShareModal from "@/components/ShareModal";
 import CommentModal from "@/components/CommentModal";
+import ShopSearchModal from "@/components/ShopSearchModal";
 
 const ShopPage = () => {
   const router = useRouter();
@@ -48,6 +49,7 @@ const ShopPage = () => {
   const { user: currentUser } = useUser();
   const { data: myShop } = useMyShop();
   const { data: popularShopsData, isLoading: isShopsLoading } = usePopularShops();
+  const shopsQuery = searchParams.get("shops_q") || "";
   const { data: flashDealsData } = useLimitedProducts(3);
   const followMutation = useFollowShop();
 
@@ -98,6 +100,8 @@ const ShopPage = () => {
     title: ""
   });
 
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -129,7 +133,7 @@ const ShopPage = () => {
   const products = productsData || [];
 
   const popularShops = React.useMemo(() => {
-    return (popularShopsData || []).map((s: any) => ({
+    let shops = (popularShopsData || []).map((s: any) => ({
       id: s._id || s.id || `shop-${Math.random()}`,
       name: s.name || "Unknown Shop",
       handle: s.username ? `@${s.username}` : null,
@@ -139,7 +143,17 @@ const ShopPage = () => {
       followersList: s.followers || [],
       products: s.productsCount || s.products?.length || 0
     }));
-  }, [popularShopsData]);
+
+    if (shopsQuery) {
+      const q = shopsQuery.toLowerCase();
+      shops = shops.filter((s: any) => 
+        s.name.toLowerCase().includes(q) || 
+        (s.handle && s.handle.toLowerCase().includes(q))
+      );
+    }
+
+    return shops;
+  }, [popularShopsData, shopsQuery]);
 
   const handleFollowToggle = async (shopId: string) => {
     if (!currentUser) {
@@ -229,15 +243,10 @@ const ShopPage = () => {
     const q = (formData.get('q') as string).trim();
     const params = new URLSearchParams(searchParams.toString());
     
-    // When searching, we want to search across all categories by default 
-    // unless the user explicitly wants to stay in the current category.
-    // The user said "searching the results across the categories", so I'll clear cat.
-    params.delete('cat'); 
-    
     if (q) {
-      params.set('q', q);
+      params.set('shops_q', q);
     } else {
-      params.delete('q');
+      params.delete('shops_q');
     }
     router.push(`/shop?${params.toString()}`);
   };
@@ -258,14 +267,14 @@ const ShopPage = () => {
                 <input 
                   name="q"
                   type="text" 
-                  defaultValue={query}
-                  placeholder="Search products..." 
+                  defaultValue={shopsQuery}
+                  placeholder="Search shops..." 
                   className="w-full bg-muted border-none rounded-2xl py-3.5 pl-11 pr-4 text-sm font-bold text-foreground placeholder:text-muted-foreground/50 focus:ring-2 focus:ring-primary/20 transition-all"
                 />
               </form>
               <div className="mt-2 px-2">
                 <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-tight">
-                  Press Enter to search all categories
+                  Press Enter to search shops
                 </p>
               </div>
             </div>
@@ -345,8 +354,15 @@ const ShopPage = () => {
         <main className="flex-1 min-w-0 border-x border-border pb-24 lg:pb-0">
           {/* Header - Twitter Style */}
           <div className="sticky top-[100px] md:top-[128px] bg-background/80 backdrop-blur-md z-30 border-b border-border">
-            <div className="px-4 py-4">
+            <div className="px-4 py-4 flex items-center justify-between">
               <h1 className="text-xl font-black text-foreground">Explore</h1>
+              <button 
+                onClick={() => setIsSearchModalOpen(true)}
+                className="lg:hidden p-2.5 bg-muted hover:bg-muted/80 text-foreground rounded-2xl transition-all active:scale-95"
+                title="Search Shops"
+              >
+                <Search className="w-5 h-5" />
+              </button>
             </div>
             <div className="flex">
               {[
@@ -371,6 +387,73 @@ const ShopPage = () => {
 
           {/* Product Feed */}
           <div>
+            {/* Mobile Shop Search Results */}
+            {shopsQuery && (
+              <div className="lg:hidden border-b border-border bg-muted/30">
+                <div className="px-4 py-3 flex items-center justify-between">
+                  <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Shop Results</h3>
+                  <button 
+                    onClick={() => {
+                      const params = new URLSearchParams(searchParams.toString());
+                      params.delete('shops_q');
+                      router.push(`/shop?${params.toString()}`);
+                    }}
+                    className="text-[10px] font-bold text-primary"
+                  >
+                    Clear
+                  </button>
+                </div>
+                <div className="flex overflow-x-auto pb-4 px-4 gap-3 no-scrollbar">
+                  {popularShops.length > 0 ? (
+                    popularShops.map((vendor: any) => (
+                      <div 
+                        key={vendor.id}
+                        onClick={() => router.push(`/shop/${vendor.id}`)}
+                        className="shrink-0 w-[200px] p-4 bg-background border border-border rounded-2xl space-y-3"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full overflow-hidden border border-border">
+                            <img src={vendor.avatar} alt={vendor.name} className="w-full h-full object-cover" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-1">
+                              <p className="text-xs font-black text-foreground truncate">{vendor.name}</p>
+                              {vendor.verified && <CheckCircle2 className="w-3 h-3 text-primary" />}
+                            </div>
+                            <p className="text-[10px] font-bold text-muted-foreground truncate">{vendor.handle}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="text-[10px] font-bold text-muted-foreground">
+                            {vendor.followers} followers
+                          </div>
+                          {isMounted && (!myShop || String(myShop._id || myShop.id) !== String(vendor.id)) && (
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleFollowToggle(vendor.id);
+                              }}
+                              className={`px-3 py-1 rounded-full text-[10px] font-black ${
+                                vendor.followersList?.some((f: any) => String(f._id || f) === String(currentUser?._id))
+                                  ? 'bg-muted text-foreground'
+                                  : 'bg-foreground text-background'
+                              }`}
+                            >
+                              {vendor.followersList?.some((f: any) => String(f._id || f) === String(currentUser?._id)) ? 'Following' : 'Follow'}
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="w-full py-8 text-center bg-background rounded-2xl border border-border border-dashed">
+                      <p className="text-xs font-bold text-muted-foreground">No shops found for "{shopsQuery}"</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
             {isLoading ? (
               <div className="p-20 flex flex-col items-center justify-center text-muted-foreground gap-4">
                 <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
@@ -632,6 +715,12 @@ const ShopPage = () => {
           productName={commentModal.productName}
         />
 
+        <ShopSearchModal 
+          isOpen={isSearchModalOpen}
+          onClose={() => setIsSearchModalOpen(false)}
+          initialQuery={shopsQuery}
+        />
+
         {/* Right Sidebar - Trending/Quick Links */}
         <div className="hidden lg:block w-[320px] shrink-0">
           <aside className="fixed top-[128px] w-[320px] h-[calc(100vh-128px)] overflow-y-auto custom-scrollbar px-6 py-6 pb-24 space-y-8">
@@ -639,67 +728,71 @@ const ShopPage = () => {
             <div className="space-y-4">
               <h3 className="text-[11px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] px-2">Popular Shops</h3>
               <div className="space-y-1">
-                {popularShops.map((vendor: any) => (
-                  <div 
-                    key={vendor.id} 
-                    className="p-3 hover:bg-muted transition-all cursor-pointer flex items-center justify-between gap-3 rounded-xl group"
-                    onClick={() => router.push(`/shop/${vendor.id}`)}
-                  >
-                    <div className="flex items-center gap-3 min-w-0 flex-1">
-                      <div className="w-10 aspect-square rounded-full overflow-hidden bg-muted shrink-0 border border-border">
-                        <img src={vendor.avatar} alt={vendor.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-1">
-                          <p className="text-sm font-black text-foreground truncate">{vendor.name}</p>
-                          {vendor.verified && <CheckCircle2 className="w-3 h-3 text-primary fill-primary/10" />}
+                {popularShops.length > 0 ? (
+                  popularShops.map((vendor: any) => (
+                    <div 
+                      key={vendor.id} 
+                      className="p-3 hover:bg-muted transition-all cursor-pointer flex items-center justify-between gap-3 rounded-xl group"
+                      onClick={() => router.push(`/shop/${vendor.id}`)}
+                    >
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <div className="w-10 aspect-square rounded-full overflow-hidden bg-muted shrink-0 border border-border">
+                          <img src={vendor.avatar} alt={vendor.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                         </div>
-                        {vendor.handle && (
-                          <p className="text-[11px] font-bold text-muted-foreground/60 truncate">{vendor.handle}</p>
-                        )}
-                        <div className="flex items-center gap-2 mt-0.5">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1">
+                            <p className="text-sm font-black text-foreground truncate group-hover:text-primary transition-colors">{vendor.name}</p>
+                            {vendor.verified && <CheckCircle2 className="w-3 h-3 text-primary fill-primary/10" />}
+                          </div>
+                          <p className="text-[10px] font-bold text-muted-foreground/60 truncate">{vendor.handle || `@${vendor.name.toLowerCase().replace(/\s+/g, '')}`}</p>
+                          <div className="flex items-center gap-2 mt-0.5">
                           <p className="text-[10px] font-bold text-muted-foreground">{vendor.followers} followers</p>
                           <span className="text-muted-foreground/40 text-[8px]">·</span>
                           <p className="text-[10px] font-bold text-muted-foreground">{vendor.products} products</p>
                         </div>
                       </div>
                     </div>
-                    {isMounted && currentUser && myShop && String(myShop._id || myShop.id) !== String(vendor.id) && (
+                    {isMounted && (!myShop || String(myShop._id || myShop.id) !== String(vendor.id)) && (
                       <button 
-                        onClick={(e) => { e.stopPropagation(); handleFollowToggle(vendor.id); }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleFollowToggle(vendor.id);
+                        }}
                         disabled={followMutation.isPending && followMutation.variables === vendor.id}
-                        className={`bg-foreground text-background text-[11px] font-black px-4 py-1.5 rounded-full hover:bg-primary hover:text-primary-foreground transition-all shrink-0 ${
-                          vendor.followersList?.includes(currentUser?._id) 
-                            ? 'bg-muted text-foreground hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20' 
-                            : ''
+                        className={`px-4 py-1.5 rounded-full text-[10px] font-black transition-all ${
+                          vendor.followersList?.some((f: any) => String(f._id || f) === String(currentUser?._id))
+                            ? 'bg-muted text-foreground hover:bg-destructive hover:text-white group/btn'
+                            : 'bg-foreground text-background hover:bg-primary hover:text-white'
                         } ${followMutation.isPending && followMutation.variables === vendor.id ? 'opacity-50 cursor-not-allowed' : ''}`}
                       >
-                        {followMutation.isPending && followMutation.variables === vendor.id ? '...' : (vendor.followersList?.includes(currentUser?._id) ? 'Following' : 'Follow')}
-                      </button>
-                    )}
-                    {isMounted && currentUser && !myShop && (
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); handleFollowToggle(vendor.id); }}
-                        disabled={followMutation.isPending && followMutation.variables === vendor.id}
-                        className={`bg-foreground text-background text-[11px] font-black px-4 py-1.5 rounded-full hover:bg-primary hover:text-primary-foreground transition-all shrink-0 ${
-                          vendor.followersList?.includes(currentUser?._id) 
-                            ? 'bg-muted text-foreground hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20' 
-                            : ''
-                        } ${followMutation.isPending && followMutation.variables === vendor.id ? 'opacity-50 cursor-not-allowed' : ''}`}
-                      >
-                        {followMutation.isPending && followMutation.variables === vendor.id ? '...' : (vendor.followersList?.includes(currentUser?._id) ? 'Following' : 'Follow')}
-                      </button>
-                    )}
-                    {isMounted && !currentUser && (
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); handleFollowToggle(vendor.id); }}
-                        className="bg-foreground text-background text-[11px] font-black px-4 py-1.5 rounded-full hover:bg-primary hover:text-primary-foreground transition-all shrink-0"
-                      >
-                        Follow
+                        <span className={vendor.followersList?.some((f: any) => String(f._id || f) === String(currentUser?._id)) ? 'group-hover/btn:hidden' : ''}>
+                          {followMutation.isPending && followMutation.variables === vendor.id ? '...' : (vendor.followersList?.some((f: any) => String(f._id || f) === String(currentUser?._id)) ? 'Following' : 'Follow')}
+                        </span>
+                        {vendor.followersList?.some((f: any) => String(f._id || f) === String(currentUser?._id)) && !followMutation.isPending && (
+                          <span className="hidden group-hover/btn:inline">Unfollow</span>
+                        )}
                       </button>
                     )}
                   </div>
-                ))}
+                  ))
+                ) : (
+                  <div className="p-8 text-center space-y-2">
+                    <p className="text-xs font-black text-foreground uppercase">No shops found</p>
+                    <p className="text-[10px] font-bold text-muted-foreground/60">Try a different search term</p>
+                    {shopsQuery && (
+                      <button 
+                        onClick={() => {
+                          const params = new URLSearchParams(searchParams.toString());
+                          params.delete('shops_q');
+                          router.push(`/shop?${params.toString()}`);
+                        }}
+                        className="text-[10px] font-bold text-primary hover:underline block mx-auto mt-2"
+                      >
+                        Clear Search
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
