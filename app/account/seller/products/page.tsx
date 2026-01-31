@@ -27,6 +27,7 @@ import {
   Store
 } from "lucide-react";
 import { toast } from "sonner";
+import api from "@/lib/api";
 import { categories as allCategories } from "@/constants/categories";
 import { RegisterShopModal } from "@/components/RegisterShopModal";
 
@@ -74,12 +75,9 @@ const SellerProductsPage = () => {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
       
       // Fetch shop info first
-      const shopRes = await fetch(`${apiUrl}/shops/my-shop`, {
-        headers: { "Authorization": `Bearer ${token}` }
-      });
-      const shopData = await shopRes.json();
-      if (shopData.success && shopData.data) {
-        setShop(shopData.data);
+      const shopRes = await api.get("/shops/my-shop");
+      if (shopRes.data.success && shopRes.data.data) {
+        setShop(shopRes.data.data);
       } else {
         setShowRegisterModal(true);
         setIsLoading(false);
@@ -87,22 +85,18 @@ const SellerProductsPage = () => {
       }
 
       // Fetch products
-      const res = await fetch(`${apiUrl}/products/my-products`, {
-        headers: { "Authorization": `Bearer ${token}` }
-      });
+      const res = await api.get("/products/my-products");
 
-      if (res.status === 401) {
+      if (res.data.success) {
+        setProducts(res.data.data);
+      }
+    } catch (e: any) {
+      if (e.response?.status === 401) {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("user");
         router.push("/auth?mode=login");
         return;
       }
-
-      const data = await res.json();
-      if (data.success) {
-        setProducts(data.data);
-      }
-    } catch (e) {
       console.error("Error fetching data:", e);
     } finally {
       setIsLoading(false);
@@ -164,9 +158,6 @@ const SellerProductsPage = () => {
       return;
     }
 
-    const token = localStorage.getItem("accessToken");
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
-
     try {
       const submitData = new FormData();
       submitData.append("name", formData.name);
@@ -180,24 +171,24 @@ const SellerProductsPage = () => {
         submitData.append("image", file);
       });
 
-      const response = await fetch(`${apiUrl}/products`, {
-        method: "POST",
-        headers: { "Authorization": `Bearer ${token}` },
-        body: submitData
+      const response = await api.post("/products", submitData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || data.error || "Failed to post product");
+      if (response.data.success) {
+        toast.success("Product listed successfully!");
+        setShowCreateModal(false);
+        resetForm();
+        fetchProducts(); // Refresh the list
+      } else {
+        throw new Error(response.data.message || "Failed to post product");
       }
-
-      toast.success("Product listed successfully!");
-      setShowCreateModal(false);
-      resetForm();
-      fetchProducts(); // Refresh the list
     } catch (err: any) {
-      toast.error(err.message || "Something went wrong");
+      console.error("Error creating product:", err);
+      const message = err.response?.data?.message || err.message || "Something went wrong";
+      toast.error(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -219,25 +210,20 @@ const SellerProductsPage = () => {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
 
     setIsDeleting(productId);
-    const token = localStorage.getItem("accessToken");
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
 
     try {
-      const res = await fetch(`${apiUrl}/products/${productId}`, {
-        method: "DELETE",
-        headers: { "Authorization": `Bearer ${token}` }
-      });
-      const data = await res.json();
+      const res = await api.delete(`/products/${productId}`);
 
-      if (data.success) {
+      if (res.data.success) {
         setProducts(products.filter(p => p._id !== productId));
         toast.success("Product deleted successfully");
       } else {
-        toast.error(data.message || "Failed to delete product");
+        toast.error(res.data.message || "Failed to delete product");
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error("Error deleting product:", e);
-      toast.error("An error occurred while deleting the product");
+      const message = e.response?.data?.message || e.message || "An error occurred while deleting the product";
+      toast.error(message);
     } finally {
       setIsDeleting(null);
     }

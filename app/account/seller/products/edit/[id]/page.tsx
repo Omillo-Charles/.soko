@@ -18,7 +18,7 @@ import {
   Save
 } from "lucide-react";
 import { toast } from "sonner";
-
+import api from "@/lib/api";
 import { categories as allCategories } from "@/constants/categories";
 
 const categories = allCategories.filter(c => c.value !== 'all');
@@ -43,16 +43,9 @@ const EditProductPage = () => {
 
   useEffect(() => {
     const fetchProduct = async () => {
-      const token = localStorage.getItem("accessToken");
-      if (!token) {
-        router.push("/auth?mode=login");
-        return;
-      }
-
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
       try {
-        const response = await fetch(`${apiUrl}/products/${id}`);
-        const data = await response.json();
+        const response = await api.get(`/products/${id}`);
+        const data = response.data;
         
         if (data.success && data.data) {
           const product = data.data;
@@ -73,7 +66,13 @@ const EditProductPage = () => {
         } else {
           toast.error("Product not found");
         }
-      } catch (err) {
+      } catch (err: any) {
+        if (err.response?.status === 401) {
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("user");
+          router.push("/auth?mode=login");
+          return;
+        }
         console.error("Error fetching product:", err);
         toast.error("Failed to load product data");
       } finally {
@@ -133,9 +132,6 @@ const EditProductPage = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    const token = localStorage.getItem("accessToken");
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
-
     try {
       const submitData = new FormData();
       submitData.append("name", formData.name);
@@ -156,24 +152,22 @@ const EditProductPage = () => {
       const existingImages = imagePreviews.filter(p => !p.startsWith('data:'));
       submitData.append("existingImages", JSON.stringify(existingImages));
 
-      const response = await fetch(`${apiUrl}/products/${id}`, {
-        method: "PUT",
+      const response = await api.put(`/products/${id}`, submitData, {
         headers: {
-          "Authorization": `Bearer ${token}`
+          'Content-Type': 'multipart/form-data',
         },
-        body: submitData
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to update product");
+      if (response.data.success) {
+        toast.success("Product updated successfully!");
+        router.push("/account/seller/products");
+      } else {
+        throw new Error(response.data.message || "Failed to update product");
       }
-
-      toast.success("Product updated successfully!");
-      router.push("/account/seller/products");
     } catch (err: any) {
-      toast.error(err.message || "Something went wrong");
+      console.error("Error updating product:", err);
+      const message = err.response?.data?.message || err.message || "Something went wrong";
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }
