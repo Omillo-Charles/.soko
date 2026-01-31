@@ -101,6 +101,13 @@ const ShopPage = () => {
   });
 
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+  const [desktopSearchQuery, setDesktopSearchQuery] = useState(shopsQuery || "");
+  const [showDesktopSuggestions, setShowDesktopSuggestions] = useState(false);
+
+  // Sync search query with URL params
+  useEffect(() => {
+    setDesktopSearchQuery(shopsQuery || "");
+  }, [shopsQuery]);
 
   useEffect(() => {
     setIsMounted(true);
@@ -154,6 +161,15 @@ const ShopPage = () => {
 
     return shops;
   }, [popularShopsData, shopsQuery]);
+
+  const desktopSuggestions = React.useMemo(() => {
+    if (!desktopSearchQuery.trim()) return [];
+    const q = desktopSearchQuery.toLowerCase();
+    return popularShops.filter((shop: any) => 
+      shop.name.toLowerCase().includes(q) || 
+      (shop.handle && shop.handle.toLowerCase().includes(q))
+    ).slice(0, 5);
+  }, [desktopSearchQuery, popularShops]);
 
   const handleFollowToggle = async (shopId: string) => {
     if (!currentUser) {
@@ -239,16 +255,15 @@ const ShopPage = () => {
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const q = (formData.get('q') as string).trim();
     const params = new URLSearchParams(searchParams.toString());
     
-    if (q) {
-      params.set('shops_q', q);
+    if (desktopSearchQuery.trim()) {
+      params.set('shops_q', desktopSearchQuery.trim());
     } else {
       params.delete('shops_q');
     }
     router.push(`/shop?${params.toString()}`);
+    setShowDesktopSuggestions(false);
   };
 
   return (
@@ -267,11 +282,69 @@ const ShopPage = () => {
                 <input 
                   name="q"
                   type="text" 
-                  defaultValue={shopsQuery}
+                  value={desktopSearchQuery || ""}
+                  onChange={(e) => {
+                    setDesktopSearchQuery(e.target.value);
+                    setShowDesktopSuggestions(true);
+                  }}
+                  onFocus={() => setShowDesktopSuggestions(true)}
                   placeholder="Search shops..." 
                   className="w-full bg-muted border-none rounded-2xl py-3.5 pl-11 pr-4 text-sm font-bold text-foreground placeholder:text-muted-foreground/50 focus:ring-2 focus:ring-primary/20 transition-all"
                 />
               </form>
+
+              {/* Desktop Suggestions Dropdown */}
+              {showDesktopSuggestions && desktopSearchQuery.trim() && (
+                <>
+                  <div 
+                    className="fixed inset-0 z-10" 
+                    onClick={() => setShowDesktopSuggestions(false)} 
+                  />
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-background border border-border rounded-2xl shadow-xl z-20 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                    {desktopSuggestions.length > 0 ? (
+                      <div className="p-2 space-y-1">
+                        {desktopSuggestions.map((shop: any) => (
+                          <button
+                            key={shop.id}
+                            onClick={() => {
+                              router.push(`/shop/${shop.id}`);
+                              setShowDesktopSuggestions(false);
+                            }}
+                            className="w-full flex items-center gap-3 p-2 hover:bg-muted rounded-xl transition-all group text-left"
+                          >
+                            <div className="w-8 h-8 rounded-full overflow-hidden bg-muted shrink-0">
+                              <img src={shop.avatar} alt={shop.name} className="w-full h-full object-cover" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <p className="text-xs font-black text-foreground truncate group-hover:text-primary transition-colors">{shop.name}</p>
+                              <p className="text-[10px] font-bold text-muted-foreground/60 truncate">{shop.handle}</p>
+                            </div>
+                            <ArrowRight className="w-3 h-3 text-muted-foreground/30 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                          </button>
+                        ))}
+                        <button
+                          onClick={() => handleSearch({ preventDefault: () => {} } as any)}
+                          className="w-full flex items-center gap-2 p-2 text-primary font-bold text-[10px] hover:bg-primary/5 rounded-xl transition-all"
+                        >
+                          <Search className="w-3 h-3" />
+                          <span>Search for "{desktopSearchQuery}"</span>
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="p-4 text-center">
+                        <p className="text-[10px] font-bold text-muted-foreground">No exact matches found</p>
+                        <button
+                          onClick={() => handleSearch({ preventDefault: () => {} } as any)}
+                          className="mt-2 text-primary text-[10px] font-black uppercase hover:underline"
+                        >
+                          See all results
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+              
               <div className="mt-2 px-2">
                 <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-tight">
                   Press Enter to search shops
