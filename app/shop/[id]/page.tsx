@@ -260,7 +260,7 @@ const ShopProfilePage = () => {
             
             <div className="px-4 pb-6">
               <div className="relative flex justify-between items-end -mt-16 mb-4">
-                <div className="w-32 h-32 rounded-[2.5rem] border-4 border-background overflow-hidden bg-muted shadow-xl">
+                <div className="w-32 h-32 rounded-[2.5rem] border-4 border-background dark:border-slate-900 overflow-hidden bg-muted dark:bg-slate-800 shadow-xl">
                   <img 
                     src={shop.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${shop.name}`} 
                     alt={shop.name} 
@@ -270,7 +270,7 @@ const ShopProfilePage = () => {
                 <div className="flex gap-2 pb-2">
                   {!isMounted ? (
                     <button 
-                      className="px-6 py-2 rounded-full text-sm font-black transition-all bg-foreground text-background hover:bg-primary"
+                      className="px-6 py-2 rounded-full text-sm font-black transition-all bg-foreground dark:bg-white text-background dark:text-slate-900 hover:bg-primary dark:hover:bg-primary dark:hover:text-white"
                     >
                       Follow
                     </button>
@@ -282,8 +282,8 @@ const ShopProfilePage = () => {
                           disabled={followMutation.isPending}
                           className={`px-6 py-2 rounded-full text-sm font-black transition-all ${
                             isFollowing 
-                              ? 'bg-muted text-foreground hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/10 hover:border-red-100' 
-                              : 'bg-foreground text-background hover:bg-primary'
+                              ? 'bg-muted dark:bg-white/5 text-foreground dark:text-white hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/10 hover:border-red-100' 
+                              : 'bg-foreground dark:bg-white text-background dark:text-slate-900 hover:bg-primary dark:hover:bg-primary dark:hover:text-white'
                           } ${followMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
                           {followMutation.isPending ? '...' : (isFollowing ? 'Following' : 'Follow')}
@@ -292,7 +292,7 @@ const ShopProfilePage = () => {
                       {!currentUser && (
                         <button 
                           onClick={handleFollowToggle}
-                          className="px-6 py-2 rounded-full text-sm font-black transition-all bg-foreground text-background hover:bg-primary"
+                          className="px-6 py-2 rounded-full text-sm font-black transition-all bg-foreground dark:bg-white text-background dark:text-slate-900 hover:bg-primary dark:hover:bg-primary dark:hover:text-white"
                         >
                           Follow
                         </button>
@@ -324,29 +324,29 @@ const ShopProfilePage = () => {
 
               <div className="space-y-1">
                 <div className="flex items-center gap-1.5">
-                  <h2 className="text-xl font-black text-foreground">{shop.name}</h2>
+                  <h2 className="text-xl font-black text-foreground dark:text-white">{shop.name}</h2>
                   {shop.isVerified && <CheckCircle2 className="w-5 h-5 text-primary fill-primary/10" />}
                 </div>
                 <div className="flex items-center gap-3">
                   <p className="text-sm font-bold text-muted-foreground">{shop.username ? `@${shop.username}` : `@${shop.name.toLowerCase().replace(/\s+/g, "_")}`}</p>
-                  <div className="w-1 h-1 rounded-full bg-border" />
+                  <div className="w-1 h-1 rounded-full bg-border dark:bg-white/10" />
                   <button 
                     onClick={() => setActiveSection('Followers')}
-                    className="text-sm font-bold text-foreground hover:underline"
+                    className="text-sm font-bold text-foreground dark:text-white hover:underline"
                   >
                     {shop?.followersCount ?? shop?.followers?.length ?? 0} <span className="text-muted-foreground">Followers</span>
                   </button>
-                  <div className="w-1 h-1 rounded-full bg-border" />
+                  <div className="w-1 h-1 rounded-full bg-border dark:bg-white/10" />
                   <button 
                     onClick={() => setActiveSection('Following')}
-                    className="text-sm font-bold text-foreground hover:underline"
+                    className="text-sm font-bold text-foreground dark:text-white hover:underline"
                   >
                     {shop?.followingCount ?? shop?.following?.length ?? 0} <span className="text-muted-foreground">Following</span>
                   </button>
-                  <div className="w-1 h-1 rounded-full bg-border" />
+                  <div className="w-1 h-1 rounded-full bg-border dark:bg-white/10" />
                   <button 
                     onClick={() => setActiveSection('Products')}
-                    className="text-sm font-bold text-foreground hover:underline"
+                    className="text-sm font-bold text-foreground dark:text-white hover:underline"
                   >
                     {productsCount} <span className="text-muted-foreground">Products</span>
                   </button>
@@ -394,7 +394,7 @@ const ShopProfilePage = () => {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between gap-2 mb-1">
                             <div className="flex items-center gap-1.5 min-w-0">
-                              <span className="text-sm font-black text-foreground truncate flex items-center gap-1">
+                              <span className="text-sm font-black text-foreground dark:text-white truncate flex items-center gap-1">
                                 {shop.name}
                                 {shop.isVerified && <CheckCircle2 className="w-3.5 h-3.5 text-primary fill-primary/10" />}
                               </span>
@@ -419,7 +419,7 @@ const ShopProfilePage = () => {
                             </div>
                           </div>
 
-                          <p className="text-foreground text-[13px] leading-relaxed mb-3 whitespace-pre-wrap">
+                          <p className="text-foreground dark:text-slate-300 text-[13px] leading-relaxed mb-3 whitespace-pre-wrap">
                             {product.description}
                           </p>
 
@@ -874,21 +874,21 @@ const ShopProfilePage = () => {
                   <MapPin className="w-4 h-4 text-muted-foreground mt-0.5" />
                   <div>
                     <p className="text-[10px] font-black text-muted-foreground uppercase tracking-tight mb-0.5">Location</p>
-                    <p className="text-xs font-bold text-foreground leading-snug">{shop.address}</p>
+                    <p className="text-xs font-bold text-foreground dark:text-slate-300 leading-snug">{shop.address}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <Phone className="w-4 h-4 text-muted-foreground mt-0.5" />
                   <div>
                     <p className="text-[10px] font-black text-muted-foreground uppercase tracking-tight mb-0.5">Phone</p>
-                    <p className="text-xs font-bold text-foreground">{shop.phone}</p>
+                    <p className="text-xs font-bold text-foreground dark:text-slate-300">{shop.phone}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <Mail className="w-4 h-4 text-muted-foreground mt-0.5" />
                   <div>
                     <p className="text-[10px] font-black text-muted-foreground uppercase tracking-tight mb-0.5">Email</p>
-                    <p className="text-xs font-bold text-foreground truncate">{shop.email}</p>
+                    <p className="text-xs font-bold text-foreground dark:text-slate-300 truncate">{shop.email}</p>
                   </div>
                 </div>
               </div>
@@ -905,15 +905,15 @@ const ShopProfilePage = () => {
                   <div 
                     key={vendor.id} 
                     onClick={() => router.push(`/shop/${vendor.id}`)}
-                    className="p-3 hover:bg-muted transition-all cursor-pointer flex items-center justify-between gap-3 rounded-xl group"
+                    className="p-3 hover:bg-muted dark:hover:bg-white/5 transition-all cursor-pointer flex items-center justify-between gap-3 rounded-xl group"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-10 aspect-square rounded-full overflow-hidden bg-muted border border-border shrink-0">
+                      <div className="w-10 aspect-square rounded-full overflow-hidden bg-muted dark:bg-slate-800 border border-border shrink-0">
                         <img src={vendor.avatar} alt={vendor.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-1">
-                          <p className="font-bold text-foreground text-sm truncate">{vendor.name}</p>
+                          <p className="font-bold text-foreground dark:text-white text-sm truncate">{vendor.name}</p>
                           {vendor.verified && <CheckCircle2 className="w-3 h-3 text-primary fill-primary/10" />}
                         </div>
                         <div className="flex items-center gap-2">
@@ -923,7 +923,7 @@ const ShopProfilePage = () => {
                         </div>
                       </div>
                     </div>
-                    <button className="bg-foreground text-background text-[11px] font-black px-4 py-1.5 rounded-full hover:bg-primary hover:text-white transition-all shrink-0">
+                    <button className="bg-foreground dark:bg-white text-background dark:text-slate-900 text-[11px] font-black px-4 py-1.5 rounded-full hover:bg-primary dark:hover:bg-primary dark:hover:text-white transition-all shrink-0">
                       View
                     </button>
                   </div>
