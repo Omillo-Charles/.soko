@@ -39,7 +39,7 @@ const ShopProfilePage = () => {
   const router = useRouter();
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
-  const { user: currentUser } = useUser();
+  const { user: currentUser, refreshUser } = useUser();
   const { data: myShop } = useMyShop();
   
   const [shareModal, setShareModal] = useState<{
@@ -147,6 +147,7 @@ const ShopProfilePage = () => {
 
     try {
       await followMutation.mutateAsync(id);
+      await refreshUser();
       toast.success(isFollowing ? "Unfollowed shop" : "Following shop");
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Failed to toggle follow");
@@ -154,7 +155,7 @@ const ShopProfilePage = () => {
   };
 
   const isLoading = isShopLoading;
-  const error = shopError ? (shopError as any).response?.data?.message || "Failed to load shop" : null;
+  const error = shopError ? (shopError as any).friendlyMessage || (shopError as any).response?.data?.message || "Failed to load shop" : null;
 
   // Use the actual products length if productsCount is missing
   const productsCount = shop?.productsCount || shop?.products?.length || products.length || 0;

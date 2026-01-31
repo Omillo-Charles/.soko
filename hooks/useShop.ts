@@ -6,9 +6,17 @@ export const useShop = (id: string) => {
     queryKey: ['shop', id],
     queryFn: async () => {
       const response = await api.get(`/shops/${id}`);
-      return response.data.data;
+      const shopData = response.data.data || response.data;
+      
+      // If the data is empty or missing name, it might be an unsuccessful response
+      if (!shopData || (typeof shopData === 'object' && !shopData.name && !shopData._id)) {
+        throw new Error("Shop not found");
+      }
+      
+      return shopData;
     },
     enabled: !!id && id !== 'undefined',
+    staleTime: 0, // Ensure we always get fresh data for profile
   });
 };
 
@@ -89,51 +97,15 @@ export const useFollowShop = () => {
       const response = await api.post(`/shops/${shopId}/follow`);
       return response.data;
     },
-    // Optimistic Update
+    // Snapshot the previous value
     onMutate: async (shopId) => {
       // Cancel any outgoing refetches
       await queryClient.cancelQueries({ queryKey: ['shop', shopId] });
       await queryClient.cancelQueries({ queryKey: ['popular-shops'] });
 
-      // Snapshot the previous value
+      // Snapshot the previous values
       const previousShop = queryClient.getQueryData(['shop', shopId]);
       const previousPopular = queryClient.getQueryData(['popular-shops']);
-
-      // Optimistically update to the new value
-      const currentUser = JSON.parse(localStorage.getItem('user') || 'null');
-      
-      if (currentUser) {
-        // Update individual shop query if it exists
-        queryClient.setQueryData(['shop', shopId], (old: any) => {
-          if (!old) return old;
-          const isFollowing = old.followers?.some((f: any) => String(f._id || f) === String(currentUser._id));
-          return {
-            ...old,
-            followers: isFollowing 
-              ? old.followers.filter((f: any) => String(f._id || f) !== String(currentUser._id))
-              : [...(old.followers || []), currentUser._id],
-            followersCount: isFollowing ? (old.followersCount || 1) - 1 : (old.followersCount || 0) + 1
-          };
-        });
-
-        // Update popular shops list query if it exists
-        queryClient.setQueryData(['popular-shops'], (old: any) => {
-          if (!old) return old;
-          return old.map((s: any) => {
-            if (String(s._id || s.id) === String(shopId)) {
-              const isFollowing = s.followers?.some((f: any) => String(f._id || f) === String(currentUser._id));
-              return {
-                ...s,
-                followers: isFollowing 
-                  ? s.followers.filter((f: any) => String(f._id || f) !== String(currentUser._id))
-                  : [...(s.followers || []), currentUser._id],
-                followersCount: isFollowing ? (s.followersCount || 1) - 1 : (s.followersCount || 0) + 1
-              };
-            }
-            return s;
-          });
-        });
-      }
 
       return { previousShop, previousPopular };
     },
@@ -146,10 +118,15 @@ export const useFollowShop = () => {
         queryClient.setQueryData(['popular-shops'], context.previousPopular);
       }
     },
-    // Always refetch after error or success:
-    onSettled: (_, __, shopId) => {
-      queryClient.invalidateQueries({ queryKey: ['shop', shopId] });
+    onSettled: (data, error, variables) => {
+      // Always refetch to ensure we have the correct server state
+      queryClient.invalidateQueries({ queryKey: ['shop'] });
       queryClient.invalidateQueries({ queryKey: ['popular-shops'] });
+      queryClient.invalidateQueries({ queryKey: ['my-shop'] });
+      queryClient.invalidateQueries({ queryKey: ['user-me'] });
+      if (variables && variables !== 'undefined') {
+        queryClient.invalidateQueries({ queryKey: ['shop-lists', variables] });
+      }
     },
   });
 };

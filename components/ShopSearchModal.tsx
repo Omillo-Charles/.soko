@@ -49,9 +49,12 @@ const ShopSearchModal = ({ isOpen, onClose, initialQuery = "" }: ShopSearchModal
     onClose();
   };
 
-  const handleSuggestionClick = (shopId: string) => {
-    router.push(`/shop/${shopId}`);
-    onClose();
+  const handleSuggestionClick = (shop: any) => {
+    const shopId = shop._id || shop.id;
+    if (shopId) {
+      router.push(`/shop/${shopId}`);
+      onClose();
+    }
   };
 
   return (
@@ -96,8 +99,8 @@ const ShopSearchModal = ({ isOpen, onClose, initialQuery = "" }: ShopSearchModal
               <h3 className="px-4 py-2 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Suggestions</h3>
               {suggestions.map((shop: any) => (
                 <button
-                  key={shop._id}
-                  onClick={() => handleSuggestionClick(shop._id)}
+                  key={shop._id || shop.id}
+                  onClick={() => handleSuggestionClick(shop)}
                   className="w-full flex items-center gap-4 p-4 hover:bg-muted rounded-2xl transition-all group text-left"
                 >
                   <div className="w-12 h-12 rounded-full overflow-hidden bg-muted shrink-0 border border-border">
