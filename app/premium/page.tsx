@@ -65,7 +65,7 @@ const PremiumPage = () => {
     },
     {
       name: "Enterprise",
-      price: { monthly: "1,000", annual: "10,000" },
+      price: { monthly: "700", annual: "7,000" },
       description: "Dedicated tools for large scale operations",
       features: [
         "Everything in Premium",

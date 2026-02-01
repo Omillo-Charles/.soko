@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ShoppingCart, User, Heart, Menu, Phone, Home, Store, Tag, Crown } from "lucide-react";
+import { ShoppingCart, User, Heart, Menu, Phone, Home, Store, Tag, Crown, MoreHorizontal, Info, Shield, FileText, Cookie, Mail } from "lucide-react";
 import SearchBar from "@/components/searchBar";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useCart } from "@/context/CartContext";
@@ -13,6 +13,7 @@ const Navbar = () => {
   const pathname = usePathname();
   const isHomepage = pathname === "/";
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
   const { totalItems } = useCart();
   const { wishlistItems } = useWishlist();
 
@@ -21,6 +22,33 @@ const Navbar = () => {
     const token = localStorage.getItem("accessToken");
     setIsLoggedIn(!!token);
   }, []);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const menu = document.getElementById('mobile-more-menu');
+      const button = document.getElementById('mobile-more-button');
+      if (menu && !menu.contains(event.target as Node) && button && !button.contains(event.target as Node)) {
+        setShowMoreMenu(false);
+      }
+    };
+
+    if (showMoreMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showMoreMenu]);
+
+  const moreMenuItems = [
+    { icon: <Info className="w-4 h-4" />, label: "About Us", href: "/about" },
+    { icon: <Mail className="w-4 h-4" />, label: "Contact", href: "/contact" },
+    { icon: <Shield className="w-4 h-4" />, label: "Privacy Policy", href: "/privacy" },
+    { icon: <FileText className="w-4 h-4" />, label: "Terms of Service", href: "/terms" },
+    { icon: <Cookie className="w-4 h-4" />, label: "Cookie Policy", href: "/cookies" },
+    { icon: <Phone className="w-4 h-4" />, label: "Help Center", href: "/help" },
+  ];
 
   return (
     <>
@@ -177,58 +205,74 @@ const Navbar = () => {
       </div>
     </header>
 
-    {/* Mobile Bottom Navigation (Fixed) - Moved outside the header to keep it visible */}
+    {/* Mobile Bottom Navigation (Fixed) */}
     <div className="md:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border shadow-[0_-1px_3px_rgba(0,0,0,0.1)] z-50">
+      {/* More Menu Card */}
+      {showMoreMenu && (
+        <div 
+          id="mobile-more-menu"
+          className="absolute bottom-full right-4 mb-4 w-56 bg-background rounded-[2rem] border border-border shadow-2xl animate-in slide-in-from-bottom-4 fade-in duration-300 overflow-hidden"
+        >
+          <div className="p-4 bg-primary/5 border-b border-border">
+            <h3 className="text-[10px] font-black text-foreground uppercase tracking-widest">More Links</h3>
+          </div>
+          <div className="p-2 grid grid-cols-1 gap-1">
+            {moreMenuItems.map((item, index) => (
+              <Link
+                key={index}
+                href={item.href}
+                onClick={() => setShowMoreMenu(false)}
+                className="flex items-center gap-3 p-3 rounded-2xl hover:bg-primary/5 transition-colors group"
+              >
+                <div className="w-8 h-8 rounded-xl bg-muted flex items-center justify-center group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                  {item.icon}
+                </div>
+                <span className="text-xs font-bold text-muted-foreground group-hover:text-foreground transition-colors">
+                  {item.label}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="flex justify-around items-center p-2 text-[10px] font-medium text-muted-foreground">
         <Link
           href="/"
-          className="flex flex-col items-center gap-1 p-2 hover:text-primary"
+          className={`flex flex-col items-center gap-1 p-2 transition-colors ${pathname === "/" ? "text-primary" : "hover:text-primary"}`}
         >
           <Home className="w-5 h-5" />
           <span>Home</span>
         </Link>
         <Link
           href="/shop"
-          className="flex flex-col items-center gap-1 p-2 hover:text-primary"
+          className={`flex flex-col items-center gap-1 p-2 transition-colors ${pathname === "/shop" ? "text-primary" : "hover:text-primary"}`}
         >
           <Store className="w-5 h-5" />
           <span>Shop</span>
         </Link>
         <Link
-          href="/deals"
-          className="flex flex-col items-center gap-1 p-2 hover:text-primary"
+          href={isLoggedIn ? "/account" : "/auth"}
+          className={`flex flex-col items-center gap-1 p-2 transition-colors ${pathname.startsWith("/account") ? "text-primary" : "hover:text-primary"}`}
         >
-          <Tag className="w-5 h-5" />
-          <span>Deals</span>
+          <User className="w-5 h-5" />
+          <span>Dashboard</span>
         </Link>
         <Link
           href="/premium"
-          className="flex flex-col items-center gap-1 p-2 text-amber-600 hover:text-amber-500"
+          className={`flex flex-col items-center gap-1 p-2 transition-colors ${pathname === "/premium" ? "text-amber-500" : "text-amber-600 hover:text-amber-500"}`}
         >
-          <Crown className="w-5 h-5 fill-amber-600/10" />
+          <Crown className={`w-5 h-5 ${pathname === "/premium" ? "fill-amber-500/20" : "fill-amber-600/10"}`} />
           <span className="font-bold">Premium</span>
         </Link>
-        <Link
-          href="/cart"
-          className="flex flex-col items-center gap-1 p-2 hover:text-primary relative"
+        <button
+          id="mobile-more-button"
+          onClick={() => setShowMoreMenu(!showMoreMenu)}
+          className={`flex flex-col items-center gap-1 p-2 transition-colors ${showMoreMenu ? "text-primary" : "hover:text-primary"}`}
         >
-          <div className="relative">
-            <ShoppingCart className="w-5 h-5" />
-            {totalItems > 0 && (
-              <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-secondary text-primary-foreground text-[9px] flex items-center justify-center rounded-full">
-                {totalItems}
-              </span>
-            )}
-          </div>
-          <span>Cart</span>
-        </Link>
-        <Link
-          href={isLoggedIn ? "/account" : "/auth"}
-          className="flex flex-col items-center gap-1 p-2 hover:text-primary"
-        >
-          <User className="w-5 h-5" />
-          <span>{isLoggedIn ? "Dashboard" : "Account"}</span>
-        </Link>
+          <MoreHorizontal className="w-5 h-5" />
+          <span>More</span>
+        </button>
       </div>
     </div>
     </>
