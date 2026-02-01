@@ -71,7 +71,7 @@ const Navbar = () => {
         <div className="flex items-center gap-4 divide-x divide-white/10">
           <Link
             href="/help"
-            className="hover:text-slate-50 transition-colors pr-4"
+            className={`transition-colors pr-4 ${pathname === "/help" ? "text-secondary font-bold" : "hover:text-slate-50"}`}
           >
             Help Center
           </Link>
@@ -97,14 +97,14 @@ const Navbar = () => {
             {/* Mobile Icons (Visible only on mobile) */}
             <div className="flex items-center gap-4 md:hidden">
               <ThemeToggle />
-              <Link href="/wishlist" className="relative">
-                <Heart className="w-6 h-6 text-slate-50" />
+              <Link href="/wishlist" className="relative transition-colors">
+                <Heart className={`w-6 h-6 ${pathname === "/wishlist" ? "text-primary fill-primary/20" : "text-slate-50"}`} />
                 <span className="absolute -top-1 -right-1 w-4 h-4 bg-secondary text-primary-foreground text-[10px] flex items-center justify-center rounded-full">
                   {wishlistItems.length}
                 </span>
               </Link>
-              <Link href="/cart" className="relative">
-                <ShoppingCart className="w-6 h-6 text-slate-50" />
+              <Link href="/cart" className="relative transition-colors">
+                <ShoppingCart className={`w-6 h-6 ${pathname === "/cart" ? "text-primary" : "text-slate-50"}`} />
                 <span className="absolute -top-1 -right-1 w-4 h-4 bg-secondary text-primary-foreground text-[10px] flex items-center justify-center rounded-full">
                   {totalItems}
                 </span>
@@ -120,18 +120,18 @@ const Navbar = () => {
           {/* Desktop Icons (Hidden on mobile) */}
           <div className="hidden md:flex items-center gap-6 text-slate-50">
             <ThemeToggle />
-            <Link href={isLoggedIn ? "/account" : "/auth"} className="flex flex-col items-center group">
-              <User className="w-6 h-6 group-hover:text-primary transition-colors" />
-              <span className="text-xs mt-1 font-medium group-hover:text-primary text-slate-400">
+            <Link href={isLoggedIn ? "/account" : "/auth"} className={`flex flex-col items-center group transition-colors ${pathname.startsWith("/account") || pathname === "/auth" ? "text-primary" : "text-slate-50"}`}>
+              <User className={`w-6 h-6 transition-colors ${pathname.startsWith("/account") || pathname === "/auth" ? "text-primary" : "group-hover:text-primary"}`} />
+              <span className={`text-xs mt-1 font-medium transition-colors ${pathname.startsWith("/account") || pathname === "/auth" ? "text-primary" : "text-slate-400 group-hover:text-primary"}`}>
                 {isLoggedIn ? "Dashboard" : "Account"}
               </span>
             </Link>
             <Link
               href="/wishlist"
-              className="flex flex-col items-center group relative"
+              className={`flex flex-col items-center group relative transition-colors ${pathname === "/wishlist" ? "text-primary" : "text-slate-50"}`}
             >
-              <Heart className="w-6 h-6 group-hover:text-primary transition-colors" />
-              <span className="text-xs mt-1 font-medium group-hover:text-primary">
+              <Heart className={`w-6 h-6 transition-colors ${pathname === "/wishlist" ? "text-primary" : "group-hover:text-primary"}`} />
+              <span className={`text-xs mt-1 font-medium transition-colors ${pathname === "/wishlist" ? "text-primary" : "group-hover:text-primary"}`}>
                 Wishlist
               </span>
               {wishlistItems.length > 0 && (
@@ -142,10 +142,10 @@ const Navbar = () => {
             </Link>
             <Link
               href="/cart"
-              className="flex flex-col items-center group relative"
+              className={`flex flex-col items-center group relative transition-colors ${pathname === "/cart" ? "text-primary" : "text-slate-50"}`}
             >
-              <ShoppingCart className="w-6 h-6 group-hover:text-primary transition-colors" />
-              <span className="text-xs mt-1 font-medium group-hover:text-primary">
+              <ShoppingCart className={`w-6 h-6 transition-colors ${pathname === "/cart" ? "text-primary" : "group-hover:text-primary"}`} />
+              <span className={`text-xs mt-1 font-medium transition-colors ${pathname === "/cart" ? "text-primary" : "group-hover:text-primary"}`}>
                 Cart
               </span>
               <span className="absolute -top-1 -right-1 w-4 h-4 bg-secondary text-primary-foreground text-[10px] flex items-center justify-center rounded-full">
@@ -168,31 +168,34 @@ const Navbar = () => {
               <span>All Categories</span>
             </Link>
             <nav className="flex items-center gap-6">
-              <Link href="/" className="hover:text-primary-foreground/80 transition-colors">
+              <Link 
+                href="/" 
+                className={`transition-colors ${pathname === "/" ? "text-secondary font-bold underline decoration-2 underline-offset-8" : "hover:text-primary-foreground/80"}`}
+              >
                 Home
               </Link>
               <Link
                 href="/shop"
-                className="hover:text-primary-foreground/80 transition-colors"
+                className={`transition-colors ${pathname === "/shop" ? "text-secondary font-bold underline decoration-2 underline-offset-8" : "hover:text-primary-foreground/80"}`}
               >
                 Shop
               </Link>
               <Link
                 href="/deals"
-                className="hover:text-primary-foreground/80 transition-colors"
+                className={`transition-colors ${pathname === "/deals" ? "text-secondary font-bold underline decoration-2 underline-offset-8" : "hover:text-primary-foreground/80"}`}
               >
                 Deals
               </Link>
               <Link
                 href="/premium"
-                className="flex items-center gap-1.5 text-amber-300 hover:text-amber-200 transition-colors font-bold"
+                className={`flex items-center gap-1.5 transition-colors font-bold ${pathname === "/premium" ? "text-amber-200 underline decoration-2 underline-offset-8" : "text-amber-300 hover:text-amber-200"}`}
               >
-                <Crown className="w-4 h-4 fill-current" />
+                <Crown className={`w-4 h-4 fill-current ${pathname === "/premium" ? "animate-pulse" : ""}`} />
                 Premium
               </Link>
               <Link
                 href="/contact"
-                className="hover:text-primary-foreground/80 transition-colors"
+                className={`transition-colors ${pathname === "/contact" ? "text-secondary font-bold underline decoration-2 underline-offset-8" : "hover:text-primary-foreground/80"}`}
               >
                 Contact
               </Link>
@@ -217,21 +220,24 @@ const Navbar = () => {
             <h3 className="text-[10px] font-black text-foreground uppercase tracking-widest">More Links</h3>
           </div>
           <div className="p-2 grid grid-cols-1 gap-1">
-            {moreMenuItems.map((item, index) => (
-              <Link
-                key={index}
-                href={item.href}
-                onClick={() => setShowMoreMenu(false)}
-                className="flex items-center gap-3 p-3 rounded-2xl hover:bg-primary/5 transition-colors group"
-              >
-                <div className="w-8 h-8 rounded-xl bg-muted flex items-center justify-center group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-                  {item.icon}
-                </div>
-                <span className="text-xs font-bold text-muted-foreground group-hover:text-foreground transition-colors">
-                  {item.label}
-                </span>
-              </Link>
-            ))}
+            {moreMenuItems.map((item, index) => {
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={index}
+                  href={item.href}
+                  onClick={() => setShowMoreMenu(false)}
+                  className={`flex items-center gap-3 p-3 rounded-2xl transition-colors group ${isActive ? "bg-primary/10 text-primary" : "hover:bg-primary/5"}`}
+                >
+                  <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors ${isActive ? "bg-primary text-primary-foreground" : "bg-muted group-hover:bg-primary/10 group-hover:text-primary"}`}>
+                    {item.icon}
+                  </div>
+                  <span className={`text-xs font-bold transition-colors ${isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"}`}>
+                    {item.label}
+                  </span>
+                </Link>
+              );
+            })}
           </div>
         </div>
       )}
