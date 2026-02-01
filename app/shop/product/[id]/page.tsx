@@ -43,7 +43,7 @@ const ProductDetailsPage = () => {
   const { toggleWishlist, isInWishlist } = useWishlist();
   const { user: currentUser } = useUser();
   const { data: myShop } = useMyShop();
-  const { data: popularShopsData } = usePopularShops();
+  const { data: popularShopsData } = usePopularShops(4);
   const followMutation = useFollowShop();
   
   const { data: product, isLoading, error } = useProduct(id as string);

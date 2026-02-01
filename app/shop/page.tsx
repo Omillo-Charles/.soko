@@ -48,7 +48,7 @@ const ShopPage = () => {
   const [activeTab, setActiveTab] = useState<'foryou' | 'following'>('foryou');
   const { user: currentUser } = useUser();
   const { data: myShop } = useMyShop();
-  const { data: popularShopsData, isLoading: isShopsLoading } = usePopularShops();
+  const { data: popularShopsData, isLoading: isShopsLoading } = usePopularShops(4);
   const shopsQuery = searchParams.get("shops_q") || "";
   const { data: flashDealsData } = useLimitedProducts(3);
   const followMutation = useFollowShop();

@@ -99,7 +99,7 @@ const ShopProfilePage = () => {
     minPrice: debouncedPriceRange.min ? parseFloat(debouncedPriceRange.min) : undefined,
     maxPrice: debouncedPriceRange.max ? parseFloat(debouncedPriceRange.max) : undefined
   });
-  const { data: popularShopsData = [] } = usePopularShops();
+  const { data: popularShopsData = [] } = usePopularShops(4);
   const { data: listData = [], isLoading: isListsLoading } = useShopLists(id, activeSection as 'Followers' | 'Following');
   const { data: reviewsData = [], isLoading: isReviewsLoading } = useShopReviews(id);
   const followMutation = useFollowShop();
@@ -901,7 +901,7 @@ const ShopProfilePage = () => {
               <div className="space-y-1">
                 {popularShops
                   .filter((s: any) => s.id !== id) // Filter out the current shop
-                  .slice(0, 5) // Limit to 5 shops
+                  .slice(0, 4) // Limit to 4 shops
                   .map((vendor: any) => (
                   <div 
                     key={vendor.id} 

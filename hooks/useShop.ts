@@ -44,11 +44,13 @@ export const useShopProducts = (id: string, params?: { limit?: number; minPrice?
   });
 };
 
-export const usePopularShops = () => {
+export const usePopularShops = (limit?: number) => {
   return useQuery({
-    queryKey: ['popular-shops'],
+    queryKey: ['popular-shops', limit],
     queryFn: async () => {
-      const response = await api.get('/shops');
+      const response = await api.get('/shops', {
+        params: { limit }
+      });
       return response.data.data;
     },
   });
