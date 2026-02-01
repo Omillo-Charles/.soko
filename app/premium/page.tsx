@@ -10,9 +10,25 @@ import {
   BadgeCheck, 
   Star
 } from "lucide-react";
+import { PremiumUpgradeModal } from "@/components/PremiumUpgradeModal";
 
 const PremiumPage = () => {
   const [isAnnual, setIsAnnual] = useState(false);
+  const [upgradeModal, setUpgradeModal] = useState({
+    isOpen: false,
+    planName: "",
+    price: ""
+  });
+
+  const handleUpgradeClick = (plan: any) => {
+    if (plan.name === "Free" || plan.name === "Enterprise") return;
+    
+    setUpgradeModal({
+      isOpen: true,
+      planName: plan.name,
+      price: isAnnual ? plan.price.annual : plan.price.monthly
+    });
+  };
 
   const plans = [
     {
@@ -175,6 +191,7 @@ const PremiumPage = () => {
               </div>
 
               <button 
+                onClick={() => handleUpgradeClick(plan)}
                 className={`w-full py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all ${
                   plan.buttonVariant === "primary"
                   ? "bg-primary text-primary-foreground hover:scale-[1.02] shadow-lg shadow-primary/20"
@@ -187,6 +204,14 @@ const PremiumPage = () => {
           ))}
         </div>
       </div>
+
+      <PremiumUpgradeModal 
+        isOpen={upgradeModal.isOpen}
+        onClose={() => setUpgradeModal(prev => ({ ...prev, isOpen: false }))}
+        planName={upgradeModal.planName}
+        price={upgradeModal.price}
+        isAnnual={isAnnual}
+      />
 
       {/* Benefits Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
