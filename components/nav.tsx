@@ -162,10 +162,10 @@ const Navbar = () => {
           <div className="flex items-center gap-8 text-sm font-medium">
             <Link 
               href="/categories"
-              className="flex items-center gap-2 cursor-pointer bg-black/10 h-12 px-4 hover:bg-black/20 transition-colors"
+              className={`flex items-center gap-2 cursor-pointer h-12 px-4 transition-colors ${pathname === "/categories" ? "bg-black/30 text-secondary" : "bg-black/10 hover:bg-black/20"}`}
             >
-              <Menu className="w-5 h-5" />
-              <span>All Categories</span>
+              <Menu className={`w-5 h-5 ${pathname === "/categories" ? "text-secondary" : ""}`} />
+              <span className={pathname === "/categories" ? "font-bold" : ""}>All Categories</span>
             </Link>
             <nav className="flex items-center gap-6">
               <Link 

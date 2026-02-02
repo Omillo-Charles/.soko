@@ -152,16 +152,21 @@ const ProductDetailsPage = () => {
             <div className="space-y-4">
               <h3 className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em] px-2">Categories</h3>
               <div className="space-y-1">
-                {categories.map((category) => (
-                  <Link 
-                    key={category.value}
-                    href={`/shop?cat=${category.value}`}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all group"
-                  >
-                    <span className="text-xl group-hover:scale-110 transition-transform">{(category as any).icon}</span>
-                    {category.label}
-                  </Link>
-                ))}
+                {categories.map((category) => {
+                  const Icon = (category as any).icon;
+                  return (
+                    <Link 
+                      key={category.value}
+                      href={`/shop?cat=${category.value}`}
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all group"
+                    >
+                      <div className="p-1.5 rounded-lg bg-muted group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                        {Icon && <Icon className="w-3.5 h-3.5" />}
+                      </div>
+                      {category.label}
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           </aside>

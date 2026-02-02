@@ -5,131 +5,106 @@ import Image from "next/image";
 import { ChevronRight, LayoutGrid, ShoppingBag, Zap, Heart, Star } from "lucide-react";
 import { categories as allCategories } from "@/constants/categories";
 
-// Map categories to images or icons
-const categoryMeta: Record<string, { image: string; icon: any; description: string }> = {
+// Map categories to images or descriptions
+const categoryMeta: Record<string, { image: string; description: string }> = {
   "clothing-apparel": {
     image: "/categories/clothing/clothing.jpg",
-    icon: <ShoppingBag className="w-5 h-5" />,
     description: "Trendy outfits and daily wear for all ages."
   },
   "footwear": {
     image: "/categories/footwear/footwear.jpg",
-    icon: <Zap className="w-5 h-5" />,
     description: "Comfortable and stylish shoes for every occasion."
   },
   "fashion-accessories": {
     image: "/categories/fashion/fashionaccessories.jpg",
-    icon: <Heart className="w-5 h-5" />,
     description: "Complete your look with our exclusive accessories."
   },
   "electronics": {
     image: "/categories/electronics/electronics.jpg",
-    icon: <Zap className="w-5 h-5" />,
     description: "Latest gadgets and high-tech electronic devices."
   },
   "phone-accessories": {
     image: "/categories/phone%20accessories/phones.jpg",
-    icon: <Zap className="w-5 h-5" />,
     description: "Cases, chargers, and more for your smartphones."
   },
   "home-appliances": {
     image: "/categories/home%20appliances/home.jpg",
-    icon: <Zap className="w-5 h-5" />,
     description: "Modern appliances for a more efficient home."
   },
   "beauty-products": {
     image: "/categories/beauty%20products/beauty.jpg",
-    icon: <Star className="w-5 h-5" />,
     description: "Skincare, makeup, and beauty essentials."
   },
   "personal-care": {
     image: "/categories/personal%20care/personal.jpg",
-    icon: <Heart className="w-5 h-5" />,
     description: "Self-care and personal hygiene products."
   },
   "watches-jewelry": {
     image: "/categories/jewelary/watches.jpg",
-    icon: <Star className="w-5 h-5" />,
     description: "Elegant watches and fine jewelry pieces."
   },
   "groceries-packaged-foods": {
     image: "/categories/groceries%20and%20foods/groceries.jpg",
-    icon: <ShoppingBag className="w-5 h-5" />,
     description: "Fresh groceries and quality packaged food items."
   },
   "furniture": {
     image: "/categories/furniture/furniture.jpg",
-    icon: <LayoutGrid className="w-5 h-5" />,
     description: "Stylish furniture for every room in your house."
   },
   "home-decor": {
     image: "/categories/home%20decor/decor.jpg",
-    icon: <Star className="w-5 h-5" />,
     description: "Beautiful items to make your house a home."
   },
   "kitchenware": {
     image: "/categories/kitchenware/kitchen.jpg",
-    icon: <LayoutGrid className="w-5 h-5" />,
     description: "Essential tools and appliances for your kitchen."
   },
   "books-stationery": {
     image: "/categories/stationery/stationery.jpg",
-    icon: <Star className="w-5 h-5" />,
     description: "Books, notebooks, and office supplies."
   },
   "baby-products": {
     image: "/categories/baby%20products/baby.jpg",
-    icon: <Heart className="w-5 h-5" />,
     description: "Everything you need for your little ones."
   },
   "toys-games": {
     image: "/categories/toys/toys.jpg",
-    icon: <Zap className="w-5 h-5" />,
     description: "Fun and educational toys for children."
   },
   "sports-fitness": {
     image: "/categories/sports/sports.jpg",
-    icon: <Zap className="w-5 h-5" />,
     description: "Gear up for your fitness and sporting activities."
   },
   "computer-accessories": {
     image: "/categories/computer%20accessories/computer.jpg",
-    icon: <LayoutGrid className="w-5 h-5" />,
     description: "Enhance your computing experience."
   },
   "office-supplies": {
     image: "/categories/office%20supplies/office.jpg",
-    icon: <LayoutGrid className="w-5 h-5" />,
     description: "Quality supplies for your professional workspace."
   },
   "digital-products": {
     image: "/categories/digital%20products/digital.jpg",
-    icon: <Zap className="w-5 h-5" />,
     description: "Software, ebooks, and other digital assets."
   },
   "automotive-accessories": {
     image: "/categories/automotive/automotive.jpg",
-    icon: <LayoutGrid className="w-5 h-5" />,
     description: "Essential accessories for your vehicle."
   },
   "pet-supplies": {
     image: "/categories/pet/pet.jpg",
-    icon: <Heart className="w-5 h-5" />,
     description: "Care and supplies for your furry friends."
   },
   "health-products": {
     image: "/categories/health/health.jpg",
-    icon: <Heart className="w-5 h-5" />,
     description: "Wellness and health maintenance products."
   },
   "craft-diy": {
     image: "/categories/craft/craft.jpg",
-    icon: <Star className="w-5 h-5" />,
     description: "Supplies for your creative and DIY projects."
   },
   "event-party-supplies": {
     image: "/categories/events%20and%20parties/event.jpg",
-    icon: <Zap className="w-5 h-5" />,
     description: "Everything you need for a memorable celebration."
   },
 };
@@ -154,9 +129,9 @@ const CategoriesPage = () => {
           {displayCategories.map((category: any) => {
             const meta = (categoryMeta as any)[category.value] || {
               image: "/placeholder-category.jpg",
-              icon: <LayoutGrid className="w-5 h-5" />,
               description: `Browse all products in ${category.label}.`
             };
+            const Icon = category.icon || LayoutGrid;
 
             return (
               <Link 
@@ -179,7 +154,7 @@ const CategoriesPage = () => {
                   <div className="absolute bottom-4 left-4 right-4">
                     <div className="flex items-center gap-2 text-primary-foreground">
                       <div className="p-2 bg-primary-foreground/20 backdrop-blur-md rounded-xl">
-                        {meta.icon}
+                        <Icon className="w-5 h-5" />
                       </div>
                       <h2 className="text-lg font-black tracking-tight">{category.label}</h2>
                     </div>

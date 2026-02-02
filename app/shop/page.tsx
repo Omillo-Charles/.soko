@@ -366,19 +366,29 @@ const ShopPage = () => {
                 )}
               </div>
               <div className="space-y-1">
-                {categories.map((category) => (
-                  <button 
-                    key={category.value}
-                    onClick={() => handleCategoryClick(category.value)}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all group ${
-                      cat === category.value 
-                        ? 'text-primary bg-primary/10' 
-                        : 'text-muted-foreground hover:text-primary hover:bg-primary/5'
-                    }`}
-                  >
-                    {category.label}
-                  </button>
-                ))}
+                {categories.map((category) => {
+                  const Icon = category.icon;
+                  return (
+                    <button 
+                      key={category.value}
+                      onClick={() => handleCategoryClick(category.value)}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all group ${
+                        cat === category.value 
+                          ? 'text-primary bg-primary/10' 
+                          : 'text-muted-foreground hover:text-primary hover:bg-primary/5'
+                      }`}
+                    >
+                      <div className={`p-1.5 rounded-lg transition-colors ${
+                        cat === category.value 
+                          ? 'bg-primary/20 text-primary' 
+                          : 'bg-muted group-hover:bg-primary/10 group-hover:text-primary'
+                      }`}>
+                        {Icon && <Icon className="w-3.5 h-3.5" />}
+                      </div>
+                      {category.label}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 

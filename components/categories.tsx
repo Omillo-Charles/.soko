@@ -3,134 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRef } from "react";
-
-const items = [
-  {
-    name: "Home Décor",
-    href: "/shop?cat=home-decor",
-    image: "/categories/home%20decor/decor.jpg",
-  },
-  {
-    name: "Kitchenware",
-    href: "/shop?cat=kitchenware",
-    image: "/categories/kitchenware/kitchen.jpg",
-  },
-  {
-    name: "Books & Stationery",
-    href: "/shop?cat=books-stationery",
-    image: "/categories/stationery/stationery.jpg",
-  },
-  {
-    name: "Baby Products",
-    href: "/shop?cat=baby-products",
-    image: "/categories/baby%20products/baby.jpg",
-  },
-  {
-    name: "Toys & Games",
-    href: "/shop?cat=toys-games",
-    image: "/categories/toys/toys.jpg",
-  },
-  {
-    name: "Sports & Fitness Equipment",
-    href: "/shop?cat=sports-fitness",
-    image: "/categories/sports/sports.jpg",
-  },
-  {
-    name: "Computer Accessories",
-    href: "/shop?cat=computer-accessories",
-    image: "/categories/computer%20accessories/computer.jpg",
-  },
-  {
-    name: "Office Supplies",
-    href: "/shop?cat=office-supplies",
-    image: "/categories/office%20supplies/office.jpg",
-  },
-  {
-    name: "Digital Products",
-    href: "/shop?cat=digital-products",
-    image: "/categories/digital%20products/digital.jpg",
-  },
-  {
-    name: "Automotive Accessories",
-    href: "/shop?cat=automotive-accessories",
-    image: "/categories/automotive/automotive.jpg",
-  },
-  {
-    name: "Pet Supplies",
-    href: "/shop?cat=pet-supplies",
-    image: "/categories/pet/pet.jpg",
-  },
-  {
-    name: "Health Products",
-    href: "/shop?cat=health-products",
-    image: "/categories/health/health.jpg",
-  },
-  {
-    name: "Craft & DIY Supplies",
-    href: "/shop?cat=craft-diy",
-    image: "/categories/craft/craft.jpg",
-  },
-  {
-    name: "Event & Party Supplies",
-    href: "/shop?cat=event-party-supplies",
-    image: "/categories/events%20and%20parties/event.jpg",
-  },
-  {
-    name: "Clothing & Apparel",
-    href: "/shop?cat=clothing-apparel",
-    image: "/categories/clothing/clothing.jpg",
-  },
-  {
-    name: "Footwear",
-    href: "/shop?cat=footwear",
-    image: "/categories/footwear/footwear.jpg",
-  },
-  {
-    name: "Fashion Accessories",
-    href: "/shop?cat=fashion-accessories",
-    image: "/categories/fashion/fashionaccessories.jpg",
-  },
-  {
-    name: "Electronics",
-    href: "/shop?cat=electronics",
-    image: "/categories/electronics/electronics.jpg",
-  },
-  {
-    name: "Phone Accessories",
-    href: "/shop?cat=phone-accessories",
-    image: "/categories/phone%20accessories/phones.jpg",
-  },
-  {
-    name: "Home Appliances",
-    href: "/shop?cat=home-appliances",
-    image: "/categories/home%20appliances/home.jpg",
-  },
-  {
-    name: "Beauty Products",
-    href: "/shop?cat=beauty-products",
-    image: "/categories/beauty%20products/beauty.jpg",
-  },
-  {
-    name: "Personal Care Items",
-    href: "/shop?cat=personal-care",
-    image: "/categories/personal%20care/personal.jpg",
-  },
-  {
-    name: "Watches & Jewelry",
-    href: "/shop?cat=watches-jewelry",
-    image: "/categories/jewelary/watches.jpg",
-  },
-  {
-    name: "Groceries & Packaged Foods",
-    href: "/shop?cat=groceries-packaged-foods",
-    image: "/categories/groceries%20and%20foods/groceries.jpg",
-  },
-  {
-    name: "Furniture",
-    href: "/shop?cat=furniture",
-    image: "/categories/furniture/furniture.jpg",
-  },
-];
+import { categories } from "@/constants/categories";
 
 const Categories = () => {
   const scrollerRef = useRef<HTMLDivElement>(null);
@@ -141,6 +14,35 @@ const Categories = () => {
     const amount = 320;
     el.scrollBy({ left: dir === "left" ? -amount : amount, behavior: "smooth" });
   };
+
+  // We'll use the icons from the categories constant
+  const items = [
+    { name: "Home Décor", href: "/shop?cat=home-decor", image: "/categories/home%20decor/decor.jpg", value: "home-decor" },
+    { name: "Kitchenware", href: "/shop?cat=kitchenware", image: "/categories/kitchenware/kitchen.jpg", value: "kitchenware" },
+    { name: "Books & Stationery", href: "/shop?cat=books-stationery", image: "/categories/stationery/stationery.jpg", value: "books-stationery" },
+    { name: "Baby Products", href: "/shop?cat=baby-products", image: "/categories/baby%20products/baby.jpg", value: "baby-products" },
+    { name: "Toys & Games", href: "/shop?cat=toys-games", image: "/categories/toys/toys.jpg", value: "toys-games" },
+    { name: "Sports & Fitness Equipment", href: "/shop?cat=sports-fitness", image: "/categories/sports/sports.jpg", value: "sports-fitness" },
+    { name: "Computer Accessories", href: "/shop?cat=computer-accessories", image: "/categories/computer%20accessories/computer.jpg", value: "computer-accessories" },
+    { name: "Office Supplies", href: "/shop?cat=office-supplies", image: "/categories/office%20supplies/office.jpg", value: "office-supplies" },
+    { name: "Digital Products", href: "/shop?cat=digital-products", image: "/categories/digital%20products/digital.jpg", value: "digital-products" },
+    { name: "Automotive Accessories", href: "/shop?cat=automotive-accessories", image: "/categories/automotive/automotive.jpg", value: "automotive-accessories" },
+    { name: "Pet Supplies", href: "/shop?cat=pet-supplies", image: "/categories/pet/pet.jpg", value: "pet-supplies" },
+    { name: "Health Products", href: "/shop?cat=health-products", image: "/categories/health/health.jpg", value: "health-products" },
+    { name: "Craft & DIY Supplies", href: "/shop?cat=craft-diy", image: "/categories/craft/craft.jpg", value: "craft-diy" },
+    { name: "Event & Party Supplies", href: "/shop?cat=event-party-supplies", image: "/categories/events%20and%20parties/event.jpg", value: "event-party-supplies" },
+    { name: "Clothing & Apparel", href: "/shop?cat=clothing-apparel", image: "/categories/clothing/clothing.jpg", value: "clothing-apparel" },
+    { name: "Footwear", href: "/shop?cat=footwear", image: "/categories/footwear/footwear.jpg", value: "footwear" },
+    { name: "Fashion Accessories", href: "/shop?cat=fashion-accessories", image: "/categories/fashion/fashionaccessories.jpg", value: "fashion-accessories" },
+    { name: "Electronics", href: "/shop?cat=electronics", image: "/categories/electronics/electronics.jpg", value: "electronics" },
+    { name: "Phone Accessories", href: "/shop?cat=phone-accessories", image: "/categories/phone%20accessories/phones.jpg", value: "phone-accessories" },
+    { name: "Home Appliances", href: "/shop?cat=home-appliances", image: "/categories/home%20appliances/home.jpg", value: "home-appliances" },
+    { name: "Beauty Products", href: "/shop?cat=beauty-products", image: "/categories/beauty%20products/beauty.jpg", value: "beauty-products" },
+    { name: "Personal Care Items", href: "/shop?cat=personal-care", image: "/categories/personal%20care/personal.jpg", value: "personal-care" },
+    { name: "Watches & Jewelry", href: "/shop?cat=watches-jewelry", image: "/categories/jewelary/watches.jpg", value: "watches-jewelry" },
+    { name: "Groceries & Packaged Foods", href: "/shop?cat=groceries-packaged-foods", image: "/categories/groceries%20and%20foods/groceries.jpg", value: "groceries-packaged-foods" },
+    { name: "Furniture", href: "/shop?cat=furniture", image: "/categories/furniture/furniture.jpg", value: "furniture" },
+  ];
 
   return (
     <section className="bg-background">
@@ -186,27 +88,37 @@ const Categories = () => {
               div::-webkit-scrollbar { display: initial; height: 8px; }
             }
           `}</style>
-          {items.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              className="group min-w-[220px] md:min-w-[260px] border border-border rounded-[1.25rem] overflow-hidden hover:shadow-sm transition bg-background"
-            >
-              <div className="relative aspect-square bg-muted flex items-center justify-center">
-                <Image
-                  src={item.image}
-                  alt={item.name}
-                  fill
-                  sizes="(max-width: 768px) 220px, 260px"
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                  priority
-                />
-              </div>
-              <div className="p-3 md:p-4">
-                <div className="font-medium text-foreground group-hover:text-primary transition-colors">{item.name}</div>
-              </div>
-            </Link>
-          ))}
+          {items.map((item) => {
+            const categoryInfo = categories.find(c => c.value === item.value);
+            const Icon = categoryInfo?.icon;
+            
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className="group min-w-[220px] md:min-w-[260px] border border-border rounded-[1.25rem] overflow-hidden hover:shadow-sm transition bg-background"
+              >
+                <div className="relative aspect-square bg-muted flex items-center justify-center">
+                  <Image
+                    src={item.image}
+                    alt={item.name}
+                    fill
+                    sizes="(max-width: 768px) 220px, 260px"
+                    className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    priority
+                  />
+                  {Icon && (
+                    <div className="absolute top-3 left-3 bg-background/80 backdrop-blur-md p-2 rounded-xl border border-border shadow-sm group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
+                      <Icon className="w-4 h-4" />
+                    </div>
+                  )}
+                </div>
+                <div className="p-3 md:p-4">
+                  <div className="font-medium text-foreground group-hover:text-primary transition-colors">{item.name}</div>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </div>
     </section>
