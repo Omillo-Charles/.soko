@@ -11,6 +11,8 @@ import {
   Zap,
   ArrowRight
 } from "lucide-react";
+import api from "@/lib/api";
+import { toast } from "sonner";
 
 interface PremiumUpgradeModalProps {
   isOpen: boolean;
@@ -32,16 +34,43 @@ export const PremiumUpgradeModal = ({
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Simulate initial validation or process
-    setTimeout(() => {
-      console.log("Processing upgrade for:", { phoneNumber, planName, price, isAnnual });
+    try {
+      // Basic formatting for the backend (though backend is robust)
+      let cleanPhone = phoneNumber.replace(/\D/g, "");
+      
+      const response = await api.post("/payments/stk-push", {
+        phoneNumber: cleanPhone,
+        amount: price.replace(/,/g, ""), // Remove commas if any
+        metadata: {
+          planName,
+          isAnnual,
+          type: "premium_upgrade"
+        }
+      });
+
+      if (response.data.success) {
+        toast.success("STK Push Sent!", {
+          description: "Please check your phone for the M-Pesa PIN prompt.",
+        });
+        // We could keep the modal open or close it. 
+        // Usually, it's better to show a "Waiting for confirmation" state.
+        // For now, let's close it after a short delay to let them see the success.
+        setTimeout(() => {
+          onClose();
+        }, 3000);
+      }
+    } catch (error: any) {
+      console.error("Payment Error:", error);
+      toast.error("Payment Failed", {
+        description: error.friendlyMessage || "Could not initiate M-Pesa payment. Please try again.",
+      });
+    } finally {
       setIsLoading(false);
-      // We are only implementing the modal opening and basic state for now
-    }, 1500);
+    }
   };
 
   return (
@@ -86,8 +115,8 @@ export const PremiumUpgradeModal = ({
                   type="tel"
                   required
                   value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, '').slice(0, 9))}
-                  placeholder="700 000 000"
+                  onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                  placeholder="0700 000 000"
                   className="w-full pl-24 pr-5 py-3.5 bg-amber-500/5 border border-amber-500/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-amber-500/5 focus:border-amber-500/30 shadow-sm transition-all font-bold text-foreground placeholder:text-muted-foreground/30 text-sm"
                 />
               </div>
@@ -111,7 +140,7 @@ export const PremiumUpgradeModal = ({
 
             <button
               type="submit"
-              disabled={isLoading || phoneNumber.length < 9}
+              disabled={isLoading || (phoneNumber.startsWith("0") ? phoneNumber.length < 10 : phoneNumber.length < 9)}
               className="w-full py-4 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-amber-500/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-2"
             >
               {isLoading ? (
