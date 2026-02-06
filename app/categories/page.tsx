@@ -107,6 +107,10 @@ const categoryMeta: Record<string, { image: string; description: string }> = {
     image: "/categories/events%20and%20parties/event.jpg",
     description: "Everything you need for a memorable celebration."
   },
+  "farm-products": {
+    image: "/categories/farm%20products/farm.jpg",
+    description: "Fresh farm produce and agricultural supplies."
+  },
 };
 
 const CategoriesPage = () => {

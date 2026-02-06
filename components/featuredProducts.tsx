@@ -49,7 +49,7 @@ const FeaturedProducts = () => {
     title: ""
   });
 
-  const { data: products = [], isLoading } = useFeaturedProducts(4);
+  const { data: products = [], isLoading } = useFeaturedProducts(12);
 
 
   if (isLoading) {
@@ -74,7 +74,7 @@ const FeaturedProducts = () => {
             <ChevronRight className="w-4 h-4" />
           </Link>
         </div>
-        <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="mt-6 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
           {(products || []).map((p: any) => (
             <div key={p._id || Math.random()} className="bg-background border border-border rounded-[1.25rem] overflow-hidden group">
               <div className="relative aspect-square bg-muted cursor-pointer flex items-center justify-center overflow-hidden border-b border-border" onClick={() => p._id && router.push(`/shop/product/${p._id}`)}>

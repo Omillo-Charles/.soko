@@ -55,7 +55,16 @@ const ProductDetailsPage = () => {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   const { comments, isLoading: isCommentsLoading, deleteComment } = useComments(id as string);
-  const { data: productsData, isLoading: isProductsLoading } = useProducts({ limit: 6 });
+  const { data: productsData, isLoading: isProductsLoading } = useProducts(
+     product?.category ? { cat: product.category, limit: 11 } : { limit: 11 }
+   );
+
+  const recommendedProducts = React.useMemo(() => {
+    if (!productsData || !product) return [];
+    return productsData
+      .filter((p: any) => p._id !== product._id)
+      .slice(0, 10);
+  }, [productsData, product]);
 
   const productImages = React.useMemo(() => {
     if (!product) return [];
@@ -399,33 +408,39 @@ const ProductDetailsPage = () => {
               <div className="divide-y divide-border bg-background border border-border rounded-[1.5rem] overflow-hidden shadow-sm">
                 {isProductsLoading ? (
                   [1, 2, 3].map(i => <div key={i} className="h-40 animate-pulse bg-muted" />)
-                ) : productsData?.map((p: any) => (
-                  <div 
-                    key={p._id} 
-                    onClick={() => router.push(`/shop/product/${p._id}`)}
-                    className="p-4 hover:bg-muted transition-colors cursor-pointer group"
-                  >
-                    <div className="flex gap-4 md:gap-5">
-                      <div className="w-24 aspect-square md:w-32 rounded-2xl overflow-hidden bg-muted border border-border shrink-0 flex items-center justify-center">
-                        <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                      </div>
-                      <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
-                        <div>
-                          <div className="flex items-center justify-between gap-2">
-                            <h3 className="text-[13px] md:text-sm font-black text-foreground truncate group-hover:text-primary transition-colors">{p.name}</h3>
-                            <span className="text-xs font-black text-primary shrink-0">{formatPrice(p.price)}</span>
-                          </div>
-                          <p className="text-[11px] md:text-xs font-medium text-muted-foreground line-clamp-2 mt-0.5">{p.description}</p>
+                ) : recommendedProducts.length > 0 ? (
+                  recommendedProducts.map((p: any) => (
+                    <div 
+                      key={p._id} 
+                      onClick={() => router.push(`/shop/product/${p._id}`)}
+                      className="p-4 hover:bg-muted transition-colors cursor-pointer group"
+                    >
+                      <div className="flex gap-4 md:gap-5">
+                        <div className="w-24 aspect-square md:w-32 rounded-2xl overflow-hidden bg-muted border border-border shrink-0 flex items-center justify-center">
+                          <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                         </div>
-                        <div className="flex items-center gap-3 text-[9px] md:text-[10px] font-bold text-muted-foreground">
-                          <div className="flex items-center gap-1"><Heart className="w-3 h-3" /> {p.likesCount || 0}</div>
-                          <div className="flex items-center gap-1"><MessageIcon className="w-3 h-3" /> {p.commentsCount || 0}</div>
-                          {p.rating > 0 && <div className="flex items-center gap-1 text-amber-500"><Star className="w-3 h-3 fill-current" /> {p.rating}</div>}
+                        <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
+                          <div>
+                            <div className="flex items-center justify-between gap-2">
+                              <h3 className="text-[13px] md:text-sm font-black text-foreground truncate group-hover:text-primary transition-colors">{p.name}</h3>
+                              <span className="text-xs font-black text-primary shrink-0">{formatPrice(p.price)}</span>
+                            </div>
+                            <p className="text-[11px] md:text-xs font-medium text-muted-foreground line-clamp-2 mt-0.5">{p.description}</p>
+                          </div>
+                          <div className="flex items-center gap-3 text-[9px] md:text-[10px] font-bold text-muted-foreground">
+                            <div className="flex items-center gap-1"><Heart className="w-3 h-3" /> {p.likesCount || 0}</div>
+                            <div className="flex items-center gap-1"><MessageIcon className="w-3 h-3" /> {p.commentsCount || 0}</div>
+                            {p.rating > 0 && <div className="flex items-center gap-1 text-amber-500"><Star className="w-3 h-3 fill-current" /> {p.rating}</div>}
+                          </div>
                         </div>
                       </div>
                     </div>
+                  ))
+                ) : (
+                  <div className="p-12 text-center">
+                    <p className="text-sm font-bold text-muted-foreground italic">no other product same as this one</p>
                   </div>
-                ))}
+                )}
               </div>
             </div>
           </div>

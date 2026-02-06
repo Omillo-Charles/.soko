@@ -23,7 +23,8 @@ import {
   Lamp, 
   Armchair, 
   LayoutGrid,
-  ShoppingCart
+  ShoppingCart,
+  Sprout
 } from "lucide-react";
 
 export const categories = [
@@ -53,4 +54,5 @@ export const categories = [
   { label: "Health Products", value: "health-products", icon: Stethoscope },
   { label: "Craft & DIY Supplies", value: "craft-diy", icon: Palette },
   { label: "Event & Party Supplies", value: "event-party-supplies", icon: PartyPopper },
+  { label: "Farm Products", value: "farm-products", icon: Sprout },
 ];

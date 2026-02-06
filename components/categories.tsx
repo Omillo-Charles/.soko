@@ -2,11 +2,46 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { categories } from "@/constants/categories";
+
+// Move items outside to ensure stability and avoid hydration issues
+const CATEGORY_ITEMS = [
+  { name: "Home Décor", href: "/shop?cat=home-decor", image: "/categories/home%20decor/decor.jpg", value: "home-decor" },
+  { name: "Kitchenware", href: "/shop?cat=kitchenware", image: "/categories/kitchenware/kitchen.jpg", value: "kitchenware" },
+  { name: "Books & Stationery", href: "/shop?cat=books-stationery", image: "/categories/stationery/stationery.jpg", value: "books-stationery" },
+  { name: "Baby Products", href: "/shop?cat=baby-products", image: "/categories/baby%20products/baby.jpg", value: "baby-products" },
+  { name: "Toys & Games", href: "/shop?cat=toys-games", image: "/categories/toys/toys.jpg", value: "toys-games" },
+  { name: "Sports & Fitness Equipment", href: "/shop?cat=sports-fitness", image: "/categories/sports/sports.jpg", value: "sports-fitness" },
+  { name: "Computer Accessories", href: "/shop?cat=computer-accessories", image: "/categories/computer%20accessories/computer.jpg", value: "computer-accessories" },
+  { name: "Office Supplies", href: "/shop?cat=office-supplies", image: "/categories/office%20supplies/office.jpg", value: "office-supplies" },
+  { name: "Digital Products", href: "/shop?cat=digital-products", image: "/categories/digital%20products/digital.jpg", value: "digital-products" },
+  { name: "Automotive Accessories", href: "/shop?cat=automotive-accessories", image: "/categories/automotive/automotive.jpg", value: "automotive-accessories" },
+  { name: "Pet Supplies", href: "/shop?cat=pet-supplies", image: "/categories/pet/pet.jpg", value: "pet-supplies" },
+  { name: "Health Products", href: "/shop?cat=health-products", image: "/categories/health/health.jpg", value: "health-products" },
+  { name: "Craft & DIY Supplies", href: "/shop?cat=craft-diy", image: "/categories/craft/craft.jpg", value: "craft-diy" },
+  { name: "Event & Party Supplies", href: "/shop?cat=event-party-supplies", image: "/categories/events%20and%20parties/event.jpg", value: "event-party-supplies" },
+  { name: "Clothing & Apparel", href: "/shop?cat=clothing-apparel", image: "/categories/clothing/clothing.jpg", value: "clothing-apparel" },
+  { name: "Footwear", href: "/shop?cat=footwear", image: "/categories/footwear/footwear.jpg", value: "footwear" },
+  { name: "Fashion Accessories", href: "/shop?cat=fashion-accessories", image: "/categories/fashion/fashionaccessories.jpg", value: "fashion-accessories" },
+  { name: "Electronics", href: "/shop?cat=electronics", image: "/categories/electronics/electronics.jpg", value: "electronics" },
+  { name: "Phone Accessories", href: "/shop?cat=phone-accessories", image: "/categories/phone%20accessories/phones.jpg", value: "phone-accessories" },
+  { name: "Home Appliances", href: "/shop?cat=home-appliances", image: "/categories/home%20appliances/home.jpg", value: "home-appliances" },
+  { name: "Beauty Products", href: "/shop?cat=beauty-products", image: "/categories/beauty%20products/beauty.jpg", value: "beauty-products" },
+  { name: "Personal Care Items", href: "/shop?cat=personal-care", image: "/categories/personal%20care/personal.jpg", value: "personal-care" },
+  { name: "Watches & Jewelry", href: "/shop?cat=watches-jewelry", image: "/categories/jewelary/watches.jpg", value: "watches-jewelry" },
+  { name: "Groceries & Packaged Foods", href: "/shop?cat=groceries-packaged-foods", image: "/categories/groceries%20and%20foods/groceries.jpg", value: "groceries-packaged-foods" },
+  { name: "Furniture", href: "/shop?cat=furniture", image: "/categories/furniture/furniture.jpg", value: "furniture" },
+  { name: "Farm Products", href: "/shop?cat=farm-products", image: "/categories/farm%20products/farm.jpg", value: "farm-products" },
+];
 
 const Categories = () => {
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const scroll = (dir: "left" | "right") => {
     const el = scrollerRef.current;
@@ -15,34 +50,7 @@ const Categories = () => {
     el.scrollBy({ left: dir === "left" ? -amount : amount, behavior: "smooth" });
   };
 
-  // We'll use the icons from the categories constant
-  const items = [
-    { name: "Home Décor", href: "/shop?cat=home-decor", image: "/categories/home%20decor/decor.jpg", value: "home-decor" },
-    { name: "Kitchenware", href: "/shop?cat=kitchenware", image: "/categories/kitchenware/kitchen.jpg", value: "kitchenware" },
-    { name: "Books & Stationery", href: "/shop?cat=books-stationery", image: "/categories/stationery/stationery.jpg", value: "books-stationery" },
-    { name: "Baby Products", href: "/shop?cat=baby-products", image: "/categories/baby%20products/baby.jpg", value: "baby-products" },
-    { name: "Toys & Games", href: "/shop?cat=toys-games", image: "/categories/toys/toys.jpg", value: "toys-games" },
-    { name: "Sports & Fitness Equipment", href: "/shop?cat=sports-fitness", image: "/categories/sports/sports.jpg", value: "sports-fitness" },
-    { name: "Computer Accessories", href: "/shop?cat=computer-accessories", image: "/categories/computer%20accessories/computer.jpg", value: "computer-accessories" },
-    { name: "Office Supplies", href: "/shop?cat=office-supplies", image: "/categories/office%20supplies/office.jpg", value: "office-supplies" },
-    { name: "Digital Products", href: "/shop?cat=digital-products", image: "/categories/digital%20products/digital.jpg", value: "digital-products" },
-    { name: "Automotive Accessories", href: "/shop?cat=automotive-accessories", image: "/categories/automotive/automotive.jpg", value: "automotive-accessories" },
-    { name: "Pet Supplies", href: "/shop?cat=pet-supplies", image: "/categories/pet/pet.jpg", value: "pet-supplies" },
-    { name: "Health Products", href: "/shop?cat=health-products", image: "/categories/health/health.jpg", value: "health-products" },
-    { name: "Craft & DIY Supplies", href: "/shop?cat=craft-diy", image: "/categories/craft/craft.jpg", value: "craft-diy" },
-    { name: "Event & Party Supplies", href: "/shop?cat=event-party-supplies", image: "/categories/events%20and%20parties/event.jpg", value: "event-party-supplies" },
-    { name: "Clothing & Apparel", href: "/shop?cat=clothing-apparel", image: "/categories/clothing/clothing.jpg", value: "clothing-apparel" },
-    { name: "Footwear", href: "/shop?cat=footwear", image: "/categories/footwear/footwear.jpg", value: "footwear" },
-    { name: "Fashion Accessories", href: "/shop?cat=fashion-accessories", image: "/categories/fashion/fashionaccessories.jpg", value: "fashion-accessories" },
-    { name: "Electronics", href: "/shop?cat=electronics", image: "/categories/electronics/electronics.jpg", value: "electronics" },
-    { name: "Phone Accessories", href: "/shop?cat=phone-accessories", image: "/categories/phone%20accessories/phones.jpg", value: "phone-accessories" },
-    { name: "Home Appliances", href: "/shop?cat=home-appliances", image: "/categories/home%20appliances/home.jpg", value: "home-appliances" },
-    { name: "Beauty Products", href: "/shop?cat=beauty-products", image: "/categories/beauty%20products/beauty.jpg", value: "beauty-products" },
-    { name: "Personal Care Items", href: "/shop?cat=personal-care", image: "/categories/personal%20care/personal.jpg", value: "personal-care" },
-    { name: "Watches & Jewelry", href: "/shop?cat=watches-jewelry", image: "/categories/jewelary/watches.jpg", value: "watches-jewelry" },
-    { name: "Groceries & Packaged Foods", href: "/shop?cat=groceries-packaged-foods", image: "/categories/groceries%20and%20foods/groceries.jpg", value: "groceries-packaged-foods" },
-    { name: "Furniture", href: "/shop?cat=furniture", image: "/categories/furniture/furniture.jpg", value: "furniture" },
-  ];
+  if (!isMounted) return null;
 
   return (
     <section className="bg-background">
@@ -88,8 +96,8 @@ const Categories = () => {
               div::-webkit-scrollbar { display: initial; height: 8px; }
             }
           `}</style>
-          {items.map((item) => {
-            const categoryInfo = categories.find(c => c.value === item.value);
+          {CATEGORY_ITEMS.map((item) => {
+          const categoryInfo = categories.find(c => c.value === item.value);
             const Icon = categoryInfo?.icon;
             
             return (
