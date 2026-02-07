@@ -36,7 +36,7 @@ const PremiumPage = () => {
       price: { monthly: "0", annual: "0" },
       description: "Basic features for individuals and new sellers",
       features: [
-        "Up to 10 product listings",
+        "Unlimited product listings",
         "Standard seller dashboard",
         "Basic analytics",
         "Community support",
@@ -47,16 +47,14 @@ const PremiumPage = () => {
     },
     {
       name: "Premium",
-      price: { monthly: "300", annual: "3,000" },
+      price: { monthly: "200", annual: "2,000" },
       description: "Everything you need to grow your business faster",
       features: [
-        "Unlimited product listings",
         "Verification Checkmark (Blue Badge)",
         "Priority in search results",
         "Advanced sales analytics",
         "Featured shop placement",
         "24/7 Priority support",
-        "Zero transaction fees",
         "Early access to new features",
       ],
       buttonText: "Upgrade to Premium",
@@ -65,7 +63,7 @@ const PremiumPage = () => {
     },
     {
       name: "Enterprise",
-      price: { monthly: "700", annual: "7,000" },
+      price: { monthly: "500", annual: "5,000" },
       description: "Dedicated tools for large scale operations",
       features: [
         "Everything in Premium",

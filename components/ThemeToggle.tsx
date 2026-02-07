@@ -22,14 +22,17 @@ export function ThemeToggle() {
   return (
     <button
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:bg-slate-100 dark:hover:bg-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-50"
+      className="flex flex-col items-center group transition-colors text-slate-50"
       aria-label="Toggle theme"
     >
       {theme === "dark" ? (
-        <Sun className="w-5 h-5 transition-all" />
+        <Sun className="w-6 h-6 transition-colors group-hover:text-primary" />
       ) : (
-        <Moon className="w-5 h-5 transition-all" />
+        <Moon className="w-6 h-6 transition-colors group-hover:text-primary" />
       )}
+      <span className="hidden md:block text-xs mt-1 font-medium text-slate-400 group-hover:text-primary transition-colors">
+        {theme === "dark" ? "Light" : "Dark"}
+      </span>
     </button>
   );
 }
