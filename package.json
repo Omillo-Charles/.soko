@@ -14,7 +14,7 @@
     "apexcharts": "^5.3.6",
     "axios": "^1.13.2",
     "bcryptjs": "^3.0.3",
-    "cloudinary": "^2.8.0",
+    "cloudinary": "^1.41.0",
     "clsx": "^2.1.1",
     "dotenv": "^17.2.3",
     "inngest": "^3.48.1",
