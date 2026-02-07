@@ -258,6 +258,13 @@ const Navbar = () => {
           <span>Shop</span>
         </Link>
         <Link
+          href="/deals"
+          className={`flex flex-col items-center gap-1 p-2 transition-colors ${pathname === "/deals" ? "text-primary" : "hover:text-primary"}`}
+        >
+          <Tag className="w-5 h-5" />
+          <span>Deals</span>
+        </Link>
+        <Link
           href={isLoggedIn ? "/account" : "/auth"}
           className={`flex flex-col items-center gap-1 p-2 transition-colors ${pathname.startsWith("/account") ? "text-primary" : "hover:text-primary"}`}
         >
