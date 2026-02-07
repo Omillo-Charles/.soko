@@ -28,7 +28,7 @@ import { useWishlist } from "@/context/WishlistContext";
 import { categories as allCategories } from "@/constants/categories";
 import { toast } from "sonner";
 
-import { useProducts, useLimitedProducts } from "@/hooks/useProducts";
+import { useProducts, useLimitedProducts, usePersonalizedFeed, useTrackActivity } from "@/hooks/useProducts";
 import { usePopularShops, useFollowShop, useMyShop } from "@/hooks/useShop";
 import { useUser } from "@/hooks/useUser";
 import RatingModal from "@/components/RatingModal";
@@ -44,6 +44,7 @@ const ShopPage = () => {
   
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
+  const trackActivity = useTrackActivity();
   const [isMobile, setIsMobile] = useState(false);
   const [activeTab, setActiveTab] = useState<'foryou' | 'following'>('foryou');
   const { user: currentUser } = useUser();
@@ -59,6 +60,8 @@ const ShopPage = () => {
   const [priceRange, setPriceRange] = useState({ min: '', max: '' });
   const [debouncedPriceRange, setDebouncedPriceRange] = useState({ min: '', max: '' });
 
+  const { data: feedProducts, isLoading: isFeedLoading } = usePersonalizedFeed(24);
+
   // Debounce price range changes
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -66,6 +69,26 @@ const ShopPage = () => {
     }, 500);
     return () => clearTimeout(timer);
   }, [priceRange]);
+
+  // Track category changes
+  useEffect(() => {
+    if (cat && cat !== 'all') {
+      trackActivity({
+        type: 'view',
+        category: cat
+      });
+    }
+  }, [cat]);
+
+  // Track searches
+  useEffect(() => {
+    if (query) {
+      trackActivity({
+        type: 'search',
+        searchQuery: query
+      });
+    }
+  }, [query]);
 
   // Rating Modal State
   const [ratingModal, setRatingModal] = useState<{
@@ -137,7 +160,67 @@ const ShopPage = () => {
     maxPrice: debouncedPriceRange.max ? parseFloat(debouncedPriceRange.max) : undefined,
   });
 
-  const products = productsData || [];
+  const products = activeTab === 'foryou' && !query && cat === 'all' && !debouncedPriceRange.min && !debouncedPriceRange.max
+    ? (feedProducts || [])
+    : (productsData || []);
+
+  const isLoading = isProductsLoading || (activeTab === 'foryou' && isFeedLoading);
+  const error = productsError ? (productsError as any).response?.data?.message || "Failed to load products" : null;
+
+  const handleProductClick = (p: any) => {
+    const id = p._id || p.id;
+    if (id) {
+      trackActivity({
+        type: 'click',
+        productId: id,
+        category: p.category
+      });
+      router.push(`/shop/product/${id}`);
+    }
+  };
+
+  const handleAddToCart = (e: React.MouseEvent, p: any) => {
+    e.stopPropagation();
+    const id = p._id || p.id;
+    if (id) {
+      trackActivity({
+        type: 'cart',
+        productId: id,
+        category: p.category
+      });
+      addToCart(id);
+    }
+  };
+
+  const handleWishlist = (e: React.MouseEvent, p: any) => {
+    e.stopPropagation();
+    const id = p._id || p.id;
+    if (id) {
+      if (!isInWishlist(id)) {
+        trackActivity({
+          type: 'wishlist',
+          productId: id,
+          category: p.category
+        });
+      }
+      toggleWishlist(id);
+    }
+  };
+
+  const displayProducts = React.useMemo(() => {
+    let filtered = products;
+
+    // Filter out user's own shop products from the "Following" tab
+    if (activeTab === 'following' && myShop) {
+      const myShopId = myShop._id || myShop.id;
+      filtered = products.filter((p: any) => {
+        const productShopId = p.shop?._id || p.shop?.id || p.shop;
+        return String(productShopId) !== String(myShopId);
+      });
+    }
+
+    return filtered;
+  }, [products, activeTab, myShop]);
 
   const popularShops = React.useMemo(() => {
     let shops = (popularShopsData || []).map((s: any) => ({
@@ -186,42 +269,6 @@ const ShopPage = () => {
     }
   };
 
-  const displayProducts = React.useMemo(() => {
-    let filtered = products;
-
-    // Filter out user's own shop products from the "Following" tab
-    if (activeTab === 'following' && myShop) {
-      const myShopId = myShop._id || myShop.id;
-      filtered = products.filter((p: any) => {
-        const productShopId = p.shop?._id || p.shop?.id || p.shop;
-        return String(productShopId) !== String(myShopId);
-      });
-    }
-
-    const formatted = filtered.map((p: any) => ({
-      id: p._id || p.id || `product-${Math.random()}`,
-      vendor: {
-        id: p.shop?._id || p.shop?.id || `vendor-${Math.random()}`,
-        name: p.shop?.name || "Unknown Shop",
-        handle: p.shop?.username ? `@${p.shop.username}` : null,
-        avatar: p.shop?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.shop?.name || "shop"}`,
-        verified: p.shop?.isVerified || false
-      },
-      content: p.description || p.content || "",
-      name: p.name || "Product",
-      image: p.image,
-      price: p.price?.toLocaleString() || "0",
-      rating: p.rating || 0,
-      reviews: p.reviewsCount || 0,
-      likes: p.likesCount || 0,
-      reposts: p.repostsCount || 0,
-      comments: p.commentsCount || 0,
-      time: p.createdAt ? new Date(p.createdAt).toLocaleDateString() : "Just now"
-    }));
-
-    return formatted;
-  }, [products, activeTab, currentUser, myShop]);
-
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
@@ -232,9 +279,6 @@ const ShopPage = () => {
       window.removeEventListener("resize", checkMobile);
     };
   }, []);
-
-  const isLoading = isProductsLoading;
-  const error = productsError ? (productsError as any).response?.data?.message || "Failed to load products" : null;
 
   const categories = allCategories.filter(c => c.value !== 'all');
 
@@ -605,8 +649,8 @@ const ShopPage = () => {
               <div className="divide-y divide-border bg-background">
                 {displayProducts.map((product: any) => (
                   <div 
-                    key={product.id} 
-                    onClick={() => router.push(`/shop/product/${product.id}`)}
+                    key={product._id || product.id} 
+                    onClick={() => handleProductClick(product)}
                     className="p-4 md:p-6 hover:bg-muted/50 transition-colors cursor-pointer"
                   >
                     <div className="flex gap-3 md:gap-4">
@@ -615,11 +659,16 @@ const ShopPage = () => {
                         <div 
                           onClick={(e) => { 
                             e.stopPropagation(); 
-                            router.push(`/shop/${product.vendor.id}`);
+                            const shopId = product.shop?._id || product.shop?.id || product.shop || product.vendor?.id;
+                            if (shopId) router.push(`/shop/${shopId}`);
                           }}
                           className="w-12 h-12 rounded-full overflow-hidden border border-border bg-muted hover:opacity-90 transition-opacity"
                         >
-                          <img src={product.vendor.avatar} alt={product.vendor.name} className="w-full h-full object-cover" />
+                          <img 
+                            src={product.shop?.avatar || product.vendor?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${product.shop?.name || product.vendor?.name || 'shop'}`} 
+                            alt={product.shop?.name || product.vendor?.name} 
+                            className="w-full h-full object-cover" 
+                          />
                         </div>
                       </div>
 
@@ -631,17 +680,18 @@ const ShopPage = () => {
                             <span 
                               onClick={(e) => { 
                                 e.stopPropagation(); 
-                                router.push(`/shop/${product.vendor.id}`);
+                                const shopId = product.shop?._id || product.shop?.id || product.shop || product.vendor?.id;
+                                if (shopId) router.push(`/shop/${shopId}`);
                               }}
                               className="text-sm font-black text-foreground truncate hover:underline flex items-center gap-1"
                             >
-                              {product.vendor.name}
-                              {product.vendor.verified && <CheckCircle2 className="w-3.5 h-3.5 text-primary fill-primary/10" />}
+                              {product.shop?.name || product.vendor?.name}
+                              {(product.shop?.isVerified || product.vendor?.verified) && <CheckCircle2 className="w-3.5 h-3.5 text-primary fill-primary/10" />}
                             </span>
-                            {product.vendor.handle && (
-                              <span className="text-muted-foreground text-xs truncate">{product.vendor.handle}</span>
+                            {(product.shop?.username || product.vendor?.handle) && (
+                              <span className="text-muted-foreground text-xs truncate">@{product.shop?.username || product.vendor?.handle?.replace('@', '')}</span>
                             )}
-                            <span className="text-muted-foreground/60 text-xs shrink-0">· {product.time}</span>
+                            <span className="text-muted-foreground/60 text-xs shrink-0">· {product.time || new Date(product.createdAt).toLocaleDateString()}</span>
                           </div>
                           <div className="flex items-center gap-1">
                             <button 
@@ -649,7 +699,7 @@ const ShopPage = () => {
                                 e.stopPropagation(); 
                                 setRatingModal({
                                   isOpen: true,
-                                  productId: product.id,
+                                  productId: product._id || product.id,
                                   productName: product.name,
                                   initialRating: product.rating
                                 });
@@ -664,23 +714,23 @@ const ShopPage = () => {
 
                         {/* Product Content */}
                         <p className="text-foreground/90 text-[13px] leading-relaxed mb-3 whitespace-pre-wrap">
-                          {product.content}
+                          {product.description || product.content}
                         </p>
 
                         {/* Product Image */}
-                        {product.image && (
+                        {(product.images?.[0] || product.image) && (
                           <div className="rounded-[1.25rem] overflow-hidden border border-border mb-3 bg-muted relative aspect-square group/img flex items-center justify-center">
                             <img 
-                              src={product.image} 
-                              alt="Product" 
+                              src={product.images?.[0] || product.image} 
+                              alt={product.name} 
                               className="w-full h-full object-cover transition-transform duration-700 group-hover/img:scale-110" 
                             />
                             <div className="absolute bottom-3 right-3 bg-background/90 backdrop-blur-md px-4 py-2 rounded-2xl border border-border shadow-xl shadow-foreground/5 flex flex-col items-end">
-                              <span className="text-primary font-black text-sm">KES {product.price}</span>
-                              {product.rating > 0 && (
+                              <span className="text-primary font-black text-sm">KES {product.price.toLocaleString()}</span>
+                              {product.averageRating > 0 && (
                                 <div className="flex items-center gap-1 mt-0.5">
                                   <Star className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
-                                  <span className="text-[10px] font-black text-amber-600">{product.rating.toFixed(1)}</span>
+                                  <span className="text-[10px] font-black text-amber-600">{product.averageRating.toFixed(1)}</span>
                                 </div>
                               )}
                             </div>
@@ -694,7 +744,7 @@ const ShopPage = () => {
                               e.stopPropagation();
                               setCommentModal({
                                 isOpen: true,
-                                productId: product.id,
+                                productId: product._id || product.id,
                                 productName: product.name
                               });
                             }}
@@ -703,7 +753,7 @@ const ShopPage = () => {
                             <div className="p-1.5 rounded-full group-hover:bg-primary/10 transition-colors">
                               <MessageCircle className="w-[18px] h-[18px]" />
                             </div>
-                            <span className="text-xs font-bold">{product.comments || 0}</span>
+                            <span className="text-xs font-bold">{product.commentsCount || product.comments || 0}</span>
                           </button>
 
                           <button 
@@ -717,29 +767,25 @@ const ShopPage = () => {
                           </button>
 
                           <button 
-                            onClick={async (e) => { 
-                              e.stopPropagation();
-                              await toggleWishlist(product.id);
-                            }}
+                            onClick={(e) => handleWishlist(e, product)}
                             className={`flex items-center gap-0 group transition-colors ${
-                              isInWishlist(product.id) ? 'text-pink-500' : 'hover:text-pink-500'
+                              isInWishlist(product._id || product.id) ? 'text-pink-500' : 'hover:text-pink-500'
                             }`}
                           >
                             <div className={`p-1.5 rounded-full transition-colors ${
-                              isInWishlist(product.id) ? 'bg-pink-500/10' : 'group-hover:bg-pink-500/10'
+                              isInWishlist(product._id || product.id) ? 'bg-pink-500/10' : 'group-hover:bg-pink-500/10'
                             }`}>
-                              <Heart className={`w-[18px] h-[18px] ${isInWishlist(product.id) ? 'fill-current' : ''}`} />
+                              <Heart className={`w-[18px] h-[18px] ${isInWishlist(product._id || product.id) ? 'fill-current' : ''}`} />
                             </div>
-                            <span className="text-xs font-bold">{product.likes || 0}</span>
+                            <span className="text-xs font-bold">{product.wishlistCount || product.likes || 0}</span>
                           </button>
 
                           <button 
                             onClick={(e) => { 
-                              e.stopPropagation();
                               if (product.sizes?.length > 0 || product.colors?.length > 0) {
-                                router.push(`/shop/product/${product.id}`);
+                                handleProductClick(product);
                               } else {
-                                addToCart(product.id);
+                                handleAddToCart(e, product);
                               }
                             }}
                             className="flex items-center gap-0 group transition-colors hover:text-primary"
@@ -753,7 +799,7 @@ const ShopPage = () => {
                           <button 
                             onClick={(e) => { 
                               e.stopPropagation();
-                              const productUrl = `${window.location.origin}/shop/product/${product.id}`;
+                              const productUrl = `${window.location.origin}/shop/product/${product._id || product.id}`;
                               setShareModal({
                                 isOpen: true,
                                 url: productUrl,

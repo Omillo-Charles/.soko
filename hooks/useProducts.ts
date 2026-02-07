@@ -79,3 +79,24 @@ export const useFeaturedProducts = (limit: number = 4) => {
     staleTime: 1000 * 60 * 15, // 15 minutes
   });
 };
+
+export const usePersonalizedFeed = (limit: number = 12) => {
+  return useQuery({
+    queryKey: ['product-feed', limit],
+    queryFn: async () => {
+      const response = await api.get('/products/feed', { params: { limit } });
+      return response.data.data;
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+};
+
+export const useTrackActivity = () => {
+  return async (data: { type: string; productId?: string; category?: string; searchQuery?: string }) => {
+    try {
+      await api.post('/products/track', data);
+    } catch (error) {
+      console.error('Failed to track activity:', error);
+    }
+  };
+};
