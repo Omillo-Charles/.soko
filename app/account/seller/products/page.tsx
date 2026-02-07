@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { 
@@ -33,7 +33,7 @@ import { RegisterShopModal } from "@/components/RegisterShopModal";
 
 const categories = allCategories.filter(c => c.value !== 'all');
 
-const SellerProductsPage = () => {
+const SellerProductsContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [products, setProducts] = useState<any[]>([]);
@@ -744,6 +744,21 @@ const SellerProductsPage = () => {
     )}
   </>
 );
+};
+
+const SellerProductsPage = () => {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-10 h-10 text-primary animate-spin mx-auto mb-4" />
+          <p className="text-muted-foreground font-medium">Loading...</p>
+        </div>
+      </div>
+    }>
+      <SellerProductsContent />
+    </Suspense>
+  );
 };
 
 export default SellerProductsPage;

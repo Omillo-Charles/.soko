@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { 
   Search, 
@@ -36,7 +36,7 @@ import ShareModal from "@/components/ShareModal";
 import CommentModal from "@/components/CommentModal";
 import ShopSearchModal from "@/components/ShopSearchModal";
 
-const ShopPage = () => {
+const ShopContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const query = searchParams.get("q") || "";
@@ -1048,6 +1048,21 @@ const ShopPage = () => {
         </Link>
       )}
     </div>
+  );
+};
+
+const ShopPage = () => {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-muted-foreground font-medium">Loading Shop...</p>
+        </div>
+      </div>
+    }>
+      <ShopContent />
+    </Suspense>
   );
 };
 

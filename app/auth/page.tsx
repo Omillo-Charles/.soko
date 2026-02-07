@@ -697,11 +697,14 @@ const AuthContent = () => {
   );
 };
 
-const AccountPage = () => {
+const AuthPage = () => {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <RefreshCw className="w-10 h-10 text-primary animate-spin mx-auto mb-4" />
+          <p className="text-muted-foreground font-medium uppercase tracking-widest text-xs">Initializing Auth...</p>
+        </div>
       </div>
     }>
       <AuthContent />
@@ -709,4 +712,4 @@ const AccountPage = () => {
   );
 };
 
-export default AccountPage;
+export default AuthPage;
