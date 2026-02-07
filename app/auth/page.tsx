@@ -574,7 +574,7 @@ const AuthContent = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-128px)] flex items-center justify-center bg-muted p-4 md:py-4 md:px-8">
+    <div className="min-h-[calc(100vh-128px)] flex items-center justify-center bg-muted p-4 md:py-4 md:px-8 pb-32 md:pb-8">
       <div className="max-w-5xl w-full grid md:grid-cols-2 bg-background rounded-[2rem] shadow-2xl overflow-hidden border border-border">
         {/* Left Side: Creative Brand Section */}
         <div className="hidden md:flex flex-col justify-between bg-primary p-12 text-primary-foreground relative overflow-hidden">
