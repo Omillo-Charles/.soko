@@ -46,22 +46,92 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       const response = await api.post('/wishlist/toggle', { productId });
       return response.data;
     },
-    onSuccess: (data, productId) => {
+    onMutate: async (productId) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['products'] });
+      await queryClient.cancelQueries({ queryKey: ['products-limited'] });
+      await queryClient.cancelQueries({ queryKey: ['products-infinite'] });
+      await queryClient.cancelQueries({ queryKey: ['featured-products'] });
+      await queryClient.cancelQueries({ queryKey: ['product-feed'] });
+
+      // Snapshot the previous values
+      const previousProducts = queryClient.getQueryData(['products']);
+      const previousFeed = queryClient.getQueryData(['product-feed']);
+
+      // Determine if adding or removing
+      const currentlyInWishlist = wishlistItems.some((item: Product) => item._id === productId);
+      const action = currentlyInWishlist ? 'removed' : 'added';
+
+      // Function to update product list
+      const updateProductList = (old: any) => {
+        if (!old) return old;
+        // If it's an array (standard useQuery)
+        if (Array.isArray(old)) {
+          return old.map((p: any) => {
+            if (p._id === productId || p.id === productId) {
+              return {
+                ...p,
+                likesCount: action === 'added' ? (p.likesCount || 0) + 1 : Math.max(0, (p.likesCount || 0) - 1)
+              };
+            }
+            return p;
+          });
+        }
+        // If it's paginated data (useInfiniteQuery)
+        if (old.pages) {
+          return {
+            ...old,
+            pages: old.pages.map((page: any) => ({
+              ...page,
+              data: page.data?.map((p: any) => {
+                if (p._id === productId || p.id === productId) {
+                  return {
+                    ...p,
+                    likesCount: action === 'added' ? (p.likesCount || 0) + 1 : Math.max(0, (p.likesCount || 0) - 1)
+                  };
+                }
+                return p;
+              })
+            }))
+          };
+        }
+        return old;
+      };
+
+      // Optimistically update all related queries
+      queryClient.setQueriesData({ queryKey: ['products'] }, updateProductList);
+      queryClient.setQueriesData({ queryKey: ['products-limited'] }, updateProductList);
+      queryClient.setQueriesData({ queryKey: ['products-infinite'] }, updateProductList);
+      queryClient.setQueriesData({ queryKey: ['featured-products'] }, updateProductList);
+      queryClient.setQueriesData({ queryKey: ['product-feed'] }, updateProductList);
+
+      return { previousProducts, previousFeed };
+    },
+    onError: (error: any, productId, context) => {
+      // Rollback on error
+      if (context?.previousProducts) {
+        queryClient.setQueriesData({ queryKey: ['products'] }, context.previousProducts);
+      }
+      if (context?.previousFeed) {
+        queryClient.setQueriesData({ queryKey: ['product-feed'] }, context.previousFeed);
+      }
+      toast.error(error.response?.data?.message || "Failed to update wishlist");
+    },
+    onSettled: () => {
+      // Always refetch to ensure sync with server
       queryClient.invalidateQueries({ queryKey: ['wishlist'] });
       queryClient.invalidateQueries({ queryKey: ['products'] });
       queryClient.invalidateQueries({ queryKey: ['products-limited'] });
       queryClient.invalidateQueries({ queryKey: ['products-infinite'] });
       queryClient.invalidateQueries({ queryKey: ['featured-products'] });
-      queryClient.invalidateQueries({ queryKey: ['product', productId] });
-      
+      queryClient.invalidateQueries({ queryKey: ['product-feed'] });
+    },
+    onSuccess: (data) => {
       if (data.action === 'added') {
         toast.success("Added to wishlist");
       } else {
         toast.success("Removed from wishlist");
       }
-    },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Failed to update wishlist");
     }
   });
 

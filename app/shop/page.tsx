@@ -777,7 +777,7 @@ const ShopContent = () => {
                             }`}>
                               <Heart className={`w-[18px] h-[18px] ${isInWishlist(product._id || product.id) ? 'fill-current' : ''}`} />
                             </div>
-                            <span className="text-xs font-bold">{product.wishlistCount || product.likes || 0}</span>
+                            <span className="text-xs font-bold">{product.likesCount || product.likes || 0}</span>
                           </button>
 
                           <button 

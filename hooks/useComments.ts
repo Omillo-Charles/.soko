@@ -19,17 +19,76 @@ export const useComments = (productId?: string) => {
       const response = await api.post('/comments', { productId, content });
       return response.data.data;
     },
-    onSuccess: () => {
+    onMutate: async ({ productId }) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['products'] });
+      await queryClient.cancelQueries({ queryKey: ['products-limited'] });
+      await queryClient.cancelQueries({ queryKey: ['products-infinite'] });
+      await queryClient.cancelQueries({ queryKey: ['featured-products'] });
+      await queryClient.cancelQueries({ queryKey: ['product-feed'] });
+
+      // Snapshot previous values
+      const previousProducts = queryClient.getQueryData(['products']);
+      const previousFeed = queryClient.getQueryData(['product-feed']);
+
+      // Update function
+      const updateCommentCount = (old: any) => {
+        if (!old) return old;
+        if (Array.isArray(old)) {
+          return old.map((p: any) => {
+            if (p._id === productId || p.id === productId) {
+              return { ...p, commentsCount: (p.commentsCount || 0) + 1 };
+            }
+            return p;
+          });
+        }
+        if (old.pages) {
+          return {
+            ...old,
+            pages: old.pages.map((page: any) => ({
+              ...page,
+              data: page.data?.map((p: any) => {
+                if (p._id === productId || p.id === productId) {
+                  return { ...p, commentsCount: (p.commentsCount || 0) + 1 };
+                }
+                return p;
+              })
+            }))
+          };
+        }
+        return old;
+      };
+
+      // Optimistic updates
+      queryClient.setQueriesData({ queryKey: ['products'] }, updateCommentCount);
+      queryClient.setQueriesData({ queryKey: ['products-limited'] }, updateCommentCount);
+      queryClient.setQueriesData({ queryKey: ['products-infinite'] }, updateCommentCount);
+      queryClient.setQueriesData({ queryKey: ['featured-products'] }, updateCommentCount);
+      queryClient.setQueriesData({ queryKey: ['product-feed'] }, updateCommentCount);
+
+      return { previousProducts, previousFeed };
+    },
+    onError: (error: any, variables, context) => {
+      // Rollback
+      if (context?.previousProducts) {
+        queryClient.setQueriesData({ queryKey: ['products'] }, context.previousProducts);
+      }
+      if (context?.previousFeed) {
+        queryClient.setQueriesData({ queryKey: ['product-feed'] }, context.previousFeed);
+      }
+      toast.error(error.friendlyMessage || 'Failed to post comment');
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['comments', productId] });
       queryClient.invalidateQueries({ queryKey: ['product', productId] });
       queryClient.invalidateQueries({ queryKey: ['products'] });
       queryClient.invalidateQueries({ queryKey: ['products-limited'] });
       queryClient.invalidateQueries({ queryKey: ['products-infinite'] });
       queryClient.invalidateQueries({ queryKey: ['featured-products'] });
-      toast.success('Comment posted successfully');
+      queryClient.invalidateQueries({ queryKey: ['product-feed'] });
     },
-    onError: (error: any) => {
-      toast.error(error.friendlyMessage || 'Failed to post comment');
+    onSuccess: () => {
+      toast.success('Comment posted successfully');
     },
   });
 
