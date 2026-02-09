@@ -31,13 +31,22 @@ const Navbar = () => {
   const pathname = usePathname();
   const isHomepage = pathname === "/";
   const { user, token } = useUser();
-  const isLoggedIn = !!token;
+  const [mounted, setMounted] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const { totalItems } = useCart();
   const { wishlistItems } = useWishlist();
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isLoggedIn = mounted ? !!token : false;
+  const isPremium = mounted ? !!user?.isPremium : false;
+  const cartCount = mounted ? totalItems : 0;
+  const wishlistCount = mounted ? wishlistItems.length : 0;
+
   // Redirect premium users from /premium to /premium/dashboard
-  const premiumLink = user?.isPremium ? "/premium/dashboard" : "/premium";
+  const premiumLink = isPremium ? "/premium/dashboard" : "/premium";
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -116,13 +125,13 @@ const Navbar = () => {
               <Link href="/wishlist" className="relative transition-colors">
                 <Heart className={`w-6 h-6 ${pathname === "/wishlist" ? "text-primary fill-primary/20" : "text-slate-50"}`} />
                 <span className="absolute -top-1 -right-1 w-4 h-4 bg-secondary text-primary-foreground text-[10px] flex items-center justify-center rounded-full">
-                  {wishlistItems.length}
+                  {wishlistCount}
                 </span>
               </Link>
               <Link href="/cart" className="relative transition-colors">
                 <ShoppingCart className={`w-6 h-6 ${pathname === "/cart" ? "text-primary" : "text-slate-50"}`} />
                 <span className="absolute -top-1 -right-1 w-4 h-4 bg-secondary text-primary-foreground text-[10px] flex items-center justify-center rounded-full">
-                  {totalItems}
+                  {cartCount}
                 </span>
               </Link>
             </div>
@@ -150,9 +159,9 @@ const Navbar = () => {
               <span className={`text-xs mt-1 font-medium transition-colors ${pathname === "/wishlist" ? "text-primary" : "group-hover:text-primary"}`}>
                 Wishlist
               </span>
-              {wishlistItems.length > 0 && (
+              {wishlistCount > 0 && (
                 <span className="absolute -top-1 -right-1 w-4 h-4 bg-secondary text-primary-foreground text-[10px] flex items-center justify-center rounded-full">
-                  {wishlistItems.length}
+                  {wishlistCount}
                 </span>
               )}
             </Link>
@@ -165,7 +174,7 @@ const Navbar = () => {
                 Cart
               </span>
               <span className="absolute -top-1 -right-1 w-4 h-4 bg-secondary text-primary-foreground text-[10px] flex items-center justify-center rounded-full">
-                {totalItems}
+                {cartCount}
               </span>
             </Link>
           </div>
@@ -207,7 +216,7 @@ const Navbar = () => {
                 className={`flex items-center gap-1.5 transition-colors font-bold ${pathname.startsWith("/premium") ? "text-amber-200 underline decoration-2 underline-offset-8" : "text-amber-300 hover:text-amber-200"}`}
               >
                 <Crown className={`w-4 h-4 fill-current ${pathname.startsWith("/premium") ? "animate-pulse" : ""}`} />
-                {user?.isPremium ? "Dashboard" : "Premium"}
+                {isPremium ? "Dashboard" : "Premium"}
               </Link>
               <Link
                 href="/contact"
@@ -282,10 +291,10 @@ const Navbar = () => {
         </Link>
         <Link
           href={isLoggedIn ? "/account" : "/auth"}
-          className={`flex flex-col items-center gap-1 p-2 transition-colors ${pathname.startsWith("/account") ? "text-primary" : "hover:text-primary"}`}
+          className={`flex flex-col items-center gap-1 p-2 transition-colors ${pathname.startsWith("/account") || pathname === "/auth" ? "text-primary" : "hover:text-primary"}`}
         >
           <User className="w-5 h-5" />
-          <span>Dashboard</span>
+          <span>{isLoggedIn ? "Dashboard" : "Account"}</span>
         </Link>
         <Link
           href="/premium"

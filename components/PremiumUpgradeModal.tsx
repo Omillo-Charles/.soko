@@ -37,13 +37,11 @@ export const PremiumUpgradeModal = ({
   const [isWaitingForCallback, setIsWaitingForCallback] = useState(false);
   const [checkoutRequestId, setCheckoutRequestId] = useState<string | null>(null);
 
-  if (!isOpen) return null;
-
   // Poll for payment status if waiting
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
 
-    if (isWaitingForCallback && checkoutRequestId) {
+    if (isWaitingForCallback && checkoutRequestId && isOpen) {
       intervalId = setInterval(async () => {
         try {
           const response = await api.get(`/payments/status/${checkoutRequestId}`);
@@ -73,7 +71,9 @@ export const PremiumUpgradeModal = ({
     return () => {
       if (intervalId) clearInterval(intervalId);
     };
-  }, [isWaitingForCallback, checkoutRequestId, onClose, router]);
+  }, [isWaitingForCallback, checkoutRequestId, onClose, router, isOpen]);
+
+  if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
