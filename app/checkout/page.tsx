@@ -35,10 +35,11 @@ const CheckoutPage = () => {
     city: "",
     street: "",
   });
+  const [hasPrefilled, setHasPrefilled] = useState(false);
 
   // Pre-fill form when user data is available
   useEffect(() => {
-    if (user) {
+    if (user && !hasPrefilled) {
       const defaultAddress = user.addresses?.find((a: any) => a.isDefault) || user.addresses?.[0];
       setFormData({
         name: user.name || "",
@@ -46,8 +47,9 @@ const CheckoutPage = () => {
         city: defaultAddress?.city || "",
         street: defaultAddress?.street || "",
       });
+      setHasPrefilled(true);
     }
-  }, [user]);
+  }, [user, hasPrefilled]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
