@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { 
   X, 
   Phone, 
@@ -9,10 +9,12 @@ import {
   Loader2,
   ShieldCheck,
   Zap,
-  ArrowRight
+  ArrowRight,
+  BadgeCheck
 } from "lucide-react";
 import api from "@/lib/api";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface PremiumUpgradeModalProps {
   isOpen: boolean;
@@ -29,10 +31,49 @@ export const PremiumUpgradeModal = ({
   price, 
   isAnnual 
 }: PremiumUpgradeModalProps) => {
+  const router = useRouter();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isWaitingForCallback, setIsWaitingForCallback] = useState(false);
+  const [checkoutRequestId, setCheckoutRequestId] = useState<string | null>(null);
 
   if (!isOpen) return null;
+
+  // Poll for payment status if waiting
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+
+    if (isWaitingForCallback && checkoutRequestId) {
+      intervalId = setInterval(async () => {
+        try {
+          const response = await api.get(`/payments/status/${checkoutRequestId}`);
+          if (response.data.success && response.data.status === 'completed') {
+            setIsWaitingForCallback(false);
+            toast.success("Payment Verified!", {
+              description: "Welcome to Premium! Redirecting to your dashboard...",
+            });
+            setTimeout(() => {
+              onClose();
+              router.push("/premium/dashboard");
+              // Force refresh to update user state
+              window.location.reload();
+            }, 2000);
+          } else if (response.data.status === 'failed') {
+            setIsWaitingForCallback(false);
+            toast.error("Payment Failed", {
+              description: "Transaction was cancelled or failed. Please try again.",
+            });
+          }
+        } catch (error) {
+          console.error("Status check error:", error);
+        }
+      }, 3000); // Check every 3 seconds
+    }
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [isWaitingForCallback, checkoutRequestId, onClose, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,15 +94,11 @@ export const PremiumUpgradeModal = ({
       });
 
       if (response.data.success) {
+        setCheckoutRequestId(response.data.data.CheckoutRequestID);
+        setIsWaitingForCallback(true);
         toast.success("STK Push Sent!", {
           description: "Please check your phone for the M-Pesa PIN prompt.",
         });
-        // We could keep the modal open or close it. 
-        // Usually, it's better to show a "Waiting for confirmation" state.
-        // For now, let's close it after a short delay to let them see the success.
-        setTimeout(() => {
-          onClose();
-        }, 3000);
       }
     } catch (error: any) {
       console.error("Payment Error:", error);
@@ -87,75 +124,103 @@ export const PremiumUpgradeModal = ({
               <Crown className="w-7 h-7 text-white" />
             </div>
           </div>
-          <button 
-            onClick={onClose}
-            className="absolute top-4 right-4 p-2 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all active:scale-95 group"
-          >
-            <X className="w-4 h-4" />
-          </button>
+          {!isWaitingForCallback && (
+            <button 
+              onClick={onClose}
+              className="absolute top-4 right-4 p-2 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all active:scale-95 group"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
         </div>
 
         <div className="p-6 space-y-6">
-          <div className="text-center space-y-1">
-            <h2 className="text-xl font-black text-foreground tracking-tight">Upgrade to {planName}</h2>
-            <p className="text-[11px] font-bold text-muted-foreground">Enter your M-Pesa phone number</p>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="space-y-2">
-              <label className="text-[9px] font-black text-amber-600 uppercase tracking-widest ml-4">
-                Billing Phone Number
-              </label>
-              <div className="relative group">
-                <div className="absolute left-5 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
-                  <Phone className="w-3.5 h-3.5 text-amber-500 group-focus-within:text-amber-600 transition-colors" />
-                  <span className="text-xs font-bold text-muted-foreground/50 border-r border-border pr-2">+254</span>
+          {isWaitingForCallback ? (
+            <div className="text-center space-y-6 py-4">
+              <div className="w-20 h-20 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto animate-pulse">
+                <Loader2 className="w-10 h-10 text-amber-600 animate-spin" />
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-lg font-black text-foreground">Waiting for Payment</h3>
+                <p className="text-xs font-bold text-muted-foreground px-4">
+                  Please enter your M-Pesa PIN on your phone to complete the upgrade.
+                </p>
+              </div>
+              <div className="flex flex-col gap-2">
+                <div className="bg-amber-50 p-4 rounded-2xl border border-amber-100 flex items-center gap-3">
+                  <div className="w-8 h-8 bg-amber-500 text-white rounded-full flex items-center justify-center text-xs font-black">1</div>
+                  <p className="text-[10px] font-bold text-amber-900 text-left">Check your phone for the M-Pesa prompt</p>
                 </div>
-                <input
-                  type="tel"
-                  required
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                  placeholder="0700 000 000"
-                  className="w-full pl-24 pr-5 py-3.5 bg-amber-500/5 border border-amber-500/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-amber-500/5 focus:border-amber-500/30 shadow-sm transition-all font-bold text-foreground placeholder:text-muted-foreground/30 text-sm"
-                />
+                <div className="bg-amber-50 p-4 rounded-2xl border border-amber-100 flex items-center gap-3">
+                  <div className="w-8 h-8 bg-amber-500 text-white rounded-full flex items-center justify-center text-xs font-black">2</div>
+                  <p className="text-[10px] font-bold text-amber-900 text-left">Enter your PIN to authorize KES {price}</p>
+                </div>
               </div>
             </div>
+          ) : (
+            <>
+              <div className="text-center space-y-1">
+                <h2 className="text-xl font-black text-foreground tracking-tight">Upgrade to {planName}</h2>
+                <p className="text-[11px] font-bold text-muted-foreground">Enter your M-Pesa phone number</p>
+              </div>
 
-            <div className="bg-gradient-to-br from-amber-500/5 to-amber-600/10 rounded-[2rem] p-5 border border-amber-500/10 space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-tight">Selected Plan</span>
-                <span className="text-[10px] font-black text-amber-600 uppercase tracking-widest">{planName}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-tight">Billing Cycle</span>
-                <span className="text-[10px] font-black text-amber-600 uppercase tracking-widest">{isAnnual ? "Annually" : "Monthly"}</span>
-              </div>
-              <div className="h-px bg-amber-500/10" />
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-black text-foreground uppercase tracking-tight">Total Amount</span>
-                <span className="text-base font-black text-amber-600 tracking-tight">KES {price}</span>
-              </div>
-            </div>
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div className="space-y-2">
+                  <label className="text-[9px] font-black text-amber-600 uppercase tracking-widest ml-4">
+                    Billing Phone Number
+                  </label>
+                  <div className="relative group">
+                    <div className="absolute left-5 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
+                      <Phone className="w-3.5 h-3.5 text-amber-500 group-focus-within:text-amber-600 transition-colors" />
+                      <span className="text-xs font-bold text-muted-foreground/50 border-r border-border pr-2">+254</span>
+                    </div>
+                    <input
+                      type="tel"
+                      required
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                      placeholder="0700 000 000"
+                      className="w-full pl-24 pr-5 py-3.5 bg-amber-500/5 border border-amber-500/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-amber-500/5 focus:border-amber-500/30 shadow-sm transition-all font-bold text-foreground placeholder:text-muted-foreground/30 text-sm"
+                    />
+                  </div>
+                </div>
 
-            <button
-              type="submit"
-              disabled={isLoading || (phoneNumber.startsWith("0") ? phoneNumber.length < 10 : phoneNumber.length < 9)}
-              className="w-full py-4 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-amber-500/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-2"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  Processing...
-                </>
-              ) : (
-                <>
-                  Pay with M-Pesa
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </>
-              )}
-            </button>
-          </form>
+                <div className="bg-gradient-to-br from-amber-500/5 to-amber-600/10 rounded-[2rem] p-5 border border-amber-500/10 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-tight">Selected Plan</span>
+                    <span className="text-[10px] font-black text-amber-600 uppercase tracking-widest">{planName}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-tight">Billing Cycle</span>
+                    <span className="text-[10px] font-black text-amber-600 uppercase tracking-widest">{isAnnual ? "Annually" : "Monthly"}</span>
+                  </div>
+                  <div className="h-px bg-amber-500/10" />
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-black text-foreground uppercase tracking-tight">Total Amount</span>
+                    <span className="text-base font-black text-amber-600 tracking-tight">KES {price}</span>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isLoading || (phoneNumber.startsWith("0") ? phoneNumber.length < 10 : phoneNumber.length < 9)}
+                  className="w-full py-4 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-amber-500/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-2"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      Pay with M-Pesa
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </>
+                  )}
+                </button>
+              </form>
+            </>
+          )}
 
           <div className="flex items-center justify-center gap-4 pt-1">
             <div className="flex items-center gap-1.5">

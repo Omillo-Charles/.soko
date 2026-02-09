@@ -3,25 +3,41 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ShoppingCart, User, Heart, Menu, Phone, Home, Store, Tag, Crown, MoreHorizontal, Info, Shield, FileText, Cookie, Mail } from "lucide-react";
+import { 
+  ShoppingCart, 
+  User, 
+  Heart, 
+  Menu, 
+  Phone, 
+  Home, 
+  Store, 
+  Tag, 
+  Crown, 
+  MoreHorizontal, 
+  Info, 
+  Shield, 
+  FileText, 
+  Cookie, 
+  Mail,
+  BadgeCheck
+} from "lucide-react";
 import SearchBar from "@/components/searchBar";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
+import { useUser } from "@/hooks/useUser";
 
 const Navbar = () => {
   const pathname = usePathname();
   const isHomepage = pathname === "/";
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { user, token } = useUser();
+  const isLoggedIn = !!token;
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const { totalItems } = useCart();
   const { wishlistItems } = useWishlist();
 
-  useEffect(() => {
-    // Check login status
-    const token = localStorage.getItem("accessToken");
-    setIsLoggedIn(!!token);
-  }, []);
+  // Redirect premium users from /premium to /premium/dashboard
+  const premiumLink = user?.isPremium ? "/premium/dashboard" : "/premium";
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -187,11 +203,11 @@ const Navbar = () => {
                 Deals
               </Link>
               <Link
-                href="/premium"
-                className={`flex items-center gap-1.5 transition-colors font-bold ${pathname === "/premium" ? "text-amber-200 underline decoration-2 underline-offset-8" : "text-amber-300 hover:text-amber-200"}`}
+                href={premiumLink}
+                className={`flex items-center gap-1.5 transition-colors font-bold ${pathname.startsWith("/premium") ? "text-amber-200 underline decoration-2 underline-offset-8" : "text-amber-300 hover:text-amber-200"}`}
               >
-                <Crown className={`w-4 h-4 fill-current ${pathname === "/premium" ? "animate-pulse" : ""}`} />
-                Premium
+                <Crown className={`w-4 h-4 fill-current ${pathname.startsWith("/premium") ? "animate-pulse" : ""}`} />
+                {user?.isPremium ? "Dashboard" : "Premium"}
               </Link>
               <Link
                 href="/contact"

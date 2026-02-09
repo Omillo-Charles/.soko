@@ -65,6 +65,11 @@ export default function PremiumDashboard() {
       return;
     }
 
+    if (user && !user.isPremium) {
+      router.push("/premium");
+      return;
+    }
+
     if (user && user.accountType !== "seller") {
       router.push("/account");
       return;
