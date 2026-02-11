@@ -99,7 +99,7 @@ const TrackOrderPage = () => {
     <main className="min-h-screen bg-muted/30 pb-24 lg:pb-12">
       {/* Header */}
       <section className="bg-background border-b border-border">
-        <div className="container mx-auto px-4 md:px-8 py-8">
+        <div className="container mx-auto px-4 md:px-8 py-4 md:py-8">
           <Link 
             href="/shop"
             className="inline-flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-primary transition-colors mb-6 group"

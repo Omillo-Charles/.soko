@@ -155,7 +155,7 @@ const SellerDashboard = () => {
       />
       
       {/* Mobile Top Header */}
-      <div className="lg:hidden bg-background px-4 py-3 border-b border-border flex items-center justify-between">
+      <div className="lg:hidden sticky top-[80px] z-30 bg-background px-4 py-3 border-b border-border flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
             <Store className="w-5 h-5 text-primary-foreground" />

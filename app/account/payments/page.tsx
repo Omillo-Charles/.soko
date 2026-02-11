@@ -6,7 +6,7 @@ import { CreditCard, ChevronLeft, Clock } from "lucide-react";
 
 const PaymentsPage = () => {
   return (
-    <div className="min-h-screen bg-background p-4 md:p-8">
+    <div className="min-h-screen bg-background p-4 md:p-8 pt-4 md:pt-8">
       <div className="max-w-4xl mx-auto">
         {/* Breadcrumbs/Back Button */}
         <Link 

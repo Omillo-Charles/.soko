@@ -149,7 +149,7 @@ const AccountPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-8 pb-28 lg:pb-8">
+    <div className="min-h-screen bg-background p-4 md:p-8 pt-4 md:pt-8 pb-28 lg:pb-8">
       <div className="max-w-6xl mx-auto">
         <LogoutConfirmation 
           isOpen={showLogoutConfirm} 

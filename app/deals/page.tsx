@@ -6,7 +6,7 @@ import Link from "next/link";
 
 const DealsContent = () => {
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-6">
+    <div className="min-h-[calc(100vh-80px)] md:min-h-[calc(100vh-128px)] bg-background flex items-center justify-center p-6">
       <div className="max-w-md w-full text-center space-y-8">
         <div className="relative">
           <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full -z-10 animate-pulse"></div>

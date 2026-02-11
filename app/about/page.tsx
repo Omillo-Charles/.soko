@@ -143,9 +143,9 @@ const AboutPage = () => {
             </div>
           </div>
 
-          {/* Sidebar Column */}
+          {/* Right Column: Sidebar */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="sticky top-[128px]">
+            <div className="sticky top-[80px] lg:top-[128px]">
               
               {/* Contact Card */}
               <div className="bg-background border border-border rounded-2xl p-6 mb-6">

@@ -184,7 +184,7 @@ const ProductDetailsPage = () => {
         {/* Middle Feed - Product Detail */}
         <main className="flex-1 min-w-0 border-x border-border pb-24 lg:pb-0">
           {/* Mobile Header */}
-          <div className="lg:hidden sticky top-[100px] bg-background/80 backdrop-blur-md z-30 border-b border-border px-4 py-4 flex items-center gap-4">
+          <div className="lg:hidden sticky top-[80px] bg-background/80 backdrop-blur-md z-30 border-b border-border px-4 py-4 flex items-center gap-4">
             <button onClick={() => router.back()} className="p-2 hover:bg-muted rounded-full">
               <ChevronLeft className="w-5 h-5" />
             </button>

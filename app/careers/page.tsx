@@ -113,7 +113,7 @@ const CareersPage = () => {
 
           {/* Right Column: Sidebar */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="sticky top-[128px]">
+            <div className="sticky top-[80px] lg:top-[128px]">
               {/* Talent Pool Card */}
               <div className="bg-foreground rounded-3xl p-8 text-background relative overflow-hidden shadow-xl shadow-foreground/5">
                 <div className="relative z-10">

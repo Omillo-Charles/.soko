@@ -152,7 +152,7 @@ const CheckoutPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-28 lg:pb-20 pt-10">
+    <div className="min-h-screen bg-background pb-28 lg:pb-20 pt-4 md:pt-10">
       <div className="max-w-6xl mx-auto px-4">
         {/* Header */}
         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-8">

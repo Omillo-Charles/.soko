@@ -242,7 +242,7 @@ const ShopProfilePage = () => {
        {/* Middle Feed - Products */}
         <main className="flex-1 min-w-0 border-x border-border pb-24 lg:pb-0">
           {/* Header - Profile Style */}
-          <div className="sticky top-[100px] md:top-[128px] bg-background/80 backdrop-blur-md z-30 border-b border-border px-4 py-4 flex items-center gap-4">
+          <div className="sticky top-[80px] md:top-[128px] bg-background/80 backdrop-blur-md z-30 border-b border-border px-4 py-4 flex items-center gap-4">
             <button onClick={() => router.back()} className="lg:hidden p-2 hover:bg-muted rounded-full">
               <ChevronLeft className="w-5 h-5" />
             </button>

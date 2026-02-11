@@ -152,7 +152,7 @@ const SecurityPage = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <div className="max-w-2xl mx-auto px-4 pt-8 md:pt-12">
+      <div className="max-w-2xl mx-auto px-4 pt-4 md:pt-12">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
           <button 

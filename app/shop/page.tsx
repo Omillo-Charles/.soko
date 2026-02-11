@@ -480,8 +480,8 @@ const ShopContent = () => {
         {/* Middle Feed - Products */}
         <main className="flex-1 min-w-0 border-x border-border pb-24 lg:pb-0">
           {/* Header - Twitter Style */}
-          <div className="sticky top-[100px] md:top-[128px] bg-background/80 backdrop-blur-md z-30 border-b border-border">
-            <div className="px-4 py-4 flex items-center justify-between">
+          <div className="sticky top-[80px] md:top-[128px] bg-background/80 backdrop-blur-md z-30 border-b border-border">
+            <div className="px-4 py-2 md:py-4 flex items-center justify-between">
               <h1 className="text-xl font-black text-foreground">Explore</h1>
               <button 
                 onClick={() => setIsSearchModalOpen(true)}

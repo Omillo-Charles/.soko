@@ -129,7 +129,7 @@ const CookiePolicyPage = () => {
 
           {/* Sidebar */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="sticky top-[128px]">
+            <div className="sticky top-[80px] lg:top-[128px]">
               <div className="bg-background border border-border rounded-2xl p-6 mb-6">
                 <h3 className="font-bold text-foreground mb-4">Cookie Support</h3>
                 <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
