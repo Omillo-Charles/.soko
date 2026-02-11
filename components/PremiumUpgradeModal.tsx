@@ -124,14 +124,12 @@ export const PremiumUpgradeModal = ({
               <Crown className="w-7 h-7 text-white" />
             </div>
           </div>
-          {!isWaitingForCallback && (
-            <button 
-              onClick={onClose}
-              className="absolute top-4 right-4 p-2 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all active:scale-95 group"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          )}
+          <button 
+            onClick={onClose}
+            className="absolute top-4 right-4 p-2 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all active:scale-95 group"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
 
         <div className="p-6 space-y-6">
