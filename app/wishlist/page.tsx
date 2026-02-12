@@ -61,8 +61,8 @@ const WishlistPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-24 lg:pb-20">
-      <div className="w-full px-4 md:px-8 py-4 md:py-10">
+    <div className="min-h-screen bg-background pb-24 lg:pb-20 pt-4 md:pt-10">
+      <div className="w-full px-4 md:px-8 py-4 md:py-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
           <div>

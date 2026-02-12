@@ -18,7 +18,7 @@ import {
 
 const HelpPage = () => {
   return (
-    <main className="flex flex-col pb-24 lg:pb-0 bg-muted/30 pt-4 md:pt-0">
+    <main className="flex flex-col pb-24 lg:pb-0 bg-muted/30 pt-4 md:pt-10">
       <section className="bg-background border-b border-border">
         <div className="container mx-auto px-4 md:px-8 py-6 md:py-16">
           {/* Header */}

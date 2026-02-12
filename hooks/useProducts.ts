@@ -6,7 +6,7 @@ export const useProducts = (params?: any) => {
     queryKey: ['products', params],
     queryFn: async () => {
       const response = await api.get('/products', { 
-        params: { ...params, limit: -1 } 
+        params: { limit: 20, ...params } 
       });
       return response.data.data;
     },

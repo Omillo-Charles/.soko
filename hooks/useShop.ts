@@ -36,7 +36,7 @@ export const useShopProducts = (id: string, params?: { limit?: number; minPrice?
     queryKey: ['shop-products', id, params],
     queryFn: async () => {
       const response = await api.get(`/products/shop/${id}`, {
-        params: { limit: -1, ...params }
+        params: { limit: 20, ...params }
       });
       return response.data.data;
     },

@@ -59,10 +59,10 @@ const AboutPage = () => {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-muted/30">
+    <div className="flex flex-col min-h-screen bg-muted/30 pt-4 md:pt-10">
       {/* Header Section */}
       <section className="bg-background border-b border-border">
-        <div className="container mx-auto px-4 md:px-8 py-8 md:py-10">
+        <div className="container mx-auto px-4 md:px-8 pb-8 md:pb-10">
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/5 text-primary rounded-full text-xs font-bold mb-4">
               <Info className="w-3.5 h-3.5" />
