@@ -35,7 +35,7 @@ import ShareModal from "@/components/ShareModal";
 
 const ShopProfilePage = () => {
   const params = useParams();
-  const id = params.id as string;
+  const idOrHandle = decodeURIComponent(params.id as string);
   const router = useRouter();
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
@@ -94,15 +94,21 @@ const ShopProfilePage = () => {
     setIsMounted(true);
   }, []);
 
-  const { data: shop, isLoading: isShopLoading, error: shopError } = useShop(id);
-  const { data: productsData = [], isLoading: isProductsLoading } = useShopProducts(id, {
+  const { data: shop, isLoading: isShopLoading, error: shopError } = useShop(idOrHandle);
+  const { data: productsData = [], isLoading: isProductsLoading } = useShopProducts(idOrHandle, {
     minPrice: debouncedPriceRange.min ? parseFloat(debouncedPriceRange.min) : undefined,
     maxPrice: debouncedPriceRange.max ? parseFloat(debouncedPriceRange.max) : undefined
   });
   const { data: popularShopsData = [] } = usePopularShops(4);
-  const { data: listData = [], isLoading: isListsLoading } = useShopLists(id, activeSection as 'Followers' | 'Following');
-  const { data: reviewsData = [], isLoading: isReviewsLoading } = useShopReviews(id);
+  const { data: listData = [], isLoading: isListsLoading } = useShopLists(idOrHandle, activeSection as 'Followers' | 'Following');
+  const { data: reviewsData = [], isLoading: isReviewsLoading } = useShopReviews(idOrHandle);
   const followMutation = useFollowShop();
+
+  useEffect(() => {
+    if (shop && !idOrHandle.startsWith('@') && shop.username) {
+      router.replace(`/shop/@${shop.username}`);
+    }
+  }, [shop, idOrHandle, router]);
 
   const products = React.useMemo(() => {
     return (productsData || []).map((p: any) => ({
@@ -146,7 +152,7 @@ const ShopProfilePage = () => {
     }
 
     try {
-      await followMutation.mutateAsync(id);
+      await followMutation.mutateAsync(shop?._id);
       await refreshUser();
       toast.success(isFollowing ? "Unfollowed shop" : "Following shop");
     } catch (err: any) {
@@ -277,7 +283,7 @@ const ShopProfilePage = () => {
                     </button>
                   ) : (
                     <>
-                      {currentUser && (!myShop || String(myShop._id || myShop.id) !== String(id)) && shop?.owner !== currentUser?._id && (
+                      {currentUser && (!myShop || String(myShop._id || myShop.id) !== String(shop?._id)) && shop?.owner !== currentUser?._id && (
                         <button 
                           onClick={handleFollowToggle}
                           disabled={followMutation.isPending}
@@ -313,7 +319,7 @@ const ShopProfilePage = () => {
                   <button 
                     onClick={() => setShopRatingModal({
                       isOpen: true,
-                      shopId: id,
+                      shopId: shop?._id,
                       shopName: shop.name
                     })}
                     className="p-2 border border-border rounded-full hover:bg-muted transition-all"
@@ -528,10 +534,10 @@ const ShopProfilePage = () => {
                     {currentUser && shop?.owner !== currentUser?._id && (
                       <button 
                         onClick={() => setShopRatingModal({
-                          isOpen: true,
-                          shopId: id,
-                          shopName: shop.name
-                        })}
+                            isOpen: true,
+                            shopId: shop?._id,
+                            shopName: shop.name
+                          })}
                         className="px-8 py-3 bg-primary text-primary-foreground rounded-full font-black shadow-lg shadow-primary/20 hover:scale-105 transition-all active:scale-95"
                       >
                         Rate this Shop
@@ -565,7 +571,7 @@ const ShopProfilePage = () => {
                         <button 
                           onClick={() => setShopRatingModal({
                             isOpen: true,
-                            shopId: id,
+                            shopId: shop?._id,
                             shopName: shop.name
                           })}
                           className="px-6 py-2 bg-primary text-primary-foreground rounded-full text-xs font-black shadow-lg shadow-primary/20 hover:scale-105 transition-all active:scale-95"
@@ -672,7 +678,10 @@ const ShopProfilePage = () => {
                   (listData || []).map((followedShop: any) => (
                     <div 
                       key={followedShop._id || followedShop.id || Math.random()} 
-                      onClick={() => (followedShop._id || followedShop.id) && router.push(`/shop/${followedShop._id || followedShop.id}`)}
+                      onClick={() => {
+                        const shopIdOrHandle = followedShop.username ? `@${followedShop.username}` : (followedShop._id || followedShop.id);
+                        if (shopIdOrHandle) router.push(`/shop/${shopIdOrHandle}`);
+                      }}
                       className="p-4 md:p-6 flex items-center justify-between gap-4 hover:bg-muted/50 cursor-pointer transition-colors"
                     >
                       <div className="flex items-center gap-3">
@@ -795,10 +804,10 @@ const ShopProfilePage = () => {
                 </p>
                 <button 
                   onClick={() => setShopRatingModal({
-                    isOpen: true,
-                    shopId: id,
-                    shopName: shop.name
-                  })}
+                      isOpen: true,
+                      shopId: shop?._id,
+                      shopName: shop.name
+                    })}
                   className="flex justify-center gap-0.5 my-1 hover:scale-110 transition-transform cursor-pointer mx-auto"
                 >
                   {[1, 2, 3, 4, 5].map(i => (
@@ -900,12 +909,12 @@ const ShopProfilePage = () => {
               <h3 className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em] px-2">Popular Stores</h3>
               <div className="space-y-1">
                 {popularShops
-                  .filter((s: any) => s.id !== id) // Filter out the current shop
+                  .filter((s: any) => s.id !== shop?._id) // Filter out the current shop
                   .slice(0, 4) // Limit to 4 shops
                   .map((vendor: any) => (
                   <div 
                     key={vendor.id} 
-                    onClick={() => router.push(`/shop/${vendor.id}`)}
+                    onClick={() => router.push(`/shop/${vendor.handle || vendor.id}`)}
                     className="p-3 hover:bg-muted dark:hover:bg-white/5 transition-all cursor-pointer flex items-center justify-between gap-3 rounded-xl group"
                   >
                     <div className="flex items-center gap-3 min-w-0">

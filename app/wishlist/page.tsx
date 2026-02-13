@@ -113,14 +113,17 @@ const WishlistPage = () => {
                       </button>
                     </div>
                     {product.shop && (
-                      <p className="text-muted-foreground text-xs font-bold mt-1 uppercase tracking-wider flex items-center gap-1">
+                      <Link 
+                        href={`/shop/${product.shop.username ? `@${product.shop.username}` : product.shop._id || product.shop.id}`}
+                        className="text-muted-foreground text-xs font-bold mt-1 uppercase tracking-wider flex items-center gap-1 hover:text-primary transition-colors"
+                      >
                         {product.shop.name}
                         {product.shop.username && (
                           <span className="text-[10px] lowercase tracking-normal opacity-70">
                             @{product.shop.username}
                           </span>
                         )}
-                      </p>
+                      </Link>
                     )}
                   </div>
 

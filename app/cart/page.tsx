@@ -109,9 +109,12 @@ const CartPage = () => {
                   <div className="flex-1 flex flex-col justify-between">
                     <div className="flex justify-between items-start gap-4">
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-2">
+                        <Link 
+                          href={`/shop/${item.product.shop?.username ? `@${item.product.shop.username}` : item.product.shop?._id || item.product.shop?.id || item.product.shop}`}
+                          className="flex items-center gap-2 mb-2 hover:text-primary transition-colors group/shop"
+                        >
                           <Store className="w-3 h-3 text-primary" />
-                          <span className="text-[10px] font-black text-primary uppercase tracking-widest truncate">
+                          <span className="text-[10px] font-black text-primary uppercase tracking-widest truncate group-hover/shop:underline">
                             {item.product.shop?.name || "Official Store"}
                           </span>
                           {item.product.shop?.username && (
@@ -119,7 +122,7 @@ const CartPage = () => {
                               @{item.product.shop.username}
                             </span>
                           )}
-                        </div>
+                        </Link>
                         <h3 
                           onClick={() => router.push(`/shop/product/${item.product._id}`)}
                           className="text-lg font-bold text-foreground group-hover:text-primary transition-colors leading-tight cursor-pointer"

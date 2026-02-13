@@ -141,7 +141,7 @@ const BrandsPage = () => {
             {filteredShops.map((shop: any) => (
               <div 
                 key={shop._id}
-                onClick={() => router.push(`/shop/${shop._id}`)}
+                onClick={() => router.push(`/shop/${shop.username ? `@${shop.username}` : shop._id}`)}
                 className="group bg-background rounded-[2.5rem] border border-border hover:border-primary/20 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 cursor-pointer overflow-hidden flex flex-col"
               >
                 {/* Banner Part */}

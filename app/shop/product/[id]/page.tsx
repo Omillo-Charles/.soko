@@ -83,14 +83,14 @@ const ProductDetailsPage = () => {
 
   const popularShops = React.useMemo(() => {
     return (popularShopsData || []).map((s: any) => ({
-      id: s._id || s.id || `shop-${Math.random()}`,
-      name: s.name || "Unknown Shop",
-      handle: s.username ? `@${s.username}` : null,
+      id: String(s._id || s.id || `shop-${Math.random()}`),
+      name: String(s.name || "Unknown Shop"),
+      handle: s.username ? `@${s.username}` : `@${String(s.name || "shop").toLowerCase().replace(/\s+/g, "_")}`,
       avatar: s.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${s.name || "shop"}`,
-      followers: s.followersCount || s.followers?.length || 0,
-      verified: s.isVerified || false,
+      followers: Number(s.followersCount || s.followers?.length || 0),
+      verified: Boolean(s.isVerified || false),
       followersList: s.followers || [],
-      products: s.productsCount || s.products?.length || 0
+      products: Number(s.productsCount || s.products?.length || 0)
     }));
   }, [popularShopsData]);
 
@@ -197,18 +197,24 @@ const ProductDetailsPage = () => {
               <div className="flex flex-col">
                 {/* 1. Shop Name Header */}
                 <div className="p-5 md:px-8 md:pt-8 md:pb-3 flex items-center justify-between">
-                  <Link href={`/shop/${product.shop?._id}`} className="group flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-muted overflow-hidden border border-border shadow-sm">
-                      <img src={product.shop?.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${product.shop?.name}`} className="w-full h-full object-cover" alt="" />
-                    </div>
-                    <div>
-                      <div className="text-[13px] font-black text-foreground group-hover:text-primary transition-colors flex items-center gap-1.5">
-                        {product.shop?.name || "Official Store"}
-                        {product.shop?.isVerified && <CheckCircle2 className="w-3 h-3 text-primary fill-primary/10" />}
-                      </div>
-                      <p className="text-[8px] font-bold text-muted-foreground uppercase tracking-wider">Visit Shop</p>
-                    </div>
-                  </Link>
+                  {(() => {
+                    const handle = product.shop?.username ? `@${product.shop.username}` : null;
+                    const shopIdOrHandle = handle || product.shop?._id || product.shop?.id || product.shop;
+                    return (
+                      <Link href={`/shop/${shopIdOrHandle}`} className="group flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-full bg-muted overflow-hidden border border-border shadow-sm">
+                          <img src={product.shop?.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${product.shop?.name}`} className="w-full h-full object-cover" alt="" />
+                        </div>
+                        <div>
+                          <div className="text-[13px] font-black text-foreground group-hover:text-primary transition-colors flex items-center gap-1.5">
+                            {product.shop?.name || "Official Store"}
+                            {product.shop?.isVerified && <CheckCircle2 className="w-3 h-3 text-primary fill-primary/10" />}
+                          </div>
+                          <p className="text-[8px] font-bold text-muted-foreground uppercase tracking-wider">Visit Shop</p>
+                        </div>
+                      </Link>
+                    );
+                  })()}
                   <div className="flex items-center gap-2">
                     <button onClick={handleWishlistToggle} className={`p-1.5 rounded-full hover:bg-muted transition-all ${isInWishlist(product._id) ? 'text-pink-500 bg-pink-500/10' : 'text-muted-foreground/30'}`}>
                       <Heart className={`w-4 h-4 ${isInWishlist(product._id) ? 'fill-current' : ''}`} />
@@ -456,7 +462,7 @@ const ProductDetailsPage = () => {
                   <div 
                     key={vendor.id} 
                     className="p-3 hover:bg-muted transition-all cursor-pointer flex items-center justify-between gap-3 rounded-xl group"
-                    onClick={() => router.push(`/shop/${vendor.id}`)}
+                    onClick={() => router.push(`/shop/${vendor.handle || vendor.id}`)}
                   >
                     <div className="flex items-center gap-3 min-w-0 flex-1">
                       <div className="w-10 h-10 rounded-full overflow-hidden bg-muted shrink-0 border border-border">
@@ -468,6 +474,8 @@ const ProductDetailsPage = () => {
                           {vendor.verified && <CheckCircle2 className="w-3 h-3 text-primary fill-primary/10" />}
                         </div>
                         <div className="flex items-center gap-2 mt-0.5">
+                          <p className="text-[10px] font-bold text-muted-foreground truncate max-w-[80px]">{vendor.handle}</p>
+                          <span className="text-muted-foreground/30">·</span>
                           <p className="text-[10px] font-bold text-muted-foreground">{vendor.followers} followers</p>
                         </div>
                       </div>

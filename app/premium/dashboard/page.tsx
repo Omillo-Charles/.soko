@@ -519,7 +519,10 @@ export default function PremiumDashboard() {
                           <Link href="/account/seller/products?action=add" className="px-5 py-3 bg-foreground text-background rounded-2xl font-black text-[10px] uppercase tracking-widest hover:scale-[1.02] transition-all flex items-center gap-2">
                             <Zap className="w-4 h-4" /> Add Product
                           </Link>
-                          <Link href={`/shop/${shop?._id || 'my-shop'}`} className="px-5 py-3 bg-background text-foreground border border-border rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-muted transition-all">
+                          <Link 
+                            href={`/shop/${shop?.username ? `@${shop.username}` : shop?._id || 'my-shop'}`} 
+                            className="px-5 py-3 bg-background text-foreground border border-border rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-muted transition-all"
+                          >
                             View Storefront
                           </Link>
                           <Link href="/account/seller/settings" className="p-3 bg-muted text-foreground rounded-2xl hover:bg-muted/80 transition-all">

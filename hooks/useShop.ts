@@ -1,11 +1,16 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
 
-export const useShop = (id: string) => {
+export const useShop = (idOrHandle: string) => {
   return useQuery({
-    queryKey: ['shop', id],
+    queryKey: ['shop', idOrHandle],
     queryFn: async () => {
-      const response = await api.get(`/shops/${id}`);
+      // Check if it's a handle (starts with @)
+      const endpoint = idOrHandle.startsWith('@') 
+        ? `/shops/handle/${idOrHandle.substring(1)}` 
+        : `/shops/${idOrHandle}`;
+        
+      const response = await api.get(endpoint);
       const shopData = response.data.data || response.data;
       
       // If the data is empty or missing name, it might be an unsuccessful response
@@ -15,7 +20,7 @@ export const useShop = (id: string) => {
       
       return shopData;
     },
-    enabled: !!id && id !== 'undefined',
+    enabled: !!idOrHandle && idOrHandle !== 'undefined',
     staleTime: 0, // Ensure we always get fresh data for profile
   });
 };
@@ -31,16 +36,21 @@ export const useMyShop = () => {
   });
 };
 
-export const useShopProducts = (id: string, params?: { limit?: number; minPrice?: number; maxPrice?: number }) => {
+export const useShopProducts = (idOrHandle: string, params?: { limit?: number; minPrice?: number; maxPrice?: number }) => {
   return useQuery({
-    queryKey: ['shop-products', id, params],
+    queryKey: ['shop-products', idOrHandle, params],
     queryFn: async () => {
-      const response = await api.get(`/products/shop/${id}`, {
+      // Check if it's a handle (starts with @)
+      const endpoint = idOrHandle.startsWith('@')
+        ? `/products/shop/handle/${idOrHandle.substring(1)}`
+        : `/products/shop/${idOrHandle}`;
+
+      const response = await api.get(endpoint, {
         params: { limit: 20, ...params }
       });
       return response.data.data;
     },
-    enabled: !!id && id !== 'undefined',
+    enabled: !!idOrHandle && idOrHandle !== 'undefined',
   });
 };
 
@@ -56,13 +66,22 @@ export const usePopularShops = (limit?: number) => {
   });
 };
 
-export const useShopLists = (id: string, type: 'Followers' | 'Following') => {
+export const useShopLists = (idOrHandle: string, type: 'Followers' | 'Following') => {
   return useQuery({
-    queryKey: ['shop-lists', id, type],
+    queryKey: ['shop-lists', idOrHandle, type],
     queryFn: async () => {
+      const isHandle = idOrHandle.startsWith('@');
+      const cleanHandle = isHandle ? idOrHandle.substring(1) : idOrHandle;
+
       const endpoints = type === 'Followers' 
-        ? [`/shops/${id}/followers`, `/users/followers/${id}`]
-        : [`/shops/${id}/following`, `/users/following/${id}`];
+        ? [
+            isHandle ? `/shops/handle/${cleanHandle}/followers` : `/shops/${idOrHandle}/followers`,
+            `/users/followers/${idOrHandle}`
+          ]
+        : [
+            isHandle ? `/shops/handle/${cleanHandle}/following` : `/shops/${idOrHandle}/following`,
+            `/users/following/${idOrHandle}`
+          ];
 
       for (const endpoint of endpoints) {
         try {
@@ -76,18 +95,22 @@ export const useShopLists = (id: string, type: 'Followers' | 'Following') => {
       }
       return [];
     },
-    enabled: !!id && (type === 'Followers' || type === 'Following'),
+    enabled: !!idOrHandle && (type === 'Followers' || type === 'Following'),
   });
 };
 
-export const useShopReviews = (id: string) => {
+export const useShopReviews = (idOrHandle: string) => {
   return useQuery({
-    queryKey: ['shop-reviews', id],
+    queryKey: ['shop-reviews', idOrHandle],
     queryFn: async () => {
-      const response = await api.get(`/shops/${id}/reviews`);
+      const endpoint = idOrHandle.startsWith('@')
+        ? `/shops/handle/${idOrHandle.substring(1)}/reviews`
+        : `/shops/${idOrHandle}/reviews`;
+        
+      const response = await api.get(endpoint);
       return response.data.data;
     },
-    enabled: !!id && id !== 'undefined',
+    enabled: !!idOrHandle && idOrHandle !== 'undefined',
   });
 };
 

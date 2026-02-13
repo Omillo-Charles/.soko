@@ -351,7 +351,7 @@ const ShopContent = () => {
                           <button
                             key={shop.id}
                             onClick={() => {
-                              router.push(`/shop/${shop.id}`);
+                              router.push(`/shop/${shop.handle || shop.id}`);
                               setShowDesktopSuggestions(false);
                             }}
                             className="w-full flex items-center gap-3 p-2 hover:bg-muted rounded-xl transition-all group text-left"
@@ -535,7 +535,7 @@ const ShopContent = () => {
                     popularShops.map((vendor: any) => (
                       <div 
                         key={vendor.id}
-                        onClick={() => router.push(`/shop/${vendor.id}`)}
+                        onClick={() => router.push(`/shop/${vendor.handle || vendor.id}`)}
                         className="shrink-0 w-[200px] p-4 bg-background border border-border rounded-2xl space-y-3"
                       >
                         <div className="flex items-center gap-3">
@@ -659,8 +659,9 @@ const ShopContent = () => {
                         <div 
                           onClick={(e) => { 
                             e.stopPropagation(); 
-                            const shopId = product.shop?._id || product.shop?.id || product.shop || product.vendor?.id;
-                            if (shopId) router.push(`/shop/${shopId}`);
+                            const handle = product.shop?.username ? `@${product.shop.username}` : (product.vendor?.handle ? (product.vendor.handle.startsWith('@') ? product.vendor.handle : `@${product.vendor.handle}`) : null);
+                            const shopIdOrHandle = handle || product.shop?._id || product.shop?.id || product.shop || product.vendor?.id;
+                            if (shopIdOrHandle) router.push(`/shop/${shopIdOrHandle}`);
                           }}
                           className="w-12 h-12 rounded-full overflow-hidden border border-border bg-muted hover:opacity-90 transition-opacity"
                         >
@@ -680,8 +681,9 @@ const ShopContent = () => {
                             <span 
                               onClick={(e) => { 
                                 e.stopPropagation(); 
-                                const shopId = product.shop?._id || product.shop?.id || product.shop || product.vendor?.id;
-                                if (shopId) router.push(`/shop/${shopId}`);
+                                const handle = product.shop?.username ? `@${product.shop.username}` : (product.vendor?.handle ? (product.vendor.handle.startsWith('@') ? product.vendor.handle : `@${product.vendor.handle}`) : null);
+                                const shopIdOrHandle = handle || product.shop?._id || product.shop?.id || product.shop || product.vendor?.id;
+                                if (shopIdOrHandle) router.push(`/shop/${shopIdOrHandle}`);
                               }}
                               className="text-sm font-black text-foreground truncate hover:underline flex items-center gap-1"
                             >
@@ -862,7 +864,7 @@ const ShopContent = () => {
                     <div 
                       key={vendor.id} 
                       className="p-3 hover:bg-muted transition-all cursor-pointer flex items-center justify-between gap-3 rounded-xl group"
-                      onClick={() => router.push(`/shop/${vendor.id}`)}
+                      onClick={() => router.push(`/shop/${vendor.handle || vendor.id}`)}
                     >
                       <div className="flex items-center gap-3 min-w-0 flex-1">
                         <div className="w-10 aspect-square rounded-full overflow-hidden bg-muted shrink-0 border border-border">

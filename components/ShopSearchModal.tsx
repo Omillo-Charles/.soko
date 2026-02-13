@@ -50,9 +50,10 @@ const ShopSearchModal = ({ isOpen, onClose, initialQuery = "" }: ShopSearchModal
   };
 
   const handleSuggestionClick = (shop: any) => {
-    const shopId = shop._id || shop.id;
-    if (shopId) {
-      router.push(`/shop/${shopId}`);
+    const handle = shop.username ? `@${shop.username}` : null;
+    const shopIdOrHandle = handle || shop._id || shop.id;
+    if (shopIdOrHandle) {
+      router.push(`/shop/${shopIdOrHandle}`);
       onClose();
     }
   };

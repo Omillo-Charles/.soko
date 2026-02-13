@@ -137,7 +137,12 @@ const SellerDashboard = () => {
 
   const quickActions = [
     { label: "Add Product", icon: <Plus className="w-5 h-5" />, href: "/account/seller/products?action=add", color: "bg-primary text-primary-foreground" },
-    { label: "View Store", icon: <Store className="w-5 h-5" />, href: shop?._id ? `/shop/${shop._id}` : `/shop/my-shop`, color: "bg-background text-foreground border border-border" },
+    { 
+      label: "View Store", 
+      icon: <Store className="w-5 h-5" />, 
+      href: shop ? `/shop/${shop.username ? `@${shop.username}` : shop._id}` : `/shop/my-shop`, 
+      color: "bg-background text-foreground border border-border" 
+    },
     { label: "Settings", icon: <Settings className="w-5 h-5" />, href: "/account/seller/settings", color: "bg-background text-foreground border border-border" },
   ];
 
