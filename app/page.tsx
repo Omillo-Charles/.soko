@@ -6,7 +6,7 @@ import Footer from "@/components/footer";
 
 export default function Home() {
   return (
-    <main className="flex flex-col pb-24 lg:pb-0 pt-4 md:pt-10">
+    <main className="flex flex-col pt-4 md:pt-10">
       {/* Minimalist Gradient Background */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-gradient-to-b from-brand-soft-blue via-brand-soft-indigo/30 to-transparent"></div>

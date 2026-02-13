@@ -13,7 +13,7 @@ const Footer = () => {
   }, []);
 
   return (
-    <footer className="bg-slate-900 text-slate-400 pt-16 pb-24 md:pb-8 mt-auto border-t border-white/5">
+    <footer className="bg-slate-900 text-slate-400 pt-16 pb-20 md:pb-8 mt-auto border-t border-white/5">
       <div className="w-full px-4 md:px-8">
         
         {/* Newsletter Section */}
