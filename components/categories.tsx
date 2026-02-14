@@ -54,7 +54,7 @@ const Categories = () => {
 
   return (
     <section className="bg-background">
-      <div className="w-full px-4 md:px-8 pt-2 md:pt-1 pb-8">
+      <div className="w-full px-4 md:px-8 pt-2 md:pt-0 pb-8">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl md:text-2xl font-bold text-foreground">Shop by Category</h2>
           <div className="flex items-center gap-4">
