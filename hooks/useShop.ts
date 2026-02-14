@@ -143,15 +143,13 @@ export const useFollowShop = () => {
         queryClient.setQueryData(['popular-shops'], context.previousPopular);
       }
     },
-    onSettled: (data, error, variables) => {
+    onSettled: () => {
       // Always refetch to ensure we have the correct server state
       queryClient.invalidateQueries({ queryKey: ['shop'] });
       queryClient.invalidateQueries({ queryKey: ['popular-shops'] });
       queryClient.invalidateQueries({ queryKey: ['my-shop'] });
       queryClient.invalidateQueries({ queryKey: ['user-me'] });
-      if (variables && variables !== 'undefined') {
-        queryClient.invalidateQueries({ queryKey: ['shop-lists', variables] });
-      }
+      queryClient.invalidateQueries({ queryKey: ['shop-lists'] });
     },
   });
 };
