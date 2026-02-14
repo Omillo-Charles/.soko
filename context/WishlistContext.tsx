@@ -53,14 +53,31 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       await queryClient.cancelQueries({ queryKey: ['products-infinite'] });
       await queryClient.cancelQueries({ queryKey: ['featured-products'] });
       await queryClient.cancelQueries({ queryKey: ['product-feed'] });
+      await queryClient.cancelQueries({ queryKey: ['shop-products'] });
 
       // Snapshot the previous values
       const previousProducts = queryClient.getQueryData(['products']);
       const previousFeed = queryClient.getQueryData(['product-feed']);
+      const previousShopProducts = queryClient.getQueryData(['shop-products']);
+      const previousWishlist = queryClient.getQueryData(['wishlist']);
 
       // Determine if adding or removing
-      const currentlyInWishlist = wishlistItems.some((item: Product) => item._id === productId);
+      // Use the most up-to-date wishlist data (including potential previous optimistic updates)
+      const currentWishlist: any = previousWishlist || { products: [] };
+      const currentlyInWishlist = currentWishlist.products?.some((item: any) => (item._id || item.id) === productId);
       const action = currentlyInWishlist ? 'removed' : 'added';
+
+      // Optimistically update wishlist items
+      queryClient.setQueryData(['wishlist'], (old: any) => {
+        if (!old) return { products: [] };
+        const products = old.products || [];
+        if (action === 'added') {
+          // We don't have the full product object here necessarily, but for isInWishlist we only need the ID
+          return { ...old, products: [...products, { _id: productId }] };
+        } else {
+          return { ...old, products: products.filter((p: any) => (p._id || p.id) !== productId) };
+        }
+      });
 
       // Function to update product list
       const updateProductList = (old: any) => {
@@ -104,8 +121,9 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       queryClient.setQueriesData({ queryKey: ['products-infinite'] }, updateProductList);
       queryClient.setQueriesData({ queryKey: ['featured-products'] }, updateProductList);
       queryClient.setQueriesData({ queryKey: ['product-feed'] }, updateProductList);
+      queryClient.setQueriesData({ queryKey: ['shop-products'] }, updateProductList);
 
-      return { previousProducts, previousFeed };
+      return { previousProducts, previousFeed, previousWishlist, previousShopProducts };
     },
     onError: (error: any, productId, context) => {
       // Rollback on error
@@ -114,6 +132,12 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       }
       if (context?.previousFeed) {
         queryClient.setQueriesData({ queryKey: ['product-feed'] }, context.previousFeed);
+      }
+      if (context?.previousShopProducts) {
+        queryClient.setQueriesData({ queryKey: ['shop-products'] }, context.previousShopProducts);
+      }
+      if (context?.previousWishlist) {
+        queryClient.setQueryData(['wishlist'], context.previousWishlist);
       }
       toast.error(error.response?.data?.message || "Failed to update wishlist");
     },
@@ -125,6 +149,7 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       queryClient.invalidateQueries({ queryKey: ['products-infinite'] });
       queryClient.invalidateQueries({ queryKey: ['featured-products'] });
       queryClient.invalidateQueries({ queryKey: ['product-feed'] });
+      queryClient.invalidateQueries({ queryKey: ['shop-products'] });
     },
     onSuccess: (data) => {
       if (data.action === 'added') {
