@@ -450,13 +450,13 @@ const ShopProfilePage = () => {
                           )}
 
                           <div className="flex items-center justify-between max-w-md text-muted-foreground -ml-2">
-                            <button onClick={(e) => e.stopPropagation()} className="flex items-center gap-2 group hover:text-primary transition-colors">
+                            <button onClick={(e) => e.stopPropagation()} className="flex items-center gap-0 group hover:text-primary transition-colors">
                               <div className="p-2 rounded-full group-hover:bg-primary/10">
                                 <MessageCircle className="w-[18px] h-[18px]" />
                               </div>
                               <span className="text-xs font-bold">{product.commentsCount || 0}</span>
                             </button>
-                            <button onClick={(e) => e.stopPropagation()} className="flex items-center gap-2 group hover:text-green-500 transition-colors">
+                            <button onClick={(e) => e.stopPropagation()} className="flex items-center gap-0 group hover:text-green-500 transition-colors">
                               <div className="p-2 rounded-full group-hover:bg-green-500/10">
                                 <Repeat2 className="w-[18px] h-[18px]" />
                               </div>
@@ -467,7 +467,7 @@ const ShopProfilePage = () => {
                                 e.stopPropagation();
                                 await toggleWishlist(product._id);
                               }} 
-                              className={`flex items-center gap-2 group transition-colors ${
+                              className={`flex items-center gap-0 group transition-colors ${
                                 isInWishlist(product._id) ? 'text-pink-500' : 'hover:text-pink-500'
                               }`}
                             >
@@ -487,7 +487,7 @@ const ShopProfilePage = () => {
                                   addToCart(product._id);
                                 }
                               }} 
-                              className="flex items-center gap-2 group hover:text-primary transition-colors"
+                              className="flex items-center gap-0 group hover:text-primary transition-colors"
                             >
                               <div className="p-2 rounded-full group-hover:bg-primary/10">
                                 <ShoppingCart className="w-[18px] h-[18px]" />
