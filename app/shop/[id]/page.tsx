@@ -106,7 +106,7 @@ const ShopProfilePage = () => {
   }, []);
 
   const { data: shop, isLoading: isShopLoading, error: shopError } = useShop(idOrHandle);
-  const { data: productsData = [], isLoading: isProductsLoading } = useShopProducts(idOrHandle, {
+  const { data: productsData = [], isLoading: isProductsLoading, refetch: refetchProducts } = useShopProducts(idOrHandle, {
     minPrice: debouncedPriceRange.min ? parseFloat(debouncedPriceRange.min) : undefined,
     maxPrice: debouncedPriceRange.max ? parseFloat(debouncedPriceRange.max) : undefined
   });
@@ -809,6 +809,7 @@ const ShopProfilePage = () => {
           onClose={() => setCommentModal(prev => ({ ...prev, isOpen: false }))}
           productId={commentModal.productId}
           productName={commentModal.productName}
+          onCommentAdded={refetchProducts}
         />
 
         <ShopRatingModal

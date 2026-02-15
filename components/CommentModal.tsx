@@ -11,9 +11,10 @@ interface CommentModalProps {
   onClose: () => void;
   productId: string;
   productName: string;
+  onCommentAdded?: () => void;
 }
 
-const CommentModal = ({ isOpen, onClose, productId, productName }: CommentModalProps) => {
+const CommentModal = ({ isOpen, onClose, productId, productName, onCommentAdded }: CommentModalProps) => {
   const [content, setContent] = useState("");
   const { createComment, isPosting } = useComments(productId);
   const { user } = useUser();
@@ -39,6 +40,7 @@ const CommentModal = ({ isOpen, onClose, productId, productName }: CommentModalP
         onSuccess: () => {
           setContent("");
           onClose();
+          if (onCommentAdded) onCommentAdded();
         },
       }
     );
