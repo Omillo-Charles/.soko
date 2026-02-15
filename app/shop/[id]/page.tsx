@@ -32,6 +32,7 @@ import RatingModal from "@/components/RatingModal";
 import ShopRatingModal from "@/components/ShopRatingModal";
 import ShareShopModal from "@/components/ShareShopModal";
 import ShareModal from "@/components/ShareModal";
+import CommentModal from "@/components/CommentModal";
 
 const ShopProfilePage = () => {
   const params = useParams();
@@ -56,6 +57,16 @@ const ShopProfilePage = () => {
     isOpen: false,
     url: "",
     shopName: ""
+  });
+
+  const [commentModal, setCommentModal] = useState<{
+    isOpen: boolean;
+    productId: string;
+    productName: string;
+  }>({
+    isOpen: false,
+    productId: "",
+    productName: ""
   });
 
   const [activeSection, setActiveSection] = useState('Products');
@@ -450,7 +461,14 @@ const ShopProfilePage = () => {
                           )}
 
                           <div className="flex items-center justify-between max-w-md text-muted-foreground -ml-2">
-                            <button onClick={(e) => e.stopPropagation()} className="flex items-center gap-0 group hover:text-primary transition-colors">
+                            <button onClick={(e) => {
+                              e.stopPropagation();
+                              setCommentModal({
+                                isOpen: true,
+                                productId: product._id,
+                                productName: product.name
+                              });
+                            }} className="flex items-center gap-0 group hover:text-primary transition-colors">
                               <div className="p-2 rounded-full group-hover:bg-primary/10">
                                 <MessageCircle className="w-[18px] h-[18px]" />
                               </div>
@@ -784,6 +802,13 @@ const ShopProfilePage = () => {
           onClose={() => setShareShopModal(prev => ({ ...prev, isOpen: false }))}
           url={shareShopModal.url}
           shopName={shareShopModal.shopName}
+        />
+
+        <CommentModal
+          isOpen={commentModal.isOpen}
+          onClose={() => setCommentModal(prev => ({ ...prev, isOpen: false }))}
+          productId={commentModal.productId}
+          productName={commentModal.productName}
         />
 
         <ShopRatingModal
