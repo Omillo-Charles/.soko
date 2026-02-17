@@ -23,6 +23,7 @@ import {
   ShoppingCart
 } from "lucide-react";
 import Link from "next/link";
+import { BlueCheck } from "@/components/BlueCheck";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { toast } from "sonner";
