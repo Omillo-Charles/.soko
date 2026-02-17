@@ -82,6 +82,11 @@ const AccountPage = () => {
   const toggleAccountType = async (targetType?: "buyer" | "seller") => {
     const newType = targetType || (accountType === "buyer" ? "seller" : "buyer");
     
+    // If user is already in the target account type, no need to update
+    if (accountType === newType) {
+      return true;
+    }
+
     try {
       await updateAccountType(newType);
       setAccountType(newType);
@@ -194,17 +199,20 @@ const AccountPage = () => {
                 <span className="px-4 py-1.5 bg-primary/10 text-primary text-xs font-bold rounded-full border border-primary/20">
                   Member since {isMounted ? new Date().getFullYear() : "2026"}
                 </span>
-                <button 
-                  onClick={() => toggleAccountType()}
-                  className={`px-4 py-1.5 rounded-full text-xs font-bold border flex items-center gap-2 transition-all duration-300 ${
-                    accountType === "seller" 
-                    ? "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20" 
-                    : "bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 border-indigo-500/20"
-                  }`}
-                >
-                  <ArrowLeftRight className="w-3 h-3" />
-                  Switch to {accountType === "buyer" ? "Seller" : "Buyer"}
-                </button>
+                {/* Only show switch button if user doesn't have a shop, or is in buyer mode (to allow switching to seller) */}
+                {(!hasShop || accountType === "buyer") && (
+                  <button 
+                    onClick={() => toggleAccountType()}
+                    className={`px-4 py-1.5 rounded-full text-xs font-bold border flex items-center gap-2 transition-all duration-300 ${
+                      accountType === "seller" 
+                      ? "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20" 
+                      : "bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 border-indigo-500/20"
+                    }`}
+                  >
+                    <ArrowLeftRight className="w-3 h-3" />
+                    Switch to {accountType === "buyer" ? "Seller" : "Buyer"}
+                  </button>
+                )}
               </div>
             </div>
             <div className="flex flex-col gap-2 w-full md:w-auto">
