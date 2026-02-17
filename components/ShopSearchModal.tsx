@@ -115,7 +115,7 @@ const ShopSearchModal = ({ isOpen, onClose, initialQuery = "" }: ShopSearchModal
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-0.5">
                       <p className="text-sm font-black text-foreground truncate group-hover:text-primary transition-colors">{shop.name}</p>
                       {shop.isVerified && <BlueCheck className="w-3 h-3" />}
                     </div>

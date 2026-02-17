@@ -341,7 +341,7 @@ const ShopProfilePage = () => {
               </div>
 
               <div className="space-y-1">
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-0.5">
                   <h2 className="text-xl font-black text-foreground dark:text-white">{shop.name}</h2>
                   {shop.isVerified && <BlueCheck className="w-5 h-5" />}
                 </div>
@@ -412,7 +412,7 @@ const ShopProfilePage = () => {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between gap-2 mb-1">
                             <div className="flex items-center gap-1.5 min-w-0">
-                              <span className="text-sm font-black text-foreground dark:text-white truncate flex items-center gap-1">
+                              <span className="text-sm font-black text-foreground dark:text-white truncate flex items-center gap-0.5">
                                 {shop.name}
                                 {shop.isVerified && <BlueCheck className="w-3.5 h-3.5" />}
                               </span>
@@ -711,7 +711,7 @@ const ShopProfilePage = () => {
                           />
                         </div>
                         <div>
-                          <div className="flex items-center gap-1">
+                          <div className="flex items-center gap-0.5">
                             <p className="font-black text-foreground text-sm">{followedShop.name || 'Unknown Shop'}</p>
                             {followedShop.isVerified && <BlueCheck className="w-3 h-3" />}
                           </div>
@@ -948,7 +948,7 @@ const ShopProfilePage = () => {
                         <img src={vendor.avatar} alt={vendor.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                       </div>
                       <div className="min-w-0">
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-0.5">
                           <p className="font-bold text-foreground dark:text-white text-sm truncate">{vendor.name}</p>
                           {vendor.verified && <BlueCheck className="w-3 h-3" />}
                         </div>

@@ -178,7 +178,7 @@ const AccountPage = () => {
               <User className="w-12 h-12 text-primary" />
             </div>
             <div className="flex-1 text-center md:text-left">
-              <div className="flex flex-row flex-wrap items-center justify-center md:justify-start gap-2 mb-1">
+              <div className="flex flex-row flex-wrap items-center justify-center md:justify-start gap-1 mb-1">
                 <h1 className="text-3xl font-bold text-foreground leading-tight">
                   Hello, {isMounted ? (user?.name || "User") : "User"}!
                 </h1>

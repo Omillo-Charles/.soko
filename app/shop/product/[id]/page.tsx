@@ -206,7 +206,7 @@ const ProductDetailsPage = () => {
                           <img src={product.shop?.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${product.shop?.name}`} className="w-full h-full object-cover" alt="" />
                         </div>
                         <div>
-                          <div className="text-[13px] font-black text-foreground group-hover:text-primary transition-colors flex items-center gap-1.5">
+                          <div className="text-[13px] font-black text-foreground group-hover:text-primary transition-colors flex items-center gap-0.5">
                             {product.shop?.name || "Official Store"}
                             {product.shop?.isVerified && <BlueCheck className="w-3.5 h-3.5" />}
                           </div>
@@ -469,7 +469,7 @@ const ProductDetailsPage = () => {
                         <img src={vendor.avatar} alt={vendor.name} className="w-full h-full object-cover" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-0.5">
                           <p className="text-sm font-black text-foreground truncate">{vendor.name}</p>
                           {vendor.verified && <BlueCheck className="w-3 h-3" />}
                         </div>
