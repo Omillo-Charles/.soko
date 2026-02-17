@@ -13,7 +13,6 @@ import {
   Heart, 
   Share2,
   TrendingUp,
-  CheckCircle2,
   LayoutGrid,
   List,
   Info,
@@ -23,6 +22,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { BlueCheck } from "@/components/BlueCheck";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { categories as allCategories } from "@/constants/categories";
@@ -543,9 +543,9 @@ const ShopContent = () => {
                             <img src={vendor.avatar} alt={vendor.name} className="w-full h-full object-cover" />
                           </div>
                           <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-1">
+                            <div className="flex items-center gap-0.5">
                               <p className="text-xs font-black text-foreground truncate">{vendor.name}</p>
-                              {vendor.verified && <CheckCircle2 className="w-3 h-3 text-primary" />}
+                              {vendor.verified && <BlueCheck className="w-3 h-3" />}
                             </div>
                             <p className="text-[10px] font-bold text-muted-foreground truncate">{vendor.handle}</p>
                           </div>
@@ -685,10 +685,10 @@ const ShopContent = () => {
                                 const shopIdOrHandle = handle || product.shop?._id || product.shop?.id || product.shop || product.vendor?.id;
                                 if (shopIdOrHandle) router.push(`/shop/${shopIdOrHandle}`);
                               }}
-                              className="text-sm font-black text-foreground truncate hover:underline flex items-center gap-1"
+                              className="text-sm font-black text-foreground truncate hover:underline flex items-center gap-0.5"
                             >
                               {product.shop?.name || product.vendor?.name}
-                              {(product.shop?.isVerified || product.vendor?.verified) && <CheckCircle2 className="w-3.5 h-3.5 text-primary fill-primary/10" />}
+                              {(product.shop?.isVerified || product.vendor?.verified) && <BlueCheck className="w-3.5 h-3.5" />}
                             </span>
                             {(product.shop?.username || product.vendor?.handle) && (
                               <span className="text-muted-foreground text-xs truncate">@{product.shop?.username || product.vendor?.handle?.replace('@', '')}</span>
@@ -871,10 +871,10 @@ const ShopContent = () => {
                           <img src={vendor.avatar} alt={vendor.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-1">
-                            <p className="text-sm font-black text-foreground truncate group-hover:text-primary transition-colors">{vendor.name}</p>
-                            {vendor.verified && <CheckCircle2 className="w-3 h-3 text-primary fill-primary/10" />}
-                          </div>
+                          <div className="flex items-center gap-0.5">
+                          <p className="text-sm font-black text-foreground truncate group-hover:text-primary transition-colors">{vendor.name}</p>
+                          {vendor.verified && <BlueCheck className="w-3 h-3" />}
+                        </div>
                           <p className="text-[10px] font-bold text-muted-foreground/60 truncate">{vendor.handle || `@${vendor.name.toLowerCase().replace(/\s+/g, '')}`}</p>
                           <div className="flex items-center gap-2 mt-0.5">
                           <p className="text-[10px] font-bold text-muted-foreground">{vendor.followers} followers</p>
