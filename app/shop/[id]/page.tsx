@@ -12,7 +12,6 @@ import {
   ChevronLeft,
   ShoppingBag,
   Star,
-  CheckCircle2,
   Share2,
   Heart,
   MessageCircle,
@@ -415,7 +414,7 @@ const ShopProfilePage = () => {
                             <div className="flex items-center gap-1.5 min-w-0">
                               <span className="text-sm font-black text-foreground dark:text-white truncate flex items-center gap-1">
                                 {shop.name}
-                                {shop.isVerified && <CheckCircle2 className="w-3.5 h-3.5 text-primary fill-primary/10" />}
+                                {shop.isVerified && <BlueCheck className="w-3.5 h-3.5" />}
                               </span>
                               <span className="text-muted-foreground text-xs truncate">{shop.username ? `@${shop.username}` : `@${shop.name.toLowerCase().replace(/\s+/g, "_")}`}</span>
                             </div>
@@ -714,7 +713,7 @@ const ShopProfilePage = () => {
                         <div>
                           <div className="flex items-center gap-1">
                             <p className="font-black text-foreground text-sm">{followedShop.name || 'Unknown Shop'}</p>
-                            {followedShop.isVerified && <CheckCircle2 className="w-3 h-3 text-primary fill-primary/10" />}
+                            {followedShop.isVerified && <BlueCheck className="w-3 h-3" />}
                           </div>
                           <p className="text-xs font-bold text-muted-foreground/60">{followedShop.username ? `@${followedShop.username}` : `@${(followedShop.name || 'shop').toLowerCase().replace(/\s+/g, "_")}`}</p>
                         </div>
@@ -951,7 +950,7 @@ const ShopProfilePage = () => {
                       <div className="min-w-0">
                         <div className="flex items-center gap-1">
                           <p className="font-bold text-foreground dark:text-white text-sm truncate">{vendor.name}</p>
-                          {vendor.verified && <CheckCircle2 className="w-3 h-3 text-primary fill-primary/10" />}
+                          {vendor.verified && <BlueCheck className="w-3 h-3" />}
                         </div>
                         <div className="flex items-center gap-2">
                           <p className="text-muted-foreground text-[11px] truncate">{vendor.handle}</p>
