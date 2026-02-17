@@ -16,6 +16,7 @@ import {
 import api from "@/lib/api";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/hooks/useUser";
 
 interface PremiumUpgradeModalProps {
   isOpen: boolean;
@@ -33,6 +34,7 @@ export const PremiumUpgradeModal = ({
   isAnnual 
 }: PremiumUpgradeModalProps) => {
   const router = useRouter();
+  const { refreshUser } = useUser();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isCheckingStatus, setIsCheckingStatus] = useState(false);
@@ -55,12 +57,14 @@ export const PremiumUpgradeModal = ({
             toast.success("Payment Verified!", {
               description: "Welcome to Premium! Redirecting to your dashboard...",
             });
+            
+            // Force refresh user data to update isPremium status
+            await refreshUser();
+            
             setTimeout(() => {
               onClose();
-              router.push("/premium/dashboard");
-              // Force refresh to update user state
-              window.location.reload();
-            }, 2000);
+              window.location.href = "/premium/dashboard";
+            }, 1000);
           } else if (response.data.status === 'failed') {
             setIsWaitingForCallback(false);
             toast.error("Payment Failed", {
@@ -76,7 +80,7 @@ export const PremiumUpgradeModal = ({
     return () => {
       if (intervalId) clearInterval(intervalId);
     };
-  }, [isWaitingForCallback, checkoutRequestId, onClose, router, isOpen, isCheckingStatus]);
+  }, [isWaitingForCallback, checkoutRequestId, onClose, router, isOpen, isCheckingStatus, refreshUser]);
 
   const handleManualCheck = async () => {
     if (!checkoutRequestId) return;
@@ -88,11 +92,14 @@ export const PremiumUpgradeModal = ({
             toast.success("Payment Verified!", {
                 description: "Welcome to Premium! Redirecting to your dashboard...",
             });
+            
+            // Force refresh user data to update isPremium status
+            await refreshUser();
+            
             setTimeout(() => {
                 onClose();
-                router.push("/premium/dashboard");
-                window.location.reload();
-            }, 2000);
+                window.location.href = "/premium/dashboard";
+            }, 1000);
         } else if (response.data.status === 'failed') {
              setIsWaitingForCallback(false);
              toast.error("Payment Failed", { description: "Transaction failed or was cancelled." });
