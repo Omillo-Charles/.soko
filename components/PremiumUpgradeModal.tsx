@@ -83,6 +83,8 @@ export const PremiumUpgradeModal = ({
       // Basic formatting for the backend (though backend is robust)
       let cleanPhone = phoneNumber.replace(/\D/g, "");
       
+      console.log(`Sending STK push for amount: ${price}`);
+      
       const response = await api.post("/payments/stk-push", {
         phoneNumber: cleanPhone,
         amount: price.replace(/,/g, ""), // Remove commas if any

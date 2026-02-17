@@ -177,7 +177,7 @@ const AccountPage = () => {
                   Hello, {isMounted ? (user?.name || "User") : "User"}!
                 </h1>
                 {user?.isPremium && (
-                  <BadgeCheck className="w-6 h-6 text-blue-500 fill-blue-500/10" />
+                  <BadgeCheck className="w-6 h-6 text-white fill-blue-500" />
                 )}
                 <span className={`px-3 py-1 rounded-lg text-[10px] uppercase tracking-wider font-black whitespace-nowrap ${
                   accountType === "seller" ? "bg-amber-500/10 text-amber-700 dark:text-amber-400" : "bg-indigo-500/10 text-indigo-700 dark:text-indigo-400"

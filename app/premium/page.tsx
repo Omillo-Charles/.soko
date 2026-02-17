@@ -21,7 +21,7 @@ const PremiumPage = () => {
   });
 
   const handleUpgradeClick = (plan: any) => {
-    if (plan.name === "Free" || plan.name === "Enterprise") return;
+    if (plan.name === "Free") return;
     
     setUpgradeModal({
       isOpen: true,
@@ -47,7 +47,7 @@ const PremiumPage = () => {
     },
     {
       name: "Premium",
-      price: { monthly: "200", annual: "2,000" },
+      price: { monthly: "1", annual: "12" },
       description: "Everything you need to grow your business faster",
       features: [
         "Verification Checkmark (Blue Badge)",
@@ -57,13 +57,13 @@ const PremiumPage = () => {
         "24/7 Priority support",
         "Early access to new features",
       ],
-      buttonText: "Upgrade to Premium",
+      buttonText: "Upgrade to Premium (KES 1)",
       buttonVariant: "primary",
       popular: true,
     },
     {
       name: "Enterprise",
-      price: { monthly: "500", annual: "5,000" },
+      price: { monthly: "5", annual: "50" },
       description: "Dedicated tools for large scale operations",
       features: [
         "Everything in Premium",
@@ -73,7 +73,7 @@ const PremiumPage = () => {
         "Bulk inventory management",
         "Multi-user access (Teams)",
       ],
-      buttonText: "Contact Sales",
+      buttonText: "Upgrade to Enterprise (KES 5)",
       buttonVariant: "outline",
       popular: false,
     },
