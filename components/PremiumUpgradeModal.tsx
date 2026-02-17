@@ -10,7 +10,8 @@ import {
   ShieldCheck,
   Zap,
   ArrowRight,
-  BadgeCheck
+  BadgeCheck,
+  RefreshCcw
 } from "lucide-react";
 import api from "@/lib/api";
 import { toast } from "sonner";
@@ -34,6 +35,7 @@ export const PremiumUpgradeModal = ({
   const router = useRouter();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isCheckingStatus, setIsCheckingStatus] = useState(false);
   const [isWaitingForCallback, setIsWaitingForCallback] = useState(false);
   const [checkoutRequestId, setCheckoutRequestId] = useState<string | null>(null);
 
@@ -43,6 +45,9 @@ export const PremiumUpgradeModal = ({
 
     if (isWaitingForCallback && checkoutRequestId && isOpen) {
       intervalId = setInterval(async () => {
+        // Don't auto-poll if manually checking to avoid race conditions/spam
+        if (isCheckingStatus) return;
+
         try {
           const response = await api.get(`/payments/status/${checkoutRequestId}`);
           if (response.data.success && response.data.status === 'completed') {
@@ -65,13 +70,42 @@ export const PremiumUpgradeModal = ({
         } catch (error) {
           console.error("Status check error:", error);
         }
-      }, 3000); // Check every 3 seconds
+      }, 5000); // Slow down polling to 5 seconds since we have a manual button and backend query
     }
 
     return () => {
       if (intervalId) clearInterval(intervalId);
     };
-  }, [isWaitingForCallback, checkoutRequestId, onClose, router, isOpen]);
+  }, [isWaitingForCallback, checkoutRequestId, onClose, router, isOpen, isCheckingStatus]);
+
+  const handleManualCheck = async () => {
+    if (!checkoutRequestId) return;
+    setIsCheckingStatus(true);
+    try {
+        const response = await api.get(`/payments/status/${checkoutRequestId}`);
+        if (response.data.success && response.data.status === 'completed') {
+            setIsWaitingForCallback(false);
+            toast.success("Payment Verified!", {
+                description: "Welcome to Premium! Redirecting to your dashboard...",
+            });
+            setTimeout(() => {
+                onClose();
+                router.push("/premium/dashboard");
+                window.location.reload();
+            }, 2000);
+        } else if (response.data.status === 'failed') {
+             setIsWaitingForCallback(false);
+             toast.error("Payment Failed", { description: "Transaction failed or was cancelled." });
+        } else {
+             toast.info("Payment Pending", { description: "We are still waiting for confirmation. If you have paid, please wait a moment and try again." });
+        }
+    } catch (error) {
+        console.error("Manual check error:", error);
+        toast.error("Error checking status");
+    } finally {
+        setIsCheckingStatus(false);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -156,6 +190,15 @@ export const PremiumUpgradeModal = ({
                   <p className="text-[10px] font-bold text-amber-900 text-left">Enter your PIN to authorize KES {price}</p>
                 </div>
               </div>
+              
+              <button
+                onClick={handleManualCheck}
+                disabled={isCheckingStatus}
+                className="w-full py-3 bg-amber-100 hover:bg-amber-200 text-amber-900 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2"
+              >
+                <RefreshCcw className={`w-3.5 h-3.5 ${isCheckingStatus ? 'animate-spin' : ''}`} />
+                {isCheckingStatus ? "Verifying..." : "I have paid, check status"}
+              </button>
             </div>
           ) : (
             <>
