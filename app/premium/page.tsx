@@ -81,7 +81,7 @@ const PremiumPage = () => {
 
   const benefits = [
     {
-      icon: <BadgeCheck className="w-6 h-6 text-primary" />,
+      icon: <BadgeCheck className="w-6 h-6 text-blue-500" />,
       title: "Verification Check",
       description: "Build instant trust with a verified badge on your profile and products."
     },

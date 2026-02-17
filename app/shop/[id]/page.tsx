@@ -343,7 +343,7 @@ const ShopProfilePage = () => {
               <div className="space-y-1">
                 <div className="flex items-center gap-1.5">
                   <h2 className="text-xl font-black text-foreground dark:text-white">{shop.name}</h2>
-                  {shop.isVerified && <CheckCircle2 className="w-5 h-5 text-primary fill-primary/10" />}
+                  {shop.isVerified && <BlueCheck className="w-5 h-5" />}
                 </div>
                 <div className="flex items-center gap-3">
                   <p className="text-sm font-bold text-muted-foreground">{shop.username ? `@${shop.username}` : `@${shop.name.toLowerCase().replace(/\s+/g, "_")}`}</p>
