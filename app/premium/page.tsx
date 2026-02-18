@@ -57,13 +57,13 @@ const PremiumPage = () => {
         "24/7 Priority support",
         "Early access to new features",
       ],
-      buttonText: "Upgrade to Premium (KES 1)",
+      buttonText: "Upgrade to Premium (KES 350)",
       buttonVariant: "primary",
       popular: true,
     },
     {
       name: "Enterprise",
-      price: { monthly: "5", annual: "50" },
+      price: { monthly: "750", annual: "7200" },
       description: "Dedicated tools for large scale operations",
       features: [
         "Everything in Premium",
