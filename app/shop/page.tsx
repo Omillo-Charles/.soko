@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { BlueCheck } from "@/components/BlueCheck";
+import { GoldCheck } from "@/components/GoldCheck";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { categories as allCategories } from "@/constants/categories";
@@ -545,7 +545,7 @@ const ShopContent = () => {
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-0.5">
                               <p className="text-xs font-black text-foreground truncate">{vendor.name}</p>
-                              {vendor.verified && <BlueCheck className="w-3.5 h-3.5" />}
+                              {vendor.verified && <GoldCheck className="w-3.5 h-3.5" />}
                             </div>
                             <p className="text-[10px] font-bold text-muted-foreground truncate">{vendor.handle}</p>
                           </div>
@@ -688,7 +688,7 @@ const ShopContent = () => {
                               className="text-sm font-black text-foreground truncate hover:underline flex items-center gap-0.5"
                             >
                               {product.shop?.name || product.vendor?.name}
-                              {(product.shop?.isVerified || product.vendor?.verified) && <BlueCheck className="w-4 h-4" />}
+                              {(product.shop?.isVerified || product.vendor?.verified) && <GoldCheck className="w-4 h-4" />}
                             </span>
                             {(product.shop?.username || product.vendor?.handle) && (
                               <span className="text-muted-foreground text-xs truncate">@{product.shop?.username || product.vendor?.handle?.replace('@', '')}</span>
@@ -873,7 +873,7 @@ const ShopContent = () => {
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-0.5">
                           <p className="text-sm font-black text-foreground truncate group-hover:text-primary transition-colors">{vendor.name}</p>
-                          {vendor.verified && <BlueCheck className="w-4 h-4" />}
+                          {vendor.verified && <GoldCheck className="w-4 h-4" />}
                         </div>
                           <p className="text-[10px] font-bold text-muted-foreground/60 truncate">{vendor.handle || `@${vendor.name.toLowerCase().replace(/\s+/g, '')}`}</p>
                           <div className="flex items-center gap-2 mt-0.5">

@@ -26,7 +26,7 @@ import { toast } from "sonner";
 import LogoutConfirmation from "@/components/LogoutConfirmation";
 import { RegisterShopModal } from "@/components/RegisterShopModal";
 
-import { BlueCheck } from "@/components/BlueCheck";
+import { GoldCheck } from "@/components/GoldCheck";
 
 const AccountPage = () => {
   const router = useRouter();
@@ -183,7 +183,7 @@ const AccountPage = () => {
                   Hello, {isMounted ? (user?.name || "User") : "User"}!
                 </h1>
                 {user?.isPremium && (
-                  <BlueCheck className="w-6 h-6" />
+                  <GoldCheck className="w-6 h-6" />
                 )}
                 <span className={`px-3 py-1 rounded-lg text-[10px] uppercase tracking-wider font-black whitespace-nowrap ${
                   accountType === "seller" ? "bg-amber-500/10 text-amber-700 dark:text-amber-400" : "bg-indigo-500/10 text-indigo-700 dark:text-indigo-400"

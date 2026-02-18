@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const BlueCheck = ({ className = "w-5 h-5" }: { className?: string }) => {
+export const GoldCheck = ({ className = "w-5 h-5" }: { className?: string }) => {
   return (
     <svg
       viewBox="0 0 24 24"

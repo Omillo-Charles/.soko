@@ -24,7 +24,7 @@ import {
   Repeat2
 } from "lucide-react";
 import Link from "next/link";
-import { BlueCheck } from "@/components/BlueCheck";
+import { GoldCheck } from "@/components/GoldCheck";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { useUser } from "@/hooks/useUser";
@@ -208,7 +208,7 @@ const ProductDetailsPage = () => {
                         <div>
                           <div className="text-[13px] font-black text-foreground group-hover:text-primary transition-colors flex items-center gap-0.5">
                             {product.shop?.name || "Official Store"}
-                            {product.shop?.isVerified && <BlueCheck className="w-3.5 h-3.5" />}
+                            {product.shop?.isVerified && <GoldCheck className="w-3.5 h-3.5" />}
                           </div>
                           <p className="text-[8px] font-bold text-muted-foreground uppercase tracking-wider">Visit Shop</p>
                         </div>
@@ -471,7 +471,7 @@ const ProductDetailsPage = () => {
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-0.5">
                           <p className="text-sm font-black text-foreground truncate">{vendor.name}</p>
-                          {vendor.verified && <BlueCheck className="w-3 h-3" />}
+                          {vendor.verified && <GoldCheck className="w-3 h-3" />}
                         </div>
                         <div className="flex items-center gap-2 mt-0.5">
                           <p className="text-[10px] font-bold text-muted-foreground truncate max-w-[80px]">{vendor.handle}</p>

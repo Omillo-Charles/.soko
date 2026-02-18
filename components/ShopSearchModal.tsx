@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { Search, X, Store, CheckCircle2, ArrowRight, User } from "lucide-react";
-import { BlueCheck } from "@/components/BlueCheck";
+import { GoldCheck } from "@/components/GoldCheck";
 import { useRouter, useSearchParams } from "next/navigation";
 import { usePopularShops } from "@/hooks/useShop";
 
@@ -117,7 +117,7 @@ const ShopSearchModal = ({ isOpen, onClose, initialQuery = "" }: ShopSearchModal
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-0.5">
                       <p className="text-sm font-black text-foreground truncate group-hover:text-primary transition-colors">{shop.name}</p>
-                      {shop.isVerified && <BlueCheck className="w-3 h-3" />}
+                      {shop.isVerified && <GoldCheck className="w-3 h-3" />}
                     </div>
                     <p className="text-[10px] font-bold text-muted-foreground/60 truncate">
                       {shop.username ? `@${shop.username}` : `@${shop.name.toLowerCase().replace(/\s+/g, '')}`}
@@ -163,7 +163,7 @@ const ShopSearchModal = ({ isOpen, onClose, initialQuery = "" }: ShopSearchModal
               {/* Quick Info */}
               <div className="mt-12 grid grid-cols-1 gap-3">
                 {[
-                  { label: "Verified Shops", icon: <BlueCheck className="w-4 h-4" />, desc: "Look for the blue checkmark" },
+                  { label: "Verified Shops", icon: <GoldCheck className="w-4 h-4" />, desc: "Look for the blue checkmark" },
                   { label: "Top Rated", icon: <Store className="w-4 h-4 text-primary" />, desc: "Shops with high customer ratings" }
                 ].map((item) => (
                   <div key={item.label} className="flex items-center gap-4 p-4 rounded-2xl bg-muted/50 border border-border/50">
