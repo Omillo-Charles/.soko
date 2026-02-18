@@ -47,7 +47,7 @@ const PremiumPage = () => {
     },
     {
       name: "Premium",
-      price: { monthly: "1", annual: "12" },
+      price: { monthly: "350", annual: "3360" },
       description: "Everything you need to grow your business faster",
       features: [
         "Verification Checkmark (Gold Badge)",
@@ -73,7 +73,7 @@ const PremiumPage = () => {
         "Bulk inventory management",
         "Multi-user access (Teams)",
       ],
-      buttonText: "Upgrade to Enterprise (KES 5)",
+      buttonText: `Upgrade to Enterprise (KES ${isAnnual ? "7200" : "750"})`,
       buttonVariant: "outline",
       popular: false,
     },

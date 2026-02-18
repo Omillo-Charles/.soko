@@ -163,7 +163,7 @@ const ShopSearchModal = ({ isOpen, onClose, initialQuery = "" }: ShopSearchModal
               {/* Quick Info */}
               <div className="mt-12 grid grid-cols-1 gap-3">
                 {[
-                  { label: "Verified Shops", icon: <GoldCheck className="w-4 h-4" />, desc: "Look for the blue checkmark" },
+                  { label: "Verified Shops", icon: <GoldCheck className="w-4 h-4" />, desc: "Look for the Gold checkmark" },
                   { label: "Top Rated", icon: <Store className="w-4 h-4 text-primary" />, desc: "Shops with high customer ratings" }
                 ].map((item) => (
                   <div key={item.label} className="flex items-center gap-4 p-4 rounded-2xl bg-muted/50 border border-border/50">
