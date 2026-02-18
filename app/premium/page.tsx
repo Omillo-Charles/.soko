@@ -50,7 +50,7 @@ const PremiumPage = () => {
       price: { monthly: "1", annual: "12" },
       description: "Everything you need to grow your business faster",
       features: [
-        "Verification Checkmark (Blue Badge)",
+        "Verification Checkmark (Gold Badge)",
         "Priority in search results",
         "Advanced sales analytics",
         "Featured shop placement",
