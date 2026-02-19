@@ -11,8 +11,10 @@ import {
   Star
 } from "lucide-react";
 import { PremiumUpgradeModal } from "@/components/PremiumUpgradeModal";
+import { useUser } from "@/hooks/useUser";
 
 const PremiumPage = () => {
+  const { user } = useUser();
   const [isAnnual, setIsAnnual] = useState(false);
   const [upgradeModal, setUpgradeModal] = useState({
     isOpen: false,
@@ -147,14 +149,19 @@ const PremiumPage = () => {
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
-          {plans.map((plan, index) => (
+          {plans.map((plan, index) => {
+            const isCurrentPlan = user?.isPremium 
+              ? plan.name === (user.premiumPlan || "Premium")
+              : plan.name === "Free";
+
+            return (
             <div 
               key={index} 
               className={`relative bg-background rounded-[3rem] p-10 border transition-all duration-500 ${
                 plan.popular 
                 ? "border-primary shadow-2xl shadow-primary/10 scale-105 z-10" 
                 : "border-border hover:border-border/50"
-              }`}
+              } ${isCurrentPlan ? "ring-2 ring-primary ring-offset-2" : ""}`}
             >
               {plan.popular && (
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-primary-foreground px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
@@ -189,17 +196,20 @@ const PremiumPage = () => {
               </div>
 
               <button 
-                onClick={() => handleUpgradeClick(plan)}
+                onClick={() => !isCurrentPlan && handleUpgradeClick(plan)}
+                disabled={isCurrentPlan}
                 className={`w-full py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all ${
-                  plan.buttonVariant === "primary"
-                  ? "bg-primary text-primary-foreground hover:scale-[1.02] shadow-lg shadow-primary/20"
-                  : "bg-background text-foreground border border-border hover:bg-muted"
+                  isCurrentPlan
+                    ? "bg-muted text-muted-foreground cursor-not-allowed border border-border"
+                    : plan.buttonVariant === "primary"
+                    ? "bg-primary text-primary-foreground hover:scale-[1.02] shadow-lg shadow-primary/20"
+                    : "bg-background text-foreground border border-border hover:bg-muted"
                 }`}
               >
-                {plan.buttonText}
+                {isCurrentPlan ? "Current Plan" : plan.buttonText}
               </button>
             </div>
-          ))}
+          )})}
         </div>
       </div>
 
