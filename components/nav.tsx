@@ -19,7 +19,9 @@ import {
   FileText, 
   Cookie, 
   Mail,
-  BadgeCheck
+  BadgeCheck,
+  LayoutDashboard,
+  CreditCard
 } from "lucide-react";
 import SearchBar from "@/components/searchBar";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -33,6 +35,8 @@ const Navbar = () => {
   const { user, token } = useUser();
   const [mounted, setMounted] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
+  const [showPremiumMenu, setShowPremiumMenu] = useState(false);
+  const [showMobilePremiumMenu, setShowMobilePremiumMenu] = useState(false);
   const { totalItems } = useCart();
   const { wishlistItems } = useWishlist();
 
@@ -45,26 +49,38 @@ const Navbar = () => {
   const cartCount = mounted ? totalItems : 0;
   const wishlistCount = mounted ? wishlistItems.length : 0;
 
-  // Redirect premium users from /premium to /premium/dashboard
-  const premiumLink = isPremium ? "/premium/dashboard" : "/premium";
-
   // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      // More menu
       const menu = document.getElementById('mobile-more-menu');
       const button = document.getElementById('mobile-more-button');
       if (menu && !menu.contains(event.target as Node) && button && !button.contains(event.target as Node)) {
         setShowMoreMenu(false);
       }
+
+      // Premium menu (Desktop)
+      const premiumMenu = document.getElementById('premium-menu');
+      const premiumButton = document.getElementById('premium-button');
+      if (premiumMenu && !premiumMenu.contains(event.target as Node) && premiumButton && !premiumButton.contains(event.target as Node)) {
+        setShowPremiumMenu(false);
+      }
+
+      // Premium menu (Mobile)
+      const mobilePremiumMenu = document.getElementById('mobile-premium-menu');
+      const mobilePremiumButton = document.getElementById('mobile-premium-button');
+      if (mobilePremiumMenu && !mobilePremiumMenu.contains(event.target as Node) && mobilePremiumButton && !mobilePremiumButton.contains(event.target as Node)) {
+        setShowMobilePremiumMenu(false);
+      }
     };
 
-    if (showMoreMenu) {
+    if (showMoreMenu || showPremiumMenu || showMobilePremiumMenu) {
       document.addEventListener('mousedown', handleClickOutside);
     }
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [showMoreMenu]);
+  }, [showMoreMenu, showPremiumMenu, showMobilePremiumMenu]);
 
   const moreMenuItems = [
     { icon: <Info className="w-4 h-4" />, label: "About Us", href: "/about" },
@@ -211,13 +227,63 @@ const Navbar = () => {
               >
                 Deals
               </Link>
-              <Link
-                href={premiumLink}
-                className={`flex items-center gap-1.5 transition-colors font-bold ${pathname.startsWith("/premium") ? "text-amber-200 underline decoration-2 underline-offset-8" : "text-amber-300 hover:text-amber-200"}`}
-              >
-                <Crown className={`w-4 h-4 fill-current ${pathname.startsWith("/premium") ? "animate-pulse" : ""}`} />
-                {isPremium ? "Dashboard" : "Premium"}
-              </Link>
+              {isPremium ? (
+                <div className="relative">
+                  <button
+                    id="premium-button"
+                    onClick={() => setShowPremiumMenu(!showPremiumMenu)}
+                    className={`flex items-center gap-1.5 transition-colors font-bold ${pathname.startsWith("/premium") ? "text-amber-200 underline decoration-2 underline-offset-8" : "text-amber-300 hover:text-amber-200"}`}
+                  >
+                    <Crown className={`w-4 h-4 fill-current ${pathname.startsWith("/premium") ? "animate-pulse" : ""}`} />
+                    Dashboard
+                  </button>
+                  
+                  {showPremiumMenu && (
+                    <div 
+                      id="premium-menu"
+                      className="absolute top-full right-0 mt-4 w-64 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200"
+                    >
+                      <div className="p-1">
+                        <Link 
+                          href="/premium/dashboard" 
+                          onClick={() => setShowPremiumMenu(false)}
+                          className="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-primary rounded-xl transition-colors group"
+                        >
+                          <div className="w-8 h-8 rounded-lg bg-slate-100 group-hover:bg-primary/10 flex items-center justify-center text-slate-500 group-hover:text-primary transition-colors">
+                            <LayoutDashboard className="w-4 h-4" />
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-sm font-bold">Dashboard</span>
+                            <span className="text-[10px] text-slate-400 font-medium">View your stats</span>
+                          </div>
+                        </Link>
+                        
+                        <Link 
+                          href="/premium" 
+                          onClick={() => setShowPremiumMenu(false)}
+                          className="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-amber-600 rounded-xl transition-colors group"
+                        >
+                          <div className="w-8 h-8 rounded-lg bg-slate-100 group-hover:bg-amber-500/10 flex items-center justify-center text-slate-500 group-hover:text-amber-600 transition-colors">
+                            <CreditCard className="w-4 h-4" />
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-sm font-bold">Manage Plan</span>
+                            <span className="text-[10px] text-slate-400 font-medium">Upgrade or Downgrade</span>
+                          </div>
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Link
+                  href="/premium"
+                  className={`flex items-center gap-1.5 transition-colors font-bold ${pathname.startsWith("/premium") ? "text-amber-200 underline decoration-2 underline-offset-8" : "text-amber-300 hover:text-amber-200"}`}
+                >
+                  <Crown className={`w-4 h-4 fill-current ${pathname.startsWith("/premium") ? "animate-pulse" : ""}`} />
+                  Premium
+                </Link>
+              )}
               <Link
                 href="/contact"
                 className={`transition-colors ${pathname === "/contact" ? "text-secondary font-bold underline decoration-2 underline-offset-8" : "hover:text-primary-foreground/80"}`}
@@ -296,13 +362,58 @@ const Navbar = () => {
           <User className="w-5 h-5" />
           <span>{isLoggedIn ? "Dashboard" : "Account"}</span>
         </Link>
-        <Link
-          href="/premium"
-          className={`flex flex-col items-center gap-1 p-2 transition-colors ${pathname === "/premium" ? "text-amber-500" : "text-amber-600 hover:text-amber-500"}`}
-        >
-          <Crown className={`w-5 h-5 ${pathname === "/premium" ? "fill-amber-500/20" : "fill-amber-600/10"}`} />
-          <span className="font-bold">Premium</span>
-        </Link>
+        {isPremium ? (
+          <div className="relative">
+            {showMobilePremiumMenu && (
+              <div 
+                id="mobile-premium-menu"
+                className="absolute bottom-full mb-4 left-1/2 -translate-x-1/2 w-48 bg-background rounded-[2rem] border border-border shadow-2xl animate-in slide-in-from-bottom-4 fade-in duration-300 overflow-hidden z-50"
+              >
+                <div className="p-4 bg-amber-500/10 border-b border-amber-500/20">
+                  <h3 className="text-[10px] font-black text-amber-700 uppercase tracking-widest text-center">Premium Access</h3>
+                </div>
+                <div className="p-2 grid grid-cols-1 gap-1">
+                  <Link
+                    href="/premium/dashboard"
+                    onClick={() => setShowMobilePremiumMenu(false)}
+                    className="flex items-center gap-3 p-3 rounded-2xl transition-colors hover:bg-muted group"
+                  >
+                    <div className="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                      <LayoutDashboard className="w-4 h-4" />
+                    </div>
+                    <span className="text-xs font-bold text-foreground">Dashboard</span>
+                  </Link>
+                  <Link
+                    href="/premium"
+                    onClick={() => setShowMobilePremiumMenu(false)}
+                    className="flex items-center gap-3 p-3 rounded-2xl transition-colors hover:bg-muted group"
+                  >
+                    <div className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0">
+                      <CreditCard className="w-4 h-4" />
+                    </div>
+                    <span className="text-xs font-bold text-foreground">Manage Plan</span>
+                  </Link>
+                </div>
+              </div>
+            )}
+            <button
+              id="mobile-premium-button"
+              onClick={() => setShowMobilePremiumMenu(!showMobilePremiumMenu)}
+              className={`flex flex-col items-center gap-1 p-2 transition-colors ${pathname.startsWith("/premium") ? "text-amber-500" : "text-amber-600 hover:text-amber-500"}`}
+            >
+              <Crown className={`w-5 h-5 ${pathname.startsWith("/premium") ? "fill-amber-500/20" : "fill-amber-600/10"}`} />
+              <span className="font-bold">Premium</span>
+            </button>
+          </div>
+        ) : (
+          <Link
+            href="/premium"
+            className={`flex flex-col items-center gap-1 p-2 transition-colors ${pathname === "/premium" ? "text-amber-500" : "text-amber-600 hover:text-amber-500"}`}
+          >
+            <Crown className={`w-5 h-5 ${pathname === "/premium" ? "fill-amber-500/20" : "fill-amber-600/10"}`} />
+            <span className="font-bold">Premium</span>
+          </Link>
+        )}
         <button
           id="mobile-more-button"
           onClick={() => setShowMoreMenu(!showMoreMenu)}
