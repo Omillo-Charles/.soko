@@ -105,7 +105,7 @@ const PremiumPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background pb-24 pt-0">
+    <div className="min-h-screen bg-background pb-24 lg:pb-0 pt-0">
       {/* Pricing Section */}
       <div id="pricing" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 pt-6">
         <div className="text-center mb-10">

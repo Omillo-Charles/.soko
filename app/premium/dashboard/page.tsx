@@ -361,7 +361,7 @@ export default function PremiumDashboard() {
         </aside>
 
         {/* Main Content Area */}
-        <main className="flex-1 flex flex-col min-w-0 lg:ml-20">
+        <main className="flex-1 flex flex-col min-w-0 lg:ml-20 pb-24 lg:pb-8">
           {/* Header Section */}
           <header className="h-20 border-b border-border px-8 flex items-center justify-between bg-background/30 backdrop-blur-md sticky top-[80px] lg:top-[128px] z-40">
             <div className="flex items-center gap-4">
@@ -393,7 +393,7 @@ export default function PremiumDashboard() {
             </div>
           </header>
 
-          <div className="p-8">
+          <div className="py-8 px-0 sm:px-8">
             {activeTab === 'overview' && (
               <>
                 {/* Quick Stats Grid */}
@@ -473,61 +473,39 @@ export default function PremiumDashboard() {
                       <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
                     </div>
 
-                    <div className="px-8 pb-8 -mt-12 relative z-10">
-                      <div className="flex flex-col md:flex-row items-end gap-6 mb-6">
-                        <div className="w-32 h-32 rounded-[2.5rem] bg-gradient-to-br from-amber-400 to-amber-600 p-1.5 shadow-2xl shrink-0">
-                          <div className="w-full h-full bg-background rounded-[2rem] flex items-center justify-center overflow-hidden">
-                            {shop?.avatar ? (
-                              <img src={shop.avatar} alt="Logo" className="w-full h-full object-cover" />
-                            ) : (
-                              <Store className="w-12 h-12 text-amber-500" />
-                            )}
+                    <div className="px-8 pb-8 relative z-10">
+                      <div className="flex flex-col sm:flex-row items-center sm:items-end sm:justify-between w-full gap-6">
+                        <div className="flex items-end gap-6">
+                          <div className="w-32 h-32 rounded-[2.5rem] bg-gradient-to-br from-amber-400 to-amber-600 p-1.5 shadow-2xl shrink-0 -mt-24">
+                            <div className="w-full h-full bg-background rounded-[2rem] flex items-center justify-center overflow-hidden">
+                              {shop?.avatar ? (
+                                <img src={shop.avatar} alt="Logo" className="w-full h-full object-cover" />
+                              ) : (
+                                <Store className="w-12 h-12 text-amber-500" />
+                              )}
+                            </div>
+                          </div>
+                          
+                          <div className="pb-2">
+                            <div className="flex flex-wrap items-center gap-3 mb-1">
+                              <h3 className="text-3xl font-black text-foreground tracking-tight">{shop?.name || "Your Premium Shop"}</h3>
+                              {shop?.username && (
+                                <span className="text-sm font-bold text-muted-foreground">@{shop.username}</span>
+                              )}
+                              <span className={`px-3 py-1 text-[10px] font-black rounded-full border uppercase ${
+                                shop?.isVerified 
+                                ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' 
+                                : 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
+                              }`}>
+                                {shop?.isVerified ? 'VERIFIED SELLER' : 'ACTIVE SELLER'}
+                              </span>
+                            </div>
+                            <p className="text-sm text-muted-foreground max-w-xl">{shop?.description || "Welcome to your premium dashboard. Update your shop details in the settings tab."}</p>
                           </div>
                         </div>
-                        
-                        <div className="flex-1 pb-2">
-                          <div className="flex flex-wrap items-center gap-3 mb-1">
-                            <h3 className="text-3xl font-black text-foreground tracking-tight">{shop?.name || "Your Premium Shop"}</h3>
-                            {shop?.username && (
-                              <span className="text-sm font-bold text-muted-foreground">@{shop.username}</span>
-                            )}
-                            <span className={`px-3 py-1 text-[10px] font-black rounded-full border uppercase ${
-                              shop?.isVerified 
-                              ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' 
-                              : 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
-                            }`}>
-                              {shop?.isVerified ? 'VERIFIED SELLER' : 'ACTIVE SELLER'}
-                            </span>
-                          </div>
-                          <div className="flex flex-wrap items-center gap-6 text-muted-foreground">
-                            <div className="flex items-center gap-2">
-                              <MapPin className="w-4 h-4 text-amber-500" />
-                              <span className="text-xs font-bold">{shop?.address || "Location not set"}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <ShoppingBag className="w-4 h-4 text-amber-500" />
-                              <span className="text-xs font-bold capitalize">{shop?.category || "Multi-category"}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Calendar className="w-4 h-4 text-amber-500" />
-                              <span className="text-xs font-bold">Joined {shop?.createdAt ? new Date(shop.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Recently'}</span>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <div className="flex flex-wrap gap-3 pb-2">
-                          <Link href="/account/seller/products?action=add" className="px-5 py-3 bg-foreground text-background rounded-2xl font-black text-[10px] uppercase tracking-widest hover:scale-[1.02] transition-all flex items-center gap-2">
-                            <Zap className="w-4 h-4" /> Add Product
-                          </Link>
-                          <Link 
-                            href={`/shop/${shop?.username ? `@${shop.username}` : shop?._id || 'my-shop'}`} 
-                            className="px-5 py-3 bg-background text-foreground border border-border rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-muted transition-all"
-                          >
-                            View Storefront
-                          </Link>
-                          <Link href="/account/seller/settings" className="p-3 bg-muted text-foreground rounded-2xl hover:bg-muted/80 transition-all">
-                            <Settings className="w-5 h-5" />
-                          </Link>
+                        <div className="flex gap-3 w-full sm:w-auto">
+                          <button className="flex-1 px-5 py-2.5 bg-muted text-foreground text-sm font-bold rounded-xl hover:bg-muted/80 transition-colors">Edit Profile</button>
+                          <button className="flex-1 px-5 py-2.5 bg-amber-500 text-black text-sm font-bold rounded-xl hover:bg-amber-600 transition-colors shadow-lg shadow-amber-500/20">View Shop</button>
                         </div>
                       </div>
                     </div>
