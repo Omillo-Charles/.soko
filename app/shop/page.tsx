@@ -35,6 +35,7 @@ import RatingModal from "@/components/RatingModal";
 import ShareModal from "@/components/ShareModal";
 import CommentModal from "@/components/CommentModal";
 import ShopSearchModal from "@/components/ShopSearchModal";
+import { RepostModal } from "@/components/RepostModal";
 
 const ShopContent = () => {
   const router = useRouter();
@@ -126,6 +127,16 @@ const ShopContent = () => {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [desktopSearchQuery, setDesktopSearchQuery] = useState(shopsQuery || "");
   const [showDesktopSuggestions, setShowDesktopSuggestions] = useState(false);
+
+  const [repostPopover, setRepostPopover] = useState<{
+    isOpen: boolean;
+    productId: string | null;
+    position: { top: number; left: number };
+  }>({
+    isOpen: false,
+    productId: null,
+    position: { top: 0, left: 0 },
+  });
 
   // Sync search query with URL params
   useEffect(() => {
@@ -758,8 +769,19 @@ const ShopContent = () => {
                             <span className="text-xs font-bold">{product.commentsCount || product.comments || 0}</span>
                           </button>
 
-                          <button 
-                            onClick={(e) => { e.stopPropagation(); }}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                              setRepostPopover({
+                                isOpen: repostPopover.productId !== product._id,
+                                productId: product._id,
+                                position: {
+                                  top: rect.bottom + window.scrollY + 5,
+                                  left: rect.right + window.scrollX - 192,
+                                },
+                              });
+                            }}
                             className="flex items-center gap-0 group transition-colors hover:text-emerald-500"
                           >
                             <div className="p-1.5 rounded-full group-hover:bg-emerald-500/10 transition-colors">
@@ -845,6 +867,14 @@ const ShopContent = () => {
           productId={commentModal.productId}
           productName={commentModal.productName}
         />
+
+        {repostPopover.isOpen && (
+          <RepostModal
+            isOpen={repostPopover.isOpen}
+            onClose={() => setRepostPopover({ isOpen: false, productId: null, position: { top: 0, left: 0 } })}
+            position={repostPopover.position}
+          />
+        )}
 
         <ShopSearchModal 
           isOpen={isSearchModalOpen}

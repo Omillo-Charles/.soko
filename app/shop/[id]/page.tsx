@@ -124,6 +124,10 @@ const ShopProfilePage = () => {
   const { data: reviewsData = [], isLoading: isReviewsLoading } = useShopReviews(idOrHandle);
   const followMutation = useFollowShop();
 
+  const handleRepostClick = (productName: string) => {
+    setRepostModal({ isOpen: true, productName });
+  };
+
   useEffect(() => {
     if (shop && !idOrHandle.startsWith('@') && shop.username) {
       router.replace(`/shop/@${shop.username}`);
