@@ -70,12 +70,16 @@ const ShopProfilePage = () => {
     productName: ""
   });
 
-  const [repostModal, setRepostModal] = useState<{
+
+
+  const [repostPopover, setRepostPopover] = useState<{
     isOpen: boolean;
-    productName: string;
+    productId: string | null;
+    position: { top: number; left: number };
   }>({
     isOpen: false,
-    productName: ""
+    productId: null,
+    position: { top: 0, left: 0 },
   });
 
   const [activeSection, setActiveSection] = useState('Products');
@@ -125,7 +129,7 @@ const ShopProfilePage = () => {
   const followMutation = useFollowShop();
 
   const handleRepostClick = (productName: string) => {
-    setRepostModal({ isOpen: true, productName });
+    setRepostPopover({ isOpen: true, productId: null, position: { top: 0, left: 0 } });
   };
 
   useEffect(() => {
@@ -489,7 +493,15 @@ const ShopProfilePage = () => {
                             </button>
                             <button onClick={(e) => {
                               e.stopPropagation();
-                              toast.success("Product reposted!");
+                              const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                              setRepostPopover({
+                                isOpen: repostPopover.productId !== product._id,
+                                productId: product._id,
+                                position: {
+                                  top: rect.bottom + window.scrollY + 5,
+                                  left: rect.right + window.scrollX - 140,
+                                },
+                              });
                             }} className="flex items-center gap-0 group hover:text-green-500 transition-colors">
                               <div className="p-2 rounded-full group-hover:bg-green-500/10">
                                 <Repeat2 className="w-[18px] h-[18px]" />
@@ -834,6 +846,14 @@ const ShopProfilePage = () => {
           shopId={shopRatingModal.shopId}
           shopName={shopRatingModal.shopName}
         />
+
+        {repostPopover.isOpen && (
+          <RepostModal
+            isOpen={repostPopover.isOpen}
+            onClose={() => setRepostPopover({ isOpen: false, productId: null, position: { top: 0, left: 0 } })}
+            position={repostPopover.position}
+          />
+        )}
 
         {/* Right Sidebar */}
         <div className="hidden lg:block w-[320px] shrink-0">
