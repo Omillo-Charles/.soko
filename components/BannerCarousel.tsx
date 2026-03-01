@@ -10,7 +10,7 @@ const slides = [
     title: 'Latest Fashion Trends',
     subtitle: 'Discover the new arrivals',
     buttonText: 'Shop Now',
-    href: '/shop?cat=clothing-apparel',
+    href: '/shop?cat=fashion',
   },
   {
     image: '/bottom banner/gym.jfif',
@@ -24,7 +24,7 @@ const slides = [
     title: 'Crystal Clear Sound',
     subtitle: 'Experience music like never before',
     buttonText: 'Explore Audio',
-    href: '/shop?cat=electronics',
+    href: '/shop?cat=audio',
   },
   {
     image: '/bottom banner/ps.png',

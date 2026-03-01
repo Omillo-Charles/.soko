@@ -150,6 +150,9 @@ const Navbar = () => {
                   {cartCount}
                 </span>
               </Link>
+              <Link href={isLoggedIn ? "/account" : "/auth"} className="relative transition-colors">
+                <User className={`w-6 h-6 ${pathname.startsWith("/account") || pathname === "/auth" ? "text-primary" : "text-slate-50"}`} />
+              </Link>
             </div>
           </div>
 
@@ -354,13 +357,6 @@ const Navbar = () => {
         >
           <Tag className="w-5 h-5" />
           <span>Deals</span>
-        </Link>
-        <Link
-          href={isLoggedIn ? "/account" : "/auth"}
-          className={`flex flex-col items-center gap-1 p-2 transition-colors ${pathname.startsWith("/account") || pathname === "/auth" ? "text-primary" : "hover:text-primary"}`}
-        >
-          <User className="w-5 h-5" />
-          <span>{isLoggedIn ? "Dashboard" : "Account"}</span>
         </Link>
         {isPremium ? (
           <div className="relative">
