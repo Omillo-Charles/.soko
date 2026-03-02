@@ -18,7 +18,8 @@ import {
   Info,
   Plus,
   ArrowRight,
-  ShoppingCart
+  ShoppingCart,
+  Send
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -834,6 +835,18 @@ const ShopContent = () => {
                           >
                             <div className="p-2 rounded-full group-hover:bg-muted transition-colors">
                               <Share2 className="w-[18px] h-[18px]" />
+                            </div>
+                          </button>
+
+                          <button 
+                            onClick={(e) => { 
+                              e.stopPropagation();
+                              // Placeholder for future functionality
+                            }}
+                            className="flex items-center gap-2 group transition-colors hover:text-primary"
+                          >
+                            <div className="p-2 rounded-full group-hover:bg-primary/10 transition-colors">
+                              <Send className="w-[18px] h-[18px]" />
                             </div>
                           </button>
                         </div>
