@@ -19,7 +19,8 @@ import {
   Filter,
   LayoutGrid,
   TrendingUp,
-  ShoppingCart
+  ShoppingCart,
+  Send
 } from "lucide-react";
 import Link from "next/link";
 import { GoldCheck } from "@/components/GoldCheck";
@@ -553,6 +554,15 @@ const ShopProfilePage = () => {
                               className="p-2 rounded-full hover:bg-primary/10 hover:text-primary transition-colors"
                             >
                               <Share2 className="w-[18px] h-[18px]" />
+                            </button>
+                            <button 
+                              onClick={(e) => { 
+                                e.stopPropagation();
+                                // Placeholder for future functionality
+                              }}
+                              className="p-2 rounded-full hover:bg-primary/10 hover:text-primary transition-colors"
+                            >
+                              <Send className="w-[18px] h-[18px]" />
                             </button>
                           </div>
                         </div>
