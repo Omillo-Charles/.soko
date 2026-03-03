@@ -120,7 +120,7 @@ const CategoriesPage = () => {
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
       <div className="sticky top-[80px] md:top-[128px] bg-background/80 backdrop-blur-md z-30 border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-6">
+        <div className="w-full px-4 md:px-8 py-4 md:py-6">
           <div className="flex flex-col gap-1">
             <h1 className="text-2xl font-black text-foreground tracking-tight">Explore Categories</h1>
             <p className="text-sm text-muted-foreground font-medium">Find everything you need across {displayCategories.length} categories</p>
@@ -128,8 +128,8 @@ const CategoriesPage = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="w-full px-4 md:px-8 py-4 md:py-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
           {displayCategories.map((category: any) => {
             const meta = (categoryMeta as any)[category.value] || {
               image: "/placeholder-category.jpg",
