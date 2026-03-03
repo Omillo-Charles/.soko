@@ -185,6 +185,47 @@ const CategoriesPage = () => {
             );
           })}
         </div>
+
+        {/* CTA Section */}
+        <div className="mt-16 relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary/10 via-secondary/5 to-primary/5 border border-border p-8 md:p-12">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+          
+          <div className="relative z-10 max-w-3xl mx-auto text-center space-y-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full border border-primary/20">
+              <ShoppingBag className="w-4 h-4 text-primary" />
+              <span className="text-xs font-black text-primary uppercase tracking-widest">Can't Find What You Need?</span>
+            </div>
+            
+            <h2 className="text-3xl md:text-4xl font-black text-foreground tracking-tight">
+              Missing Something or Searching for Something Else?
+            </h2>
+            
+            <p className="text-base md:text-lg text-muted-foreground font-medium leading-relaxed max-w-2xl mx-auto">
+              Explore our full collection of products or get in touch with us. We're here to help you find exactly what you're looking for.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+              <Link 
+                href="/shop"
+                className="group px-8 py-4 bg-primary text-primary-foreground rounded-2xl font-black shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:scale-105 transition-all flex items-center gap-2"
+              >
+                <ShoppingBag className="w-5 h-5" />
+                Browse All Products
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
+              
+              <Link 
+                href="/contact"
+                className="group px-8 py-4 bg-background border-2 border-border text-foreground rounded-2xl font-black hover:border-primary hover:bg-primary/5 hover:scale-105 transition-all flex items-center gap-2"
+              >
+                <Heart className="w-5 h-5" />
+                Contact Us
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
