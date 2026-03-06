@@ -119,13 +119,29 @@ const FeaturedProducts = () => {
           {(products || []).map((p: any) => (
             <div key={p._id || Math.random()} className="bg-background border border-border rounded-[1.25rem] overflow-hidden group">
               <div className="relative aspect-square bg-muted cursor-pointer flex items-center justify-center overflow-hidden border-b border-border" onClick={() => handleProductClick(p)}>
-                <Image
-                  src={p.image || "/placeholder-product.jpg"}
-                  alt={p.name || "Product"}
-                  fill
-                  sizes="(max-width: 768px) 50vw, 25vw"
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                />
+                {(() => {
+                  const src = p.image || "/placeholder-product.jpg";
+                  const allowed = typeof src === 'string' && /^https?:\/\/(ik\.imagekit\.io|api\.dicebear\.com)\//.test(src);
+                  if (allowed) {
+                    return (
+                      <Image
+                        src={src}
+                        alt={p.name || "Product"}
+                        fill
+                        sizes="(max-width: 768px) 50vw, 25vw"
+                        className="object-cover transition-transform duration-700 group-hover:scale-110"
+                        priority={false}
+                      />
+                    );
+                  }
+                  return (
+                    <img
+                      src={src}
+                      alt={p.name || "Product"}
+                      className="w-full h-full object-cover"
+                    />
+                  );
+                })()}
                 <button 
                   onClick={(e) => handleAddToCart(e, p)}
                   className="absolute top-2 left-2 bg-background/80 hover:bg-background rounded-full p-2 shadow transition-all hover:scale-110 active:scale-95 z-10"
