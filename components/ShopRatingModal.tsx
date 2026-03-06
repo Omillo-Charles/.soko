@@ -44,14 +44,92 @@ const ShopRatingModal = ({
 
     setIsSubmitting(true);
     try {
-      const response = await api.post(`/shops/${shopId}/rate`, { 
-        rating: selectedRating,
-        comment: comment.trim()
-      });
+      const endpoints = shopId?.startsWith('@')
+        ? [
+            `/shops/handle/${shopId.slice(1)}/rate`,
+            `/shops/handle/${shopId.slice(1)}/reviews`,
+          ]
+        : [
+            `/shops/${shopId}/rate`,
+            `/shops/${shopId}/reviews`,
+          ];
+
+      let response: any = null;
+      let lastError: any = null;
+
+      for (const ep of endpoints) {
+        const isHandle = shopId?.startsWith('@');
+        const raw = isHandle ? shopId.slice(1) : shopId;
+        const base = { rating: Math.max(1, Math.min(5, selectedRating)), comment: comment.trim() };
+        const variants = [
+          base,
+          { rating: base.rating },
+          { stars: base.rating, comment: base.comment },
+          { score: base.rating, comment: base.comment },
+          { rating: base.rating, review: base.comment },
+          { rating: base.rating, content: base.comment },
+        ].map(v => ({
+          ...v,
+          shop: raw,
+          shopId: !isHandle ? raw : undefined,
+          handle: isHandle ? raw : undefined,
+        }));
+
+        for (const payload of variants) {
+          try {
+            response = await api.post(ep, payload);
+            if (response?.data) {
+              break;
+            }
+          } catch (err: any) {
+            lastError = err;
+            const status = err?.response?.status;
+            const data = err?.response?.data;
+            // eslint-disable-next-line no-console
+            console.warn('Shop review request failed', { ep, status, data });
+            if ([404, 405, 500, 501].includes(Number(status))) {
+              continue;
+            }
+            throw err;
+          }
+        }
+        if (response?.data) break;
+      }
+
+      if (!response?.data?.success) {
+        // If we didn't get a successful response, throw the last captured error
+        if (lastError) throw lastError;
+        throw new Error("Failed to submit review");
+      }
 
       if (response.data.success) {
         toast.success("Thank you for your review!");
-        
+        const newRating = response.data.data?.rating;
+        const newReviewsCount = response.data.data?.reviewsCount;
+        // Update cached shop + popular shops immediately
+        queryClient.setQueryData(['shop', shopId], (old: any) => old ? { ...old, rating: newRating ?? old.rating, reviewsCount: newReviewsCount ?? old.reviewsCount } : old);
+        queryClient.setQueriesData({ queryKey: ['shop'] }, (old: any, query: any) => {
+          if (!old) return old;
+          const cachedId = old._id || old.id;
+          if (String(cachedId) === String(shopId)) {
+            return { ...old, rating: newRating ?? old.rating, reviewsCount: newReviewsCount ?? old.reviewsCount };
+          }
+          return old;
+        });
+        queryClient.setQueriesData({ queryKey: ['popular-shops'] }, (old: any) => {
+          if (!old) return old;
+          if (Array.isArray(old)) {
+            return old.map((s: any) => {
+              const sid = s._id || s.id;
+              if (String(sid) === String(shopId)) {
+                return { ...s, rating: newRating ?? s.rating, reviewsCount: newReviewsCount ?? s.reviewsCount };
+              }
+              return s;
+            });
+          }
+          return old;
+        });
+
         // Invalidate queries to update the UI globally
         queryClient.invalidateQueries({ queryKey: ['shop', shopId] });
         queryClient.invalidateQueries({ queryKey: ['shop-reviews', shopId] });
@@ -68,7 +146,8 @@ const ShopRatingModal = ({
       }
     } catch (error: any) {
       console.error("Error rating shop:", error);
-      toast.error(error.response?.data?.message || "Failed to submit rating. Please try again.");
+      const msg = error.response?.data?.message || error.friendlyMessage || error.message || "Failed to submit rating. Please try again.";
+      toast.error(msg);
     } finally {
       setIsSubmitting(false);
     }

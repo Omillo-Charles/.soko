@@ -43,7 +43,19 @@ export const useSellerOrders = () => {
     queryKey: ['seller-orders'],
     queryFn: async () => {
       const response = await api.get('/orders/seller');
-      return response.data.data as Order[];
+      const data = response.data.data || [];
+      return data.map((o: any) => ({
+        ...o,
+        _id: o.id || o._id || `order-${Math.random()}`,
+        user: o.user ? {
+          ...o.user,
+          _id: o.user.id || o.user._id
+        } : null,
+        items: (o.items || []).map((i: any) => ({
+          ...i,
+          _id: i.id || i._id
+        }))
+      })) as Order[];
     }
   });
 

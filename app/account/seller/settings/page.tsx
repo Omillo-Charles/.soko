@@ -2,35 +2,27 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { 
   ArrowLeft,
   Store,
-  Settings,
   Trash2,
   Save,
   Loader2,
   AlertTriangle,
-  User,
-  ShoppingBag,
-  Package,
-  Users,
-  BarChart3,
-  TrendingUp,
-  ArrowLeftRight,
-  LogOut,
-  ChevronRight,
   Camera,
-  CheckCircle2,
+  TrendingUp,
   Info
 } from "lucide-react";
 import { toast } from "sonner";
 import { useUser } from "@/hooks/useUser";
-import LogoutConfirmation from "@/components/LogoutConfirmation";
-import { RegisterShopModal } from "@/components/RegisterShopModal";
+import Link from "next/link";
+import api from "@/lib/api";
+import imageCompression from 'browser-image-compression';
+import { useQueryClient } from "@tanstack/react-query";
 
 const SellerSettingsPage = () => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { logout } = useUser();
   const [user, setUser] = useState<any>(null);
   const [shop, setShop] = useState<any>(null);
@@ -38,8 +30,6 @@ const SellerSettingsPage = () => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState<"shop" | "account" | null>(null);
   const [activeTab, setActiveTab] = useState<"profile" | "branding" | "danger">("profile");
-  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-  const [showRegisterModal, setShowRegisterModal] = useState(false);
   
   const [formData, setFormData] = useState({
     name: "",
@@ -83,11 +73,8 @@ const SellerSettingsPage = () => {
         }
         setUser(parsedUser);
 
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
-        const shopRes = await fetch(`${apiUrl}/shops/my-shop`, {
-          headers: { "Authorization": `Bearer ${token}` }
-        });
-        const shopData = await shopRes.json();
+        const shopRes = await api.get("/shops/my-shop");
+        const shopData = shopRes.data;
 
         if (shopData.success && shopData.data) {
           setShop(shopData.data);
@@ -103,10 +90,11 @@ const SellerSettingsPage = () => {
           setAvatarPreview(shopData.data.avatar || "");
           setBannerPreview(shopData.data.banner || "");
         } else {
-          setShowRegisterModal(true);
+          router.push("/account/seller/create");
         }
       } catch (e) {
         console.error("Settings Auth Error:", e);
+        // If it's a 401, axios interceptor handles it, but we can also handle it here
         router.push("/auth?mode=login");
       } finally {
         setIsLoading(false);
@@ -135,9 +123,8 @@ const SellerSettingsPage = () => {
 
       setUsernameStatus(prev => ({ ...prev, loading: true }));
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
-        const res = await fetch(`${apiUrl}/shops/check-username/${formData.username}`);
-        const data = await res.json();
+        const res = await api.get(`/shops/check-username/${formData.username}`);
+        const data = res.data;
         setUsernameStatus({
           loading: false,
           available: data.available,
@@ -155,131 +142,119 @@ const SellerSettingsPage = () => {
   const handleUpdateShop = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsUpdating(true);
-    const token = localStorage.getItem("accessToken");
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
 
     try {
-      const response = await fetch(`${apiUrl}/shops/my-shop`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await api.put("/shops/my-shop", formData);
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Server Error Response:", errorText);
-        throw new Error(`Server error: ${response.status} ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      if (data.success) {
-        setShop(data.data);
+      if (response.data.success) {
+        setShop(response.data.data);
         toast.success("Shop settings updated successfully!");
+        queryClient.invalidateQueries({ queryKey: ["my-shop"] });
+        if (response.data.data.username) {
+          queryClient.invalidateQueries({ queryKey: ["shop", `@${response.data.data.username}`] });
+        }
+        queryClient.invalidateQueries({ queryKey: ["shop", response.data.data._id] });
       } else {
-        toast.error(data.message || "Failed to update shop settings");
+        toast.error(response.data.message || "Failed to update shop settings");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Update Shop Error:", error);
-      toast.error("An error occurred. Please try again.");
+      const message = error.response?.data?.message || error.message || "An error occurred. Please try again.";
+      toast.error(message);
     } finally {
       setIsUpdating(false);
     }
   };
 
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>, type: 'avatar' | 'banner') => {
     const file = e.target.files?.[0];
-    if (file) {
-      setAvatarFile(file);
+    if (!file) return;
+
+    const options = {
+      maxSizeMB: 1,
+      maxWidthOrHeight: type === 'banner' ? 1920 : 800,
+      useWebWorker: true,
+    };
+
+    try {
+      const compressedFile = await imageCompression(file, options);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setAvatarPreview(reader.result as string);
+        if (type === 'avatar') {
+          setAvatarPreview(reader.result as string);
+          setAvatarFile(compressedFile);
+        } else {
+          setBannerPreview(reader.result as string);
+          setBannerFile(compressedFile);
+        }
+      };
+      reader.readAsDataURL(compressedFile);
+    } catch (error) {
+      console.error('Image compression error:', error);
+      toast.error('Failed to compress image. Please try a different file.');
+      // Fallback to original file if compression fails
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (type === 'avatar') {
+          setAvatarPreview(reader.result as string);
+          setAvatarFile(file);
+        } else {
+          setBannerPreview(reader.result as string);
+          setBannerFile(file);
+        }
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setBannerFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setBannerPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => handleImageChange(e, 'avatar');
+  const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => handleImageChange(e, 'banner');
 
   const handleUpdateBranding = async () => {
     setIsUpdating(true);
-    const token = localStorage.getItem("accessToken");
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
 
     try {
+      console.log("Starting branding update with files:", { 
+        avatar: avatarFile?.name, 
+        avatarSize: avatarFile?.size,
+        banner: bannerFile?.name,
+        bannerSize: bannerFile?.size
+      });
+
       const submitData = new FormData();
       if (avatarFile) submitData.append("avatar", avatarFile);
       if (bannerFile) submitData.append("banner", bannerFile);
 
-      // If no new files, don't send anything
       if (!avatarFile && !bannerFile) {
         toast.info("Please select a new image to upload.");
         setIsUpdating(false);
         return;
       }
 
-      // Use a AbortController to handle potential client-side timeouts
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 seconds timeout
-
-      const response = await fetch(`${apiUrl}/shops/my-shop/branding`, {
-        method: "PUT",
-        headers: {
-          "Authorization": `Bearer ${token}`
-        },
-        body: submitData,
-        signal: controller.signal
+      const response = await api.put("/shops/my-shop/branding", submitData, {
+        // Let Axios and the browser set the Content-Type with the boundary
+        timeout: 120000 
       });
 
-      clearTimeout(timeoutId);
+      console.log("Branding update response:", response.data);
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Branding Server Error Response:", errorText);
-        
-        let errorMessage = "Server error occurred";
-        try {
-          const errorJson = JSON.parse(errorText);
-          if (errorJson.error === "Request Timeout") {
-            errorMessage = "The upload timed out. This usually happens with large images or slow internet. Please try again with a smaller file.";
-          } else {
-            errorMessage = errorJson.message || errorJson.error || errorMessage;
-          }
-        } catch (e) {
-          errorMessage = `Server error: ${response.status} ${response.statusText}`;
-        }
-        
-        throw new Error(errorMessage);
-      }
-
-      const data = await response.json();
-      if (data.success) {
-        setShop(data.data);
+      if (response.data.success) {
+        setShop(response.data.data);
         setAvatarFile(null);
         setBannerFile(null);
         toast.success("Shop branding updated successfully!");
+        queryClient.invalidateQueries({ queryKey: ["my-shop"] });
+        if (response.data.data.username) {
+          queryClient.invalidateQueries({ queryKey: ["shop", `@${response.data.data.username}`] });
+        }
+        queryClient.invalidateQueries({ queryKey: ["shop", response.data.data._id] });
       } else {
-        toast.error(data.message || "Failed to update branding");
+        toast.error(response.data.message || "Failed to update branding");
       }
     } catch (error: any) {
       console.error("Update Branding Error:", error);
-      if (error.name === 'AbortError') {
-        toast.error("The upload took too long and was cancelled. Please try with a smaller image or check your connection.");
-      } else {
-        toast.error(error.message || "An error occurred. Please try again.");
-      }
+      const message = error.response?.data?.message || error.message || "An error occurred. Please try again.";
+      toast.error(message);
     } finally {
       setIsUpdating(false);
     }
@@ -293,30 +268,24 @@ const SellerSettingsPage = () => {
     }
 
     setIsDeleting("shop");
-    const token = localStorage.getItem("accessToken");
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
 
     try {
-      const response = await fetch(`${apiUrl}/shops/my-shop`, {
-        method: "DELETE",
-        headers: { "Authorization": `Bearer ${token}` }
-      });
+      const response = await api.delete("/shops/my-shop");
 
-      const data = await response.json();
-      if (data.success) {
-        // Switch back to buyer account type in local storage
+      if (response.data.success) {
         const userData = JSON.parse(localStorage.getItem("user") || "{}");
         userData.accountType = "buyer";
         localStorage.setItem("user", JSON.stringify(userData));
         
-        toast.success("Shop deleted successfully. You have been switched back to a buyer account.");
+        toast.success("Shop deleted successfully. Switched back to buyer account.");
         router.push("/account");
       } else {
-        toast.error(data.message || "Failed to delete shop");
+        toast.error(response.data.message || "Failed to delete shop");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Delete Shop Error:", error);
-      toast.error("An error occurred. Please try again.");
+      const message = error.response?.data?.message || error.message || "An error occurred. Please try again.";
+      toast.error(message);
     } finally {
       setIsDeleting(null);
     }
@@ -328,383 +297,272 @@ const SellerSettingsPage = () => {
     }
 
     setIsDeleting("account");
-    const token = localStorage.getItem("accessToken");
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
 
     try {
-      const response = await fetch(`${apiUrl}/users/me`, {
-        method: "DELETE",
-        headers: { "Authorization": `Bearer ${token}` }
-      });
+      const response = await api.delete("/users/me");
 
-      const data = await response.json();
-      if (data.success) {
-        toast.success("Account deleted permanently. We're sorry to see you go.");
+      if (response.data.success) {
+        toast.success("Account deleted permanently.");
         logout();
         router.push("/");
       } else {
-        toast.error(data.message || "Failed to delete account");
+        toast.error(response.data.message || "Failed to delete account");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Delete Account Error:", error);
-      toast.error("An error occurred. Please try again.");
+      const message = error.response?.data?.message || error.message || "An error occurred. Please try again.";
+      toast.error(message);
     } finally {
       setIsDeleting(null);
     }
   };
 
-  const handleLogout = () => {
-    setShowLogoutConfirm(true);
-  };
-
-  const confirmLogout = () => {
-    logout();
-    router.push("/auth?mode=login");
-  };
-
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="flex items-center justify-center py-20">
         <Loader2 className="w-10 h-10 text-primary animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col lg:flex-row">
-      <RegisterShopModal 
-        isOpen={showRegisterModal}
-        onClose={() => router.push("/account")}
-        onSuccess={() => window.location.reload()}
-      />
-      <LogoutConfirmation 
-        isOpen={showLogoutConfirm} 
-        onClose={() => setShowLogoutConfirm(false)} 
-        onConfirm={confirmLogout} 
-      />
-      {/* Sidebar (Consistent with Seller Center) */}
-      <div className="hidden lg:block w-72 shrink-0 border-r border-border">
-        <aside className="fixed w-72 h-screen bg-background flex flex-col overflow-y-auto custom-scrollbar">
-          <div className="p-8 border-b border-border">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
-                <Store className="w-6 h-6 text-primary-foreground" />
-              </div>
-              <div>
-                <h1 className="font-black text-xl text-foreground tracking-tight">Seller Center</h1>
-                <p className="text-[10px] text-primary font-bold uppercase tracking-widest">Settings</p>
-              </div>
-            </div>
-          </div>
-
-          <nav className="flex-1 p-6 space-y-2">
-            <Link href="/account/seller" className="flex items-center gap-3 px-4 py-3 text-muted-foreground hover:bg-muted hover:text-foreground rounded-xl font-medium transition-all group">
-              <BarChart3 className="w-5 h-5 group-hover:text-primary" />
-              Overview
-            </Link>
-            <Link href="/account/seller/products" className="flex items-center gap-3 px-4 py-3 text-muted-foreground hover:bg-muted hover:text-foreground rounded-xl font-medium transition-all group">
-              <ShoppingBag className="w-5 h-5 group-hover:text-primary" />
-              Products
-            </Link>
-            <Link href="/account/seller/orders" className="flex items-center gap-3 px-4 py-3 text-muted-foreground hover:bg-muted hover:text-foreground rounded-xl font-medium transition-all group">
-              <Package className="w-5 h-5 group-hover:text-primary" />
-              Orders
-            </Link>
-            <Link href="/account/seller/settings" className="flex items-center gap-3 px-4 py-3 bg-primary/5 text-primary rounded-xl font-bold transition-all">
-              <Settings className="w-5 h-5" />
-              Settings
-            </Link>
-          </nav>
-
-          <div className="p-6 border-t border-border space-y-3">
-            <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl font-bold transition-all">
-              <LogOut className="w-5 h-5" />
-              Sign Out
-            </button>
-          </div>
-        </aside>
+    <div className="space-y-8">
+      <div className="flex items-center gap-4">
+        <Link href="/account/seller" className="p-2 hover:bg-muted rounded-xl transition-colors text-muted-foreground hover:text-foreground border border-border">
+          <ArrowLeft className="w-6 h-6" />
+        </Link>
+        <div>
+          <h2 className="text-3xl font-bold text-foreground">Shop Settings</h2>
+          <p className="text-muted-foreground font-medium">Manage your store identity and preferences.</p>
+        </div>
       </div>
 
-      {/* Main Content */}
-      <main className="flex-1 p-4 lg:p-10 pb-24 lg:pb-10">
-        <div className="max-w-4xl mx-auto space-y-8">
-          {/* Header */}
-          <div className="flex items-center gap-4">
-            <Link href="/account/seller" className="p-2 hover:bg-muted rounded-xl transition-colors text-muted-foreground hover:text-foreground shadow-sm">
-              <ArrowLeft className="w-6 h-6" />
-            </Link>
-            <div>
-              <h2 className="text-3xl font-black text-foreground tracking-tight uppercase">Shop Settings</h2>
-              <p className="text-muted-foreground font-medium">Manage your store identity and account preferences.</p>
+      <div className="flex p-1 bg-muted/50 border border-border rounded-2xl w-full max-w-md">
+        <button 
+          onClick={() => setActiveTab("profile")}
+          className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === "profile" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+        >
+          Profile
+        </button>
+        <button 
+          onClick={() => setActiveTab("branding")}
+          className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === "branding" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+        >
+          Branding
+        </button>
+        <button 
+          onClick={() => setActiveTab("danger")}
+          className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === "danger" ? "bg-red-500 text-white shadow-sm" : "text-muted-foreground hover:text-red-500"}`}
+        >
+          Danger Zone
+        </button>
+      </div>
+
+      <div className="space-y-6">
+        {activeTab === "profile" && (
+          <form onSubmit={handleUpdateShop} className="bg-background rounded-2xl border border-border shadow-sm p-8 space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-muted-foreground uppercase">Shop Name</label>
+                <input 
+                  type="text" 
+                  value={formData.name}
+                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  className="w-full px-5 py-3 bg-muted/50 border border-border rounded-xl focus:ring-2 focus:ring-primary/20 transition-all font-semibold"
+                  placeholder="Your Shop Name"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-muted-foreground uppercase">Shop Username (Handle)</label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-bold">@</span>
+                  <input 
+                    type="text" 
+                    value={formData.username}
+                    onChange={(e) => setFormData({...formData, username: e.target.value.toLowerCase()})}
+                    className={`w-full pl-9 pr-5 py-3 bg-muted/50 border rounded-xl focus:ring-2 transition-all font-semibold ${
+                      usernameStatus.error ? 'border-red-500' : usernameStatus.available ? 'border-green-500' : 'border-border'
+                    }`}
+                    placeholder="shop_handle"
+                  />
+                </div>
+                {formData.username && (
+                  <div className="flex items-center gap-2">
+                    {usernameStatus.loading ? (
+                      <Loader2 className="w-3 h-3 text-muted-foreground animate-spin" />
+                    ) : usernameStatus.error ? (
+                      <p className="text-[10px] font-bold text-red-500">{usernameStatus.error}</p>
+                    ) : usernameStatus.available ? (
+                      <p className="text-[10px] font-bold text-green-500 uppercase">Available</p>
+                    ) : null}
+                  </div>
+                )}
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-muted-foreground uppercase">Category</label>
+                <select 
+                  value={formData.category}
+                  onChange={(e) => setFormData({...formData, category: e.target.value})}
+                  className="w-full px-5 py-3 bg-muted/50 border border-border rounded-xl focus:ring-2 focus:ring-primary/20 transition-all font-semibold appearance-none"
+                >
+                  <option value="">Select Category</option>
+                  <option value="electronics">Electronics</option>
+                  <option value="fashion">Fashion</option>
+                  <option value="home">Home & Garden</option>
+                  <option value="beauty">Beauty</option>
+                  <option value="sports">Sports</option>
+                </select>
+              </div>
+              <div className="md:col-span-2 space-y-2">
+                <label className="text-xs font-bold text-muted-foreground uppercase">Description</label>
+                <textarea 
+                  rows={4}
+                  value={formData.description}
+                  onChange={(e) => setFormData({...formData, description: e.target.value})}
+                  className="w-full px-5 py-3 bg-muted/50 border border-border rounded-xl focus:ring-2 focus:ring-primary/20 transition-all font-semibold resize-none"
+                  placeholder="Describe your store..."
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-muted-foreground uppercase">Address</label>
+                <input 
+                  type="text" 
+                  value={formData.address}
+                  onChange={(e) => setFormData({...formData, address: e.target.value})}
+                  className="w-full px-5 py-3 bg-muted/50 border border-border rounded-xl focus:ring-2 focus:ring-primary/20 transition-all font-semibold"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-muted-foreground uppercase">Phone Number</label>
+                <input 
+                  type="tel" 
+                  value={formData.phone}
+                  onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                  className="w-full px-5 py-3 bg-muted/50 border border-border rounded-xl focus:ring-2 focus:ring-primary/20 transition-all font-semibold"
+                />
+              </div>
             </div>
-          </div>
 
-          {/* Tabs */}
-          <div className="flex p-1 bg-background border border-border rounded-2xl w-full max-w-md shadow-sm">
-            <button 
-              onClick={() => setActiveTab("profile")}
-              className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === "profile" ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "text-muted-foreground hover:text-foreground"}`}
-            >
-              Shop Profile
-            </button>
-            <button 
-              onClick={() => setActiveTab("branding")}
-              className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === "branding" ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "text-muted-foreground hover:text-foreground"}`}
-            >
-              Branding
-            </button>
-            <button 
-              onClick={() => setActiveTab("danger")}
-              className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === "danger" ? "bg-red-500 text-white shadow-lg shadow-red-500/20" : "text-muted-foreground hover:text-red-500"}`}
-            >
-              Danger Zone
-            </button>
-          </div>
+            <div className="pt-6 border-t border-border flex justify-end">
+              <button 
+                type="submit"
+                disabled={isUpdating}
+                className="flex items-center gap-2 bg-primary text-primary-foreground px-8 py-3 rounded-xl font-bold hover:bg-primary/90 transition-all disabled:opacity-50"
+              >
+                {isUpdating ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+                Save Changes
+              </button>
+            </div>
+          </form>
+        )}
 
-          {/* Tab Content */}
-          <div className="space-y-6">
-            {activeTab === "profile" && (
-              <form onSubmit={handleUpdateShop} className="bg-background rounded-[2.5rem] border border-border shadow-sm overflow-hidden p-8 md:p-10 space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-2">
-                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Shop Name</label>
+        {activeTab === "branding" && (
+          <div className="bg-background rounded-2xl border border-border shadow-sm p-8 space-y-10">
+            <div className="space-y-4">
+              <h3 className="text-lg font-bold text-foreground">Shop Banner</h3>
+              <div className="relative group">
+                <div className="h-48 w-full bg-muted/50 rounded-2xl overflow-hidden border border-border">
+                  {bannerPreview ? (
+                    <img src={bannerPreview} alt="Banner" className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                      <TrendingUp className="w-12 h-12 opacity-20" />
+                    </div>
+                  )}
+                </div>
+                <label className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl flex items-center justify-center cursor-pointer">
+                  <div className="flex flex-col items-center gap-2 text-white">
+                    <Camera className="w-8 h-8" />
+                    <span className="font-bold text-sm">Update Banner</span>
                     <input 
-                      type="text" 
-                      value={formData.name}
-                      onChange={(e) => setFormData({...formData, name: e.target.value})}
-                      className="w-full px-5 py-4 bg-muted border-none rounded-2xl focus:ring-2 focus:ring-primary/20 transition-all font-bold text-foreground"
-                      placeholder="Your Shop Name"
-                      required
+                      type="file" 
+                      name="banner"
+                      accept="image/*" 
+                      className="hidden" 
+                      onChange={handleBannerChange} 
                     />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Shop Username (Handle)</label>
-                    <div className="relative">
-                      <span className="absolute left-5 top-1/2 -translate-y-1/2 text-muted-foreground font-bold">@</span>
-                      <input 
-                        type="text" 
-                        value={formData.username}
-                        onChange={(e) => setFormData({...formData, username: e.target.value.toLowerCase()})}
-                        className={`w-full pl-10 pr-5 py-4 bg-muted border-none rounded-2xl focus:ring-2 transition-all font-bold text-foreground ${
-                          usernameStatus.error ? 'focus:ring-red-500/20 text-red-600 dark:text-red-400' : 
-                          usernameStatus.available ? 'focus:ring-emerald-500/20 text-emerald-600 dark:text-emerald-400' : 
-                          'focus:ring-primary/20'
-                        }`}
-                        placeholder="adidas"
-                      />
-                    </div>
-                    {formData.username && (
-                      <div className="flex items-center gap-2 ml-1">
-                        {usernameStatus.loading ? (
-                          <Loader2 className="w-3 h-3 text-muted-foreground animate-spin" />
-                        ) : usernameStatus.error ? (
-                          <p className="text-[10px] font-bold text-red-500 uppercase">{usernameStatus.error}</p>
-                        ) : usernameStatus.available ? (
-                          <p className="text-[10px] font-bold text-emerald-500 uppercase">Username is available</p>
-                        ) : null}
+                </label>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-lg font-bold text-foreground">Shop Avatar</h3>
+              <div className="flex items-center gap-8">
+                <div className="relative group shrink-0">
+                  <div className="w-32 h-32 bg-muted/50 rounded-2xl overflow-hidden border border-border shadow-sm">
+                    {avatarPreview ? (
+                      <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                        <Store className="w-10 h-10 opacity-20" />
                       </div>
                     )}
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Category</label>
-                    <select 
-                      value={formData.category}
-                      onChange={(e) => setFormData({...formData, category: e.target.value})}
-                      className="w-full px-5 py-4 bg-muted border-none rounded-2xl focus:ring-2 focus:ring-primary/20 transition-all font-bold text-foreground appearance-none"
-                    >
-                      <option value="">Select Category</option>
-                      <option value="electronics">Electronics</option>
-                      <option value="fashion">Fashion</option>
-                      <option value="home">Home & Garden</option>
-                      <option value="beauty">Beauty</option>
-                      <option value="sports">Sports</option>
-                    </select>
-                  </div>
-                  <div className="md:col-span-2 space-y-2">
-                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Description</label>
-                    <textarea 
-                      rows={4}
-                      value={formData.description}
-                      onChange={(e) => setFormData({...formData, description: e.target.value})}
-                      className="w-full px-5 py-4 bg-muted border-none rounded-2xl focus:ring-2 focus:ring-primary/20 transition-all font-bold text-foreground resize-none"
-                      placeholder="Describe what you sell..."
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Location / Address</label>
+                  <label className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl flex items-center justify-center cursor-pointer">
+                    <Camera className="w-6 h-6 text-white" />
                     <input 
-                      type="text" 
-                      value={formData.address}
-                      onChange={(e) => setFormData({...formData, address: e.target.value})}
-                      className="w-full px-5 py-4 bg-muted border-none rounded-2xl focus:ring-2 focus:ring-primary/20 transition-all font-bold text-foreground"
-                      placeholder="e.g. Nairobi, Kenya"
+                      type="file" 
+                      name="avatar"
+                      accept="image/*" 
+                      className="hidden" 
+                      onChange={handleAvatarChange} 
                     />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Phone Number</label>
-                    <input 
-                      type="tel" 
-                      value={formData.phone}
-                      onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                      className="w-full px-5 py-4 bg-muted border-none rounded-2xl focus:ring-2 focus:ring-primary/20 transition-all font-bold text-foreground"
-                      placeholder="+254..."
-                    />
-                  </div>
+                  </label>
                 </div>
-
-                <div className="pt-6 border-t border-border flex justify-end">
-                  <button 
-                    type="submit"
-                    disabled={isUpdating}
-                    className="flex items-center gap-2 bg-primary text-primary-foreground px-8 py-4 rounded-2xl font-black text-sm hover:bg-blue-700 transition-all shadow-lg shadow-primary/20 disabled:opacity-50"
-                  >
-                    {isUpdating ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                    SAVE PROFILE CHANGES
-                  </button>
-                </div>
-              </form>
-            )}
-
-            {activeTab === "branding" && (
-              <div className="bg-background rounded-[2.5rem] border border-border shadow-sm overflow-hidden p-8 md:p-10 space-y-10">
-                {/* Banner Section */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-black text-foreground uppercase tracking-tight">Shop Banner</h3>
-                  <div className="relative group">
-                    <div className="h-48 w-full bg-muted rounded-3xl overflow-hidden border border-border">
-                      {bannerPreview ? (
-                        <img src={bannerPreview} alt="Banner" className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                          <TrendingUp className="w-12 h-12 opacity-20" />
-                        </div>
-                      )}
-                    </div>
-                    <label className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-3xl flex items-center justify-center cursor-pointer">
-                      <div className="flex flex-col items-center gap-2 text-white">
-                        <Camera className="w-8 h-8" />
-                        <span className="font-bold text-sm">Upload New Banner</span>
-                        <input 
-                          type="file" 
-                          accept="image/*" 
-                          className="hidden" 
-                          onChange={handleBannerChange}
-                        />
-                      </div>
-                    </label>
-                  </div>
-                  {bannerFile && (
-                    <p className="text-xs text-primary font-bold">Selected: {bannerFile.name}</p>
-                  )}
-                </div>
-
-                {/* Avatar Section */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-black text-foreground uppercase tracking-tight">Shop Avatar</h3>
-                  <div className="flex items-center gap-8">
-                    <div className="relative group shrink-0">
-                      <div className="w-32 h-32 bg-muted rounded-[2.5rem] overflow-hidden border-4 border-background shadow-xl">
-                        {avatarPreview ? (
-                          <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                            <Store className="w-10 h-10 opacity-20" />
-                          </div>
-                        )}
-                      </div>
-                      <label className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-[2.5rem] flex items-center justify-center cursor-pointer">
-                        <Camera className="w-6 h-6 text-white" />
-                        <input 
-                          type="file" 
-                          accept="image/*" 
-                          className="hidden" 
-                          onChange={handleAvatarChange}
-                        />
-                      </label>
-                    </div>
-                    <div className="flex-1 space-y-2">
-                      <p className="text-sm font-bold text-foreground">Upload Shop Avatar</p>
-                      <p className="text-[10px] text-muted-foreground font-bold">Square images (e.g. 512x512) work best for avatars.</p>
-                      {avatarFile && (
-                        <p className="text-xs text-primary font-bold">Selected: {avatarFile.name}</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-6 border-t border-border flex justify-end">
-                  <button 
-                    onClick={handleUpdateBranding}
-                    disabled={isUpdating}
-                    className="flex items-center gap-2 bg-primary text-primary-foreground px-8 py-4 rounded-2xl font-black text-sm hover:bg-blue-700 transition-all shadow-lg shadow-primary/20 disabled:opacity-50"
-                  >
-                    {isUpdating ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                    SAVE BRANDING CHANGES
-                  </button>
+                <div>
+                  <p className="text-sm font-bold">Store Logo</p>
+                  <p className="text-xs text-muted-foreground mt-1">Recommend 512x512px square image.</p>
                 </div>
               </div>
-            )}
+            </div>
 
-            {activeTab === "danger" && (
-              <div className="space-y-6">
-                {/* Delete Shop Card */}
-                <div className="bg-background rounded-[2.5rem] border border-red-100 dark:border-red-500/20 shadow-sm overflow-hidden">
-                  <div className="p-8 md:p-10 flex flex-col md:flex-row items-center gap-8">
-                    <div className="w-20 h-20 bg-red-50 dark:bg-red-500/10 rounded-3xl flex items-center justify-center shrink-0">
-                      <Store className="w-10 h-10 text-red-500" />
-                    </div>
-                    <div className="flex-1 text-center md:text-left">
-                      <h3 className="text-xl font-black text-foreground uppercase tracking-tight">Delete Shop</h3>
-                      <p className="text-muted-foreground font-medium mt-1">
-                        This will remove your store, products, and sales history. Your buyer account will remain active.
-                      </p>
-                    </div>
-                    <button 
-                      onClick={handleDeleteShop}
-                      disabled={isDeleting !== null}
-                      className="w-full md:w-auto px-8 py-4 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 rounded-2xl font-black text-sm hover:bg-red-100 dark:hover:bg-red-500/20 transition-all disabled:opacity-50"
-                    >
-                      {isDeleting === "shop" ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "DELETE SHOP"}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Delete Account Card */}
-                <div className="bg-foreground rounded-[2.5rem] shadow-xl overflow-hidden">
-                  <div className="p-8 md:p-10 flex flex-col md:flex-row items-center gap-8">
-                    <div className="w-20 h-20 bg-background/10 rounded-3xl flex items-center justify-center shrink-0">
-                      <Trash2 className="w-10 h-10 text-background" />
-                    </div>
-                    <div className="flex-1 text-center md:text-left">
-                      <h3 className="text-xl font-black text-background uppercase tracking-tight">Delete Account</h3>
-                      <p className="text-background/60 font-medium mt-1">
-                        Permanently remove your account and all associated data. This action is irreversible.
-                      </p>
-                    </div>
-                    <button 
-                      onClick={handleDeleteAccount}
-                      disabled={isDeleting !== null}
-                      className="w-full md:w-auto px-8 py-4 bg-background text-foreground rounded-2xl font-black text-sm hover:bg-red-500 hover:text-white transition-all disabled:opacity-50"
-                    >
-                      {isDeleting === "account" ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "DELETE ACCOUNT"}
-                    </button>
-                  </div>
-                </div>
-
-                <div className="p-6 bg-amber-50 dark:bg-amber-500/10 rounded-3xl border border-amber-100 dark:border-amber-500/20 flex items-start gap-4">
-                  <AlertTriangle className="w-6 h-6 text-amber-600 shrink-0 mt-1" />
-                  <div>
-                    <h4 className="font-black text-amber-900 dark:text-amber-400 text-sm uppercase tracking-tight">Warning</h4>
-                    <p className="text-amber-800 dark:text-amber-500/80 text-xs font-bold leading-relaxed mt-1">
-                      Destructive actions cannot be undone. Please ensure you have backed up any important data or completed pending orders before proceeding.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
+            <div className="pt-6 border-t border-border flex justify-end">
+              <button 
+                onClick={handleUpdateBranding}
+                disabled={isUpdating}
+                className="flex items-center gap-2 bg-primary text-primary-foreground px-8 py-3 rounded-xl font-bold hover:bg-primary/90 transition-all disabled:opacity-50"
+              >
+                {isUpdating ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+                Save Branding
+              </button>
+            </div>
           </div>
-        </div>
-      </main>
+        )}
+
+        {activeTab === "danger" && (
+          <div className="space-y-6">
+            <div className="bg-red-500/5 border border-red-500/20 rounded-2xl p-8 flex flex-col md:flex-row items-center gap-8">
+              <div className="flex-1 text-center md:text-left">
+                <h3 className="text-xl font-bold text-red-600">Delete Shop</h3>
+                <p className="text-sm text-red-600/70 mt-1">This will permanently remove your store and products. Sales data will be lost.</p>
+              </div>
+              <button 
+                onClick={handleDeleteShop}
+                disabled={isDeleting !== null}
+                className="px-8 py-3 bg-red-500 text-white rounded-xl font-bold hover:bg-red-600 transition-all disabled:opacity-50"
+              >
+                {isDeleting === "shop" ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "Delete Shop"}
+              </button>
+            </div>
+
+            <div className="bg-muted border border-border rounded-2xl p-8 flex flex-col md:flex-row items-center gap-8">
+              <div className="flex-1 text-center md:text-left">
+                <h3 className="text-xl font-bold text-foreground">Delete Account</h3>
+                <p className="text-sm text-muted-foreground mt-1">Close your account forever. This action cannot be reversed.</p>
+              </div>
+              <button 
+                onClick={handleDeleteAccount}
+                disabled={isDeleting !== null}
+                className="px-8 py-3 bg-foreground text-background rounded-xl font-bold hover:opacity-90 transition-all disabled:opacity-50"
+              >
+                {isDeleting === "account" ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "Delete Account"}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

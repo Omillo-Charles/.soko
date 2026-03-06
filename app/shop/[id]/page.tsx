@@ -155,7 +155,9 @@ const ShopProfilePage = () => {
     }));
   }, [productsData]);
 
-  const isFollowing = shop?.followers?.some((f: any) => String(f._id || f) === String(currentUser?._id));
+  const isFollowing = (shop as any)?.isFollowing 
+    ?? shop?.followers?.some((f: any) => String(f._id || f) === String(currentUser?._id))
+    ?? false;
   
   const popularShops = React.useMemo(() => {
     return (popularShopsData || []).map((s: any) => ({
@@ -183,7 +185,6 @@ const ShopProfilePage = () => {
     try {
       await followMutation.mutateAsync(shop?._id);
       await refreshUser();
-      toast.success(isFollowing ? "Unfollowed shop" : "Following shop");
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Failed to toggle follow");
     }

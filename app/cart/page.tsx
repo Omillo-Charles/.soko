@@ -90,8 +90,11 @@ const CartPage = () => {
         <div className="grid lg:grid-cols-3 gap-10">
           {/* Cart Items List */}
           <div className="lg:col-span-2 space-y-6">
-            {cartItems.map((item: any) => (
-              <div key={item._id} className="group bg-background rounded-[2.5rem] p-6 md:p-8 border border-border shadow-sm hover:shadow-xl hover:shadow-primary/5 transition-all duration-500">
+            {cartItems.map((item: any, idx: number) => {
+              const keyBase = item?._id || `${item?.product?._id || item?.product?.id || 'prod'}-${item?.size || ''}-${item?.color || ''}`;
+              const key = `${keyBase}-${idx}`;
+              return (
+              <div key={key} className="group bg-background rounded-[2.5rem] p-6 md:p-8 border border-border shadow-sm hover:shadow-xl hover:shadow-primary/5 transition-all duration-500">
                 <div className="flex flex-col md:flex-row gap-8">
                   {/* Product Image */}
                   <div 
@@ -181,7 +184,7 @@ const CartPage = () => {
                   </div>
                 </div>
               </div>
-            ))}
+            )})}
 
             {/* Trust Badges - Hidden on mobile, shown on desktop here */}
             <div className="hidden lg:grid grid-cols-3 gap-4 pt-4">

@@ -39,7 +39,12 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     enabled: typeof window !== 'undefined' && !!localStorage.getItem('accessToken'),
   });
 
-  const wishlistItems = wishlistData?.products || [];
+  const wishlistItems = (wishlistData?.products || []).map((p: any) => {
+    if (p && p.id && !p._id) {
+      return { ...p, _id: p.id };
+    }
+    return p;
+  });
 
   const toggleMutation = useMutation({
     mutationFn: async (productId: string) => {
@@ -151,13 +156,7 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       queryClient.invalidateQueries({ queryKey: ['product-feed'] });
       queryClient.invalidateQueries({ queryKey: ['shop-products'] });
     },
-    onSuccess: (data) => {
-      if (data.action === 'added') {
-        toast.success("Added to wishlist");
-      } else {
-        toast.success("Removed from wishlist");
-      }
-    }
+    onSuccess: () => {}
   });
 
   const removeMutation = useMutation({
@@ -167,7 +166,6 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['wishlist'] });
-      toast.success("Removed from wishlist");
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || "Failed to remove item");
@@ -194,7 +192,8 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const isInWishlist = (productId: string) => {
-    return wishlistItems.some((item: Product) => item._id === productId);
+    const pid = String(productId);
+    return wishlistItems.some((item: any) => String(item._id || item.id) === pid);
   };
 
   return (

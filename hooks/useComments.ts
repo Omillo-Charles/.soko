@@ -9,7 +9,15 @@ export const useComments = (productId?: string) => {
     queryKey: ['comments', productId],
     queryFn: async () => {
       const response = await api.get(`/comments/product/${productId}`);
-      return response.data.data;
+      const data = response.data.data || [];
+      return data.map((c: any) => ({
+        ...c,
+        _id: c.id || c._id || `comment-${Math.random()}`,
+        user: c.user ? {
+          ...c.user,
+          _id: c.user.id || c.user._id
+        } : null
+      }));
     },
     enabled: !!productId,
   });

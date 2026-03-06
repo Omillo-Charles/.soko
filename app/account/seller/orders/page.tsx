@@ -3,7 +3,6 @@
 import React from 'react';
 import Link from 'next/link';
 import { 
-  ChevronRight, 
   Package, 
   Calendar, 
   MapPin, 
@@ -66,17 +65,7 @@ export default function SellerOrdersPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 pb-28 lg:pb-8">
-      <div className="mb-6">
-        <Link 
-          href="/account" 
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
-        >
-          <ChevronRight className="w-4 h-4 rotate-180" />
-          Back to Dashboard
-        </Link>
-      </div>
-
+    <div className="max-w-6xl mx-auto">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">Shop Orders</h1>

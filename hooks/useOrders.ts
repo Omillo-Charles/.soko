@@ -40,7 +40,11 @@ export const useOrders = () => {
     queryKey: ['my-orders'],
     queryFn: async () => {
       const response = await api.get('/orders/my-orders');
-      return response.data.data as Order[];
+      const data = response.data.data || [];
+      return data.map((o: any) => ({
+        ...o,
+        _id: o.id || o._id || `order-${Math.random()}`
+      })) as Order[];
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
@@ -51,7 +55,11 @@ export const useOrderDetails = (orderId: string) => {
     queryKey: ['order', orderId],
     queryFn: async () => {
       const response = await api.get(`/orders/${orderId}`);
-      return response.data.data as Order;
+      const order = response.data.data;
+      if (order && order.id && !order._id) {
+        order._id = order.id;
+      }
+      return order as Order;
     },
     enabled: !!orderId,
   });

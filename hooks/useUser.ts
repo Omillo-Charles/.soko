@@ -13,9 +13,13 @@ export const useUser = () => {
       try {
         const response = await api.get('/users/me');
         if (response.data.success) {
+          const userData = response.data.data;
+          if (userData && userData.id && !userData._id) {
+            userData._id = userData.id;
+          }
           // Sync localStorage
-          localStorage.setItem('user', JSON.stringify(response.data.data));
-          return response.data.data;
+          localStorage.setItem('user', JSON.stringify(userData));
+          return userData;
         }
         return null;
       } catch (err) {
@@ -30,7 +34,11 @@ export const useUser = () => {
   });
 
   // Local fallback for immediate UI (e.g. during initial load)
-  const localUser = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || 'null') : null;
+  const localUserStr = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
+  const localUser = localUserStr ? JSON.parse(localUserStr) : null;
+  if (localUser && localUser.id && !localUser._id) {
+    localUser._id = localUser.id;
+  }
   const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
 
   const updateAccountTypeMutation = useMutation({

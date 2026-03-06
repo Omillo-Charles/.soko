@@ -182,29 +182,25 @@ const EditProductPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background pt-12 pb-32 lg:pb-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        <button 
-          onClick={() => router.back()}
-          className="flex items-center gap-2 text-muted-foreground hover:text-foreground font-bold mb-8 transition-colors"
-        >
-          <ChevronLeft className="w-5 h-5" />
-          Back to Products
-        </button>
+    <div className="max-w-4xl mx-auto">
+      <button 
+        onClick={() => router.back()}
+        className="flex items-center gap-2 text-muted-foreground hover:text-foreground font-bold mb-6 transition-colors"
+      >
+        <ChevronLeft className="w-5 h-5" />
+        Back to Products
+      </button>
 
-        <div className="bg-background rounded-[2.5rem] shadow-xl shadow-primary/5 border border-border overflow-hidden">
-          <div className="bg-foreground p-10 text-background relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-background/10 rounded-full -mr-32 -mt-32 blur-3xl"></div>
-            <div className="relative z-10">
-              <div className="w-16 h-16 bg-background/10 rounded-2xl flex items-center justify-center mb-4 backdrop-blur-sm">
-                <EditProductPageIcon />
-              </div>
-              <h1 className="text-3xl font-black tracking-tight uppercase">Edit Product</h1>
-              <p className="text-background/60 font-medium mt-2">Update your product information and media.</p>
-            </div>
+      <div className="bg-background rounded-3xl shadow-xl shadow-primary/5 border border-border overflow-hidden">
+        <div className="bg-foreground p-8 text-background relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-background/10 rounded-full -mr-32 -mt-32 blur-3xl"></div>
+          <div className="relative z-10">
+            <h1 className="text-2xl font-black tracking-tight uppercase">Edit Product</h1>
+            <p className="text-background/60 font-medium mt-1">Update your product information and media.</p>
           </div>
+        </div>
 
-          <form onSubmit={handleSubmit} className="p-10 space-y-8">
+        <form onSubmit={handleSubmit} className="p-8 space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-6 md:col-span-2">
                 <h2 className="text-lg font-black text-foreground flex items-center gap-2 border-b border-border pb-2">
@@ -394,15 +390,7 @@ const EditProductPage = () => {
           </form>
         </div>
       </div>
-    </div>
   );
 };
-
-const EditProductPageIcon = () => (
-  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M11 4H4C3.46957 4 2.96086 4.21071 2.58579 4.58579C2.21071 4.96086 2 5.46957 2 6V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M18.5 2.5C18.8978 2.10217 19.4374 1.87868 20 1.87868C20.5626 1.87868 21.1022 2.10217 21.5 2.5C21.8978 2.89782 22.1213 3.43739 22.1213 4C22.1213 4.56261 21.8978 5.10217 21.5 5.5L12 15L8 16L9 12L18.5 2.5Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
 
 export default EditProductPage;

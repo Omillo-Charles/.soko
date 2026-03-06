@@ -243,6 +243,7 @@ const ShopContent = () => {
       followers: s.followersCount || s.followers?.length || 0,
       verified: s.isVerified || false,
       followersList: s.followers || [],
+      isFollowing: s.isFollowing ?? false,
       products: s.productsCount || s.products?.length || 0
     }));
 
@@ -275,7 +276,6 @@ const ShopContent = () => {
 
     try {
       await followMutation.mutateAsync(shopId);
-      toast.success("Updated follow status");
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Failed to toggle follow");
     }
@@ -573,12 +573,12 @@ const ShopContent = () => {
                                 handleFollowToggle(vendor.id);
                               }}
                               className={`px-3 py-1 rounded-full text-[10px] font-black ${
-                                vendor.followersList?.some((f: any) => String(f._id || f) === String(currentUser?._id))
+                                (vendor.isFollowing ?? vendor.followersList?.some((f: any) => String(f._id || f) === String(currentUser?._id)))
                                   ? 'bg-muted text-foreground'
                                   : 'bg-foreground text-background'
                               }`}
                             >
-                              {vendor.followersList?.some((f: any) => String(f._id || f) === String(currentUser?._id)) ? 'Following' : 'Follow'}
+                              {(vendor.isFollowing ?? vendor.followersList?.some((f: any) => String(f._id || f) === String(currentUser?._id))) ? 'Following' : 'Follow'}
                             </button>
                           )}
                         </div>
@@ -934,15 +934,15 @@ const ShopContent = () => {
                         }}
                         disabled={followMutation.isPending && followMutation.variables === vendor.id}
                         className={`px-4 py-1.5 rounded-full text-[10px] font-black transition-all ${
-                          vendor.followersList?.some((f: any) => String(f._id || f) === String(currentUser?._id))
+                          (vendor.isFollowing ?? vendor.followersList?.some((f: any) => String(f._id || f) === String(currentUser?._id)))
                             ? 'bg-muted text-foreground hover:bg-destructive hover:text-white group/btn'
                             : 'bg-foreground text-background hover:bg-primary hover:text-white'
                         } ${followMutation.isPending && followMutation.variables === vendor.id ? 'opacity-50 cursor-not-allowed' : ''}`}
                       >
-                        <span className={vendor.followersList?.some((f: any) => String(f._id || f) === String(currentUser?._id)) ? 'group-hover/btn:hidden' : ''}>
-                          {followMutation.isPending && followMutation.variables === vendor.id ? '...' : (vendor.followersList?.some((f: any) => String(f._id || f) === String(currentUser?._id)) ? 'Following' : 'Follow')}
+                        <span className={(vendor.isFollowing ?? vendor.followersList?.some((f: any) => String(f._id || f) === String(currentUser?._id))) ? 'group-hover/btn:hidden' : ''}>
+                          {followMutation.isPending && followMutation.variables === vendor.id ? '...' : ((vendor.isFollowing ?? vendor.followersList?.some((f: any) => String(f._id || f) === String(currentUser?._id))) ? 'Following' : 'Follow')}
                         </span>
-                        {vendor.followersList?.some((f: any) => String(f._id || f) === String(currentUser?._id)) && !followMutation.isPending && (
+                        {(vendor.isFollowing ?? vendor.followersList?.some((f: any) => String(f._id || f) === String(currentUser?._id))) && !followMutation.isPending && (
                           <span className="hidden group-hover/btn:inline">Unfollow</span>
                         )}
                       </button>

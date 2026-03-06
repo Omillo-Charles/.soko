@@ -14,8 +14,13 @@ export const useShop = (idOrHandle: string) => {
       const shopData = response.data.data || response.data;
       
       // If the data is empty or missing name, it might be an unsuccessful response
-      if (!shopData || (typeof shopData === 'object' && !shopData.name && !shopData._id)) {
+      if (!shopData || (typeof shopData === 'object' && !shopData.name && !shopData.id && !shopData._id)) {
         throw new Error("Shop not found");
+      }
+
+      // Map id to _id for backward compatibility
+      if (shopData && shopData.id && !shopData._id) {
+        shopData._id = shopData.id;
       }
       
       return shopData;
@@ -30,7 +35,11 @@ export const useMyShop = () => {
     queryKey: ['my-shop'],
     queryFn: async () => {
       const response = await api.get('/shops/my-shop');
-      return response.data.data;
+      const data = response.data.data;
+      if (data && data.id && !data._id) {
+        data._id = data.id;
+      }
+      return data;
     },
     retry: false, // Don't retry if shop not found (likely 404 means redirect to register)
   });
@@ -48,7 +57,11 @@ export const useShopProducts = (idOrHandle: string, params?: { limit?: number; m
       const response = await api.get(endpoint, {
         params: { limit: 20, ...params }
       });
-      return response.data.data;
+      const data = response.data.data || [];
+      return data.map((p: any) => ({
+        ...p,
+        _id: p.id || p._id || `prod-${Math.random()}`
+      }));
     },
     enabled: !!idOrHandle && idOrHandle !== 'undefined',
   });
@@ -131,6 +144,58 @@ export const useFollowShop = () => {
       // Snapshot the previous values
       const previousShop = queryClient.getQueryData(['shop', shopId]);
       const previousPopular = queryClient.getQueryData(['popular-shops']);
+
+      const userStr = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
+      const userId = userStr ? (() => { try { const u = JSON.parse(userStr); return u._id || u.id; } catch { return null; } })() : null;
+
+      const toggleObj = (obj: any) => {
+        if (!obj) return obj;
+        const clone = { ...obj };
+        const currentFollowing = Boolean(clone.isFollowing) || (Array.isArray(clone.followersList) && userId ? clone.followersList.some((f: any) => String(f._id || f) === String(userId)) : false);
+        const nextFollowing = !currentFollowing;
+        const count = Number(clone.followersCount ?? clone._count?.followers ?? 0);
+        const nextCount = Math.max(0, count + (nextFollowing ? 1 : -1));
+        clone.isFollowing = nextFollowing;
+        clone.followersCount = nextCount;
+        if (Array.isArray(clone.followersList) && userId) {
+          if (nextFollowing) {
+            clone.followersList = [...clone.followersList, userId];
+          } else {
+            clone.followersList = clone.followersList.filter((f: any) => String(f._id || f) !== String(userId));
+          }
+        }
+        return clone;
+      };
+
+      // Optimistically update the specific shop entry
+      queryClient.setQueryData(['shop', shopId], (old: any) => toggleObj(old));
+      // Also, update any shop queries by handle that represent this shop
+      queryClient.setQueriesData({ queryKey: ['shop'] }, (old: any, query: any) => {
+        if (!old) return old;
+        const key = query?.queryKey as any[];
+        const idOrHandle = key?.[1];
+        if (!idOrHandle) return old;
+        // If the cached shop has matching id, update
+        const cachedId = old._id || old.id;
+        if (String(cachedId) === String(shopId)) {
+          return toggleObj(old);
+        }
+        return old;
+      });
+      // Update popular shops list
+      queryClient.setQueriesData({ queryKey: ['popular-shops'] }, (old: any) => {
+        if (!old) return old;
+        if (Array.isArray(old)) {
+          return old.map((s: any) => {
+            const sid = s._id || s.id;
+            if (String(sid) === String(shopId)) {
+              return toggleObj(s);
+            }
+            return s;
+          });
+        }
+        return old;
+      });
 
       return { previousShop, previousPopular };
     },
