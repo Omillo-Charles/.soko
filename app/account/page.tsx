@@ -330,7 +330,11 @@ const SellerCenterDropdowns = ({ hasShop }: { hasShop: boolean }) => {
   }) => (
     <div className="relative bg-background border border-border rounded-2xl overflow-hidden">
       <button
-        onClick={() => toggle(id)}
+        type="button"
+        onClick={(e) => {
+          e.preventDefault();
+          toggle(id);
+        }}
         className="w-full flex items-center justify-between p-5 hover:bg-muted/50 transition-colors"
       >
         <div className="flex items-center gap-4">
@@ -571,7 +575,11 @@ const AccountCenterDropdowns = () => {
     <div className="relative bg-background border border-border rounded-2xl overflow-hidden group">
       <div className="pointer-events-none absolute -top-12 -right-12 w-40 h-40 bg-primary/5 rounded-full blur-2xl" />
       <button
-        onClick={() => toggle(id)}
+        type="button"
+        onClick={(e) => {
+          e.preventDefault();
+          toggle(id);
+        }}
         className="w-full flex items-center justify-between p-5 hover:bg-muted/50 transition-colors"
       >
         <div className="flex items-center gap-4">
