@@ -111,56 +111,111 @@ const SellerDashboard = () => {
 
   return (
     <div className="space-y-8">
-      <div className="relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-primary/10 via-background to-secondary/10 p-5 md:p-8 shadow-sm">
-        <div className="hidden md:block pointer-events-none absolute -top-20 -right-16 w-72 h-72 rounded-full bg-primary/20 blur-3xl" />
-        <div className="hidden md:block pointer-events-none absolute -bottom-24 -left-20 w-96 h-96 rounded-full bg-secondary/20 blur-3xl" />
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 relative">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-primary to-secondary p-0.5">
-              <div className="w-full h-full rounded-[0.9rem] md:rounded-[1.1rem] bg-background overflow-hidden">
-                <img
-                  src={shop?.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${shop?.name || "Shop"}`}
-                  alt={shop?.name || "Shop avatar"}
-                  className="w-full h-full object-cover"
-                />
+      {/* Enhanced Header/Navbar */}
+      <div className="relative overflow-hidden rounded-[2rem] border border-border/50 bg-gradient-to-br from-primary/5 via-background to-secondary/5 shadow-xl shadow-primary/5">
+        {/* Animated Background Blobs */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-gradient-to-br from-primary/20 to-transparent blur-3xl animate-pulse" />
+          <div className="absolute -bottom-32 -left-32 w-[32rem] h-[32rem] rounded-full bg-gradient-to-tr from-secondary/15 to-transparent blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-primary/5 blur-2xl" />
+        </div>
+
+        {/* Gradient Border Effect */}
+        <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 opacity-50" />
+
+        <div className="relative p-6 md:p-10">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            {/* Shop Info Section */}
+            <div className="flex items-center gap-5">
+              {/* Shop Avatar with Glow Effect */}
+              <div className="relative group">
+                <div className="absolute inset-0 rounded-[1.5rem] bg-gradient-to-br from-primary via-primary/50 to-secondary blur-xl opacity-60 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="relative w-16 h-16 md:w-24 md:h-24 rounded-[1.5rem] bg-gradient-to-br from-primary to-secondary p-[2px] shadow-2xl shadow-primary/20">
+                  <div className="w-full h-full rounded-[1.4rem] bg-background overflow-hidden ring-2 ring-background">
+                    <img
+                      src={shop?.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${shop?.name || "Shop"}`}
+                      alt={shop?.name || "Shop avatar"}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                  </div>
+                </div>
+                {/* Online Indicator */}
+                <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full border-[3px] border-background shadow-lg">
+                  <div className="absolute inset-0 bg-emerald-500 rounded-full animate-ping opacity-75" />
+                </div>
+              </div>
+
+              {/* Shop Details */}
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h2 className="text-2xl md:text-3xl font-black text-foreground leading-none tracking-tight">
+                    {isMounted ? (shop?.name || "Store Overview") : "Store Overview"}
+                  </h2>
+                  {shop?.isVerified && (
+                    <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">
+                      <svg className="w-4 h-4 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center gap-3 flex-wrap">
+                  <p className="text-xs md:text-sm text-muted-foreground font-medium">
+                    Welcome back, <span className="font-bold text-foreground">{isMounted ? (user?.name || "User") : "User"}</span>
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-primary/10 text-primary border border-primary/20 uppercase tracking-wider">
+                      Seller
+                    </span>
+                    {user?.isPremium && (
+                      <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-gradient-to-r from-amber-500/10 to-orange-500/10 text-amber-600 border border-amber-500/20 uppercase tracking-wider">
+                        Premium
+                      </span>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
-            <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground leading-tight">
-                {isMounted ? (shop?.name || "Store Overview") : "Store Overview"}
-              </h2>
-              <div className="flex items-center gap-2 mt-1">
-                <p className="text-xs md:text-sm text-muted-foreground">
-                  Welcome back, {isMounted ? (user?.name || "User") : "User"}!
-                </p>
-                <span className="px-2 py-0.5 rounded-full text-[9px] md:text-[10px] font-black bg-primary/10 text-primary border border-primary/20">
-                  Seller
-                </span>
-              </div>
+
+            {/* Quick Actions */}
+            <div className="flex flex-wrap items-stretch gap-3 w-full lg:w-auto">
+              {quickActions.map((action, idx) => 
+                action.action ? (
+                  <button
+                    key={idx}
+                    onClick={action.action}
+                    className={`group relative px-5 py-3 rounded-xl font-bold text-sm flex items-center gap-2.5 justify-center transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl w-full sm:w-auto overflow-hidden ${action.color}`}
+                  >
+                    {/* Button Glow Effect */}
+                    {idx === 0 && (
+                      <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary-foreground/10 to-primary/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                    )}
+                    <span className="relative z-10 transition-transform duration-300 group-hover:scale-110">
+                      {action.icon}
+                    </span>
+                    <span className="relative z-10 hidden sm:inline font-black tracking-wide">
+                      {action.label}
+                    </span>
+                    {idx === 0 && (
+                      <div className="absolute top-0 right-0 w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+                    )}
+                  </button>
+                ) : (
+                  <Link
+                    key={idx}
+                    href={action.href}
+                    className={`group relative px-5 py-3 rounded-xl font-bold text-sm flex items-center gap-2.5 justify-center transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl w-full sm:w-auto ${action.color}`}
+                  >
+                    <span className="transition-transform duration-300 group-hover:scale-110">
+                      {action.icon}
+                    </span>
+                    <span className="hidden sm:inline font-black tracking-wide">
+                      {action.label}
+                    </span>
+                  </Link>
+                )
+              )}
             </div>
-          </div>
-          <div className="flex flex-wrap items-stretch gap-2 md:gap-3 w-full md:w-auto">
-            {quickActions.map((action, idx) => 
-              action.action ? (
-                <button
-                  key={idx}
-                  onClick={action.action}
-                  className={`px-4 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 justify-center transition-all hover:opacity-90 active:scale-[0.98] shadow-sm w-full sm:w-auto ${action.color}`}
-                >
-                  {action.icon}
-                  <span className="hidden sm:inline">{action.label}</span>
-                </button>
-              ) : (
-                <Link
-                  key={idx}
-                  href={action.href}
-                  className={`px-4 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 justify-center transition-all hover:opacity-90 active:scale-[0.98] shadow-sm w-full sm:w-auto ${action.color}`}
-                >
-                  {action.icon}
-                  <span className="hidden sm:inline">{action.label}</span>
-                </Link>
-              )
-            )}
           </div>
         </div>
       </div>
