@@ -10,28 +10,28 @@ const slides = [
     title: 'Latest Fashion Trends',
     subtitle: 'Discover the new arrivals',
     buttonText: 'Shop Now',
-    href: '/shop?cat=clothing-apparel',
+    href: '/shop?cat=clothing-apparel', // matches existing category
   },
   {
     image: '/bottom banner/gym.jfif',
     title: 'Achieve Your Fitness Goals',
     subtitle: 'Top-quality gym and fitness equipment',
     buttonText: 'Get Fit',
-    href: '/shop?cat=sports-fitness',
+    href: '/shop?cat=sports-fitness', // matches existing category
   },
   {
     image: '/bottom banner/jbl.png',
     title: 'Crystal Clear Sound',
     subtitle: 'Experience music like never before',
     buttonText: 'Explore Audio',
-    href: '/shop?cat=electronics',
+    href: '/shop?cat=electronics', // matches existing category
   },
   {
     image: '/bottom banner/ps.png',
     title: 'Next-Gen Gaming',
     subtitle: 'Power your dreams',
     buttonText: 'Discover Games',
-    href: '/shop?cat=toys-games',
+    href: '/shop?cat=toys-games', // matches existing category
   },
 ];
 

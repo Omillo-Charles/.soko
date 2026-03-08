@@ -53,9 +53,9 @@ export const ProductCreateModal: React.FC<Props> = ({ isOpen, onClose, onCreated
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
 
-    const remainingSlots = 3 - imageFiles.length;
+    const remainingSlots = 10 - imageFiles.length;
     if (remainingSlots <= 0) {
-      toast.error("You can only upload up to 3 images");
+      toast.error("You can only upload up to 10 images");
       return;
     }
 
@@ -196,9 +196,9 @@ export const ProductCreateModal: React.FC<Props> = ({ isOpen, onClose, onCreated
             <div className="space-y-4">
               <div className="flex items-center justify-between ml-2">
                 <label className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em]">
-                  Product Media ({imageFiles.length}/3)
+                  Product Media ({imageFiles.length}/10)
                 </label>
-                {imageFiles.length < 3 && imageFiles.length > 0 && (
+                {imageFiles.length < 10 && imageFiles.length > 0 && (
                   <label className="text-[10px] font-black text-primary uppercase tracking-widest cursor-pointer hover:underline">
                     Add more
                     <input 
@@ -219,7 +219,9 @@ export const ProductCreateModal: React.FC<Props> = ({ isOpen, onClose, onCreated
                     ? "grid-cols-1" 
                     : imagePreviews.length === 2 
                     ? "grid-cols-2" 
-                    : "grid-cols-2"
+                    : imagePreviews.length <= 4
+                    ? "grid-cols-2"
+                    : "grid-cols-3"
                 }`}>
                   {imagePreviews.map((preview, index) => (
                     <div 
@@ -268,7 +270,7 @@ export const ProductCreateModal: React.FC<Props> = ({ isOpen, onClose, onCreated
                     <ImageIcon className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
                   </div>
                   <span className="text-xs font-black text-foreground uppercase tracking-widest">Click to upload photos</span>
-                  <span className="text-[10px] font-bold text-muted-foreground mt-2 uppercase tracking-tighter">Up to 3 high quality JPG, PNG or WebP (max 5MB each)</span>
+                  <span className="text-[10px] font-bold text-muted-foreground mt-2 uppercase tracking-tighter">Up to 10 high quality JPG, PNG or WebP (max 5MB each)</span>
                 </label>
               )}
             </div>
