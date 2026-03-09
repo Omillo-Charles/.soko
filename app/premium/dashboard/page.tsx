@@ -310,7 +310,7 @@ export default function PremiumDashboard() {
       <div className="flex min-h-screen relative z-10">
         {/* Sleek Sidebar */}
         <aside className="hidden lg:flex fixed left-0 top-[128px] h-[calc(100vh-128px)] flex-col items-center w-20 py-8 border-r border-border bg-background/50 backdrop-blur-xl z-50">
-          <Link href="/account/seller" className="mb-12 group flex-shrink-0">
+          <Link href="/account" className="mb-12 group flex-shrink-0">
             <div className="w-12 h-12 bg-amber-500 rounded-2xl flex items-center justify-center shadow-lg shadow-amber-500/20 group-hover:scale-110 transition-transform duration-300">
               <Crown className="w-7 h-7 text-black" />
             </div>

@@ -25,11 +25,14 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/estree": "^1.0.8",
+    "@types/json-schema": "^7.0.15",
+    "@types/json5": "^0.0.30",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^4.0.0",
-    "eslint-config-next": "^0.2.4",
+    "eslint": "^9.0.0",
+    "eslint-config-next": "^15.0.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

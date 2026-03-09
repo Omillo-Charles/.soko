@@ -88,7 +88,7 @@ const HelpPage = () => {
                   {[
                     { title: "Account Settings", desc: "Manage profile and security", icon: Shield, href: "/account/security" },
                     { title: "Payment Methods", desc: "Cards, M-Pesa, and more", icon: CreditCard, href: "/help" },
-                    { title: <>Selling on <span className="text-secondary">.</span>Soko</>, desc: "Start your own shop today", icon: ArrowRight, href: "/account/seller" },
+                    { title: <>Selling on <span className="text-secondary">.</span>Soko</>, desc: "Start your own shop today", icon: ArrowRight, href: "/account" },
                     { title: "Buyer Protection", desc: "How we keep you safe", icon: HelpCircle, href: "/returns" },
                   ].map((topic, i) => {
                     const Icon = topic.icon;

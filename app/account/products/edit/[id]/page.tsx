@@ -160,7 +160,7 @@ const EditProductPage = () => {
 
       if (response.data.success) {
         toast.success("Product updated successfully!");
-        router.push("/account/seller/products");
+        router.push("/account/products");
       } else {
         throw new Error(response.data.message || "Failed to update product");
       }

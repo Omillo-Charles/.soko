@@ -5,6 +5,12 @@ import FeaturedProducts from "@/components/featuredProducts";
 import Footer from "@/components/footer";
 import { Updates } from "@/components/Updates";
 import { BannerCarousel } from "@/components/BannerCarousel";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Home | .Soko E-Commerce",
+  description: "Welcome to .Soko, the ultimate multivendor marketplace connecting buyers and sellers.",
+};
 
 export default function Home() {
   return (

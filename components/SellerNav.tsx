@@ -12,12 +12,10 @@ import {
 } from "lucide-react";
 
 const navItems = [
-  { icon: <BarChart3 className="w-5 h-5" />, label: "Overview", href: "/account/seller" },
-  { icon: <ShoppingBag className="w-5 h-5" />, label: "Products", href: "/account/seller/products" },
-  { icon: <Package className="w-5 h-5" />, label: "Orders", href: "/account/seller/orders" },
-  { icon: <Users className="w-5 h-5" />, label: "Customers", href: "/account/seller/customers" },
-  { icon: <TrendingUp className="w-5 h-5" />, label: "Analytics", href: "/account/seller/analytics" },
-  { icon: <Settings className="w-5 h-5" />, label: "Settings", href: "/account/seller/settings" },
+  { icon: <BarChart3 className="w-5 h-5" />, label: "Overview", href: "/account" },
+  { icon: <ShoppingBag className="w-5 h-5" />, label: "Products", href: "/account/products" },
+  { icon: <Package className="w-5 h-5" />, label: "Orders", href: "/account/seller-orders" },
+  { icon: <Settings className="w-5 h-5" />, label: "Settings", href: "/account/settings" },
 ];
 
 export const SellerNav = () => {
