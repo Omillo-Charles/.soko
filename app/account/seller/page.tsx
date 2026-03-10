@@ -26,6 +26,7 @@ import { useSellerOrders } from "@/hooks/useSellerOrders";
 import { RegisterShopModal } from "@/components/RegisterShopModal";
 import { ProductCreateModal } from "@/components/ProductCreateModal";
 import { SellerAnalytics } from "@/components/SellerAnalytics";
+import { MarketInsights } from "@/components/MarketInsights";
 
 
 // Force Next.js Fast Refresh
@@ -352,9 +353,12 @@ const SellerDashboard = () => {
               )}
             </div>
           </div>
-        </div>
+      </div>
 
-        <ProductCreateModal
+      {/* Market Ecosystem Insights */}
+      <MarketInsights />
+
+      <ProductCreateModal
           isOpen={showProductModal}
           onClose={() => setShowProductModal(false)}
           onCreated={() => {
