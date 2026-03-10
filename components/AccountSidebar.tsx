@@ -62,9 +62,9 @@ export const AccountSidebar = ({
     } else {
       return [
         { id: "overview", label: "Dashboard", icon: TrendingUp, href: "/account/seller" },
-        { id: "shop", label: "Products", icon: Store, href: "/account/products" },
-        { id: "orders", label: "Order Management", icon: Package, href: "/account/seller-orders" },
-        { id: "settings", label: "Shop Settings", icon: Settings, href: "/account/settings" },
+        { id: "shop", label: "Products", icon: Store, href: "/account/seller/products" },
+        { id: "orders", label: "Order Management", icon: Package, href: "/account/seller/orders" },
+        { id: "settings", label: "Shop Settings", icon: Settings, href: "/account/seller/settings" },
       ];
     }
   }, [activeTab]);
@@ -158,8 +158,8 @@ export const AccountSidebar = ({
             const isInternal = !!onSectionChange;
             const isActive = isInternal
               ? activeSection === item.id
-              : item.href === "/account"
-              ? pathname === "/account"
+              : item.id === "overview"
+              ? pathname === item.href
               : pathname.startsWith(item.href);
 
             if (isInternal) {

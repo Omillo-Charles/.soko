@@ -117,7 +117,7 @@ const SellerDashboard = () => {
   const quickActions = [
     { label: "Add Product", icon: <Plus className="w-5 h-5" />, action: () => setShowProductModal(true), color: "bg-primary text-primary-foreground shadow-xl shadow-primary/20" },
     { label: "Storefront", icon: <Store className="w-5 h-5" />, href: `/shop/${shop.username ? `@${shop.username}` : shop._id}`, color: "bg-background/80 backdrop-blur-md text-foreground border border-white/10 shadow-xl" },
-    { label: "Settings", icon: <Settings className="w-5 h-5" />, href: "/account/settings", color: "bg-background/80 backdrop-blur-md text-foreground border border-white/10 shadow-xl" },
+    { label: "Settings", icon: <Settings className="w-5 h-5" />, href: "/account/seller/settings", color: "bg-background/80 backdrop-blur-md text-foreground border border-white/10 shadow-xl" },
   ];
 
   return (
@@ -236,7 +236,7 @@ const SellerDashboard = () => {
               </div>
               <h2 className="text-3xl font-black text-foreground tracking-tight">Recent Activity</h2>
             </div>
-            <Link href="/account/seller-orders" className="group flex items-center gap-2.5 text-primary font-black text-xs uppercase tracking-[0.2em] hover:gap-4 transition-all">
+            <Link href="/account/seller/orders" className="group flex items-center gap-2.5 text-primary font-black text-xs uppercase tracking-[0.2em] hover:gap-4 transition-all">
               Live Ledger
               <ArrowRight className="w-4 h-4" />
             </Link>
@@ -276,7 +276,7 @@ const SellerDashboard = () => {
                         {o.status}
                       </div>
                     </div>
-                    <Link href={`/account/seller-orders`} className="p-4 bg-background/60 hover:bg-primary hover:text-primary-foreground rounded-2xl transition-all duration-500 shadow-lg border border-border">
+                    <Link href={`/account/seller/orders`} className="p-4 bg-background/60 hover:bg-primary hover:text-primary-foreground rounded-2xl transition-all duration-500 shadow-lg border border-border">
                       <ChevronRight className="w-6 h-6" />
                     </Link>
                   </div>
@@ -295,7 +295,7 @@ const SellerDashboard = () => {
               </div>
               <h2 className="text-3xl font-black text-foreground tracking-tight">Storefront Pulse</h2>
             </div>
-            <Link href="/account/products" className="group flex items-center gap-2.5 text-primary font-black text-xs uppercase tracking-[0.2em] hover:gap-4 transition-all">
+            <Link href="/account/seller/products" className="group flex items-center gap-2.5 text-primary font-black text-xs uppercase tracking-[0.2em] hover:gap-4 transition-all">
               Inventory
               <ArrowRight className="w-4 h-4" />
             </Link>
@@ -335,7 +335,7 @@ const SellerDashboard = () => {
                           Listed
                         </div>
                       </div>
-                      <Link href={`/account/products`} className="p-4 bg-background/60 hover:bg-primary hover:text-primary-foreground rounded-2xl transition-all duration-500 shadow-lg border border-border">
+                      <Link href={`/account/seller/products`} className="p-4 bg-background/60 hover:bg-primary hover:text-primary-foreground rounded-2xl transition-all duration-500 shadow-lg border border-border">
                         <ChevronRight className="w-6 h-6" />
                       </Link>
                     </div>
@@ -345,7 +345,7 @@ const SellerDashboard = () => {
               
               {products.length > 5 && (
                 <Link 
-                  href="/account/products"
+                  href="/account/seller/products"
                   className="block w-full text-center py-6 text-xs font-black text-primary uppercase tracking-[0.3em] hover:bg-primary/5 rounded-[2.5rem] transition-all duration-500 border border-white/10"
                 >
                   Expand Vault ({products.length})

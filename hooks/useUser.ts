@@ -52,6 +52,23 @@ export const useUser = () => {
     }
   });
 
+  const updatePasswordMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await api.put('/users/update-password', data);
+      return response.data;
+    }
+  });
+
+  const deleteAccountMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await api.delete('/users/me', { data });
+      return response.data;
+    },
+    onSuccess: () => {
+      logout();
+    }
+  });
+
   const logout = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('accessToken');
@@ -63,10 +80,14 @@ export const useUser = () => {
     user: user || localUser, 
     token, 
     isLoading: isLoading && !localUser, // Only "loading" if we don't even have local data
-    error,
+    error: error as any,
     logout,
     updateAccountType: updateAccountTypeMutation.mutateAsync,
     isUpdatingAccountType: updateAccountTypeMutation.isPending,
+    updatePassword: updatePasswordMutation.mutateAsync,
+    isUpdatingPassword: updatePasswordMutation.isPending,
+    deleteAccount: deleteAccountMutation.mutateAsync,
+    isDeletingAccount: deleteAccountMutation.isPending,
     refreshUser: () => queryClient.invalidateQueries({ queryKey: ['user-me'] })
   };
 };

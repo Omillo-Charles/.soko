@@ -19,9 +19,7 @@ const AccountLayout = ({ children }: { children: React.ReactNode }) => {
   const [mounted, setMounted] = useState(false);
 
   // Determine which tab is active based on pathname
-  const isSellerPath = pathname.startsWith("/account/seller") || 
-                       pathname.startsWith("/account/products") || 
-                       pathname.startsWith("/account/settings");
+  const isSellerPath = pathname.startsWith("/account/seller");
   const activeTab = isSellerPath ? "seller" : "account";
 
   useEffect(() => {

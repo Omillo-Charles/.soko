@@ -683,7 +683,7 @@ const ShopContent = () => {
                   </button>
                 ) : (
                   <Link 
-                    href="/account/products?action=add"
+                    href="/account/seller/products?action=add"
                     className="mt-2 px-8 py-3.5 bg-primary text-primary-foreground rounded-2xl text-sm font-bold shadow-xl shadow-primary/20 hover:bg-primary/90 transition-all"
                   >
                     Post a Product

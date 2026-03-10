@@ -86,7 +86,7 @@ const SellerSettingsPage = () => {
           setAvatarPreview(shopData.data.avatar || "");
           setBannerPreview(shopData.data.banner || "");
         } else {
-          router.push("/account");
+          router.push("/account/seller");
         }
       } catch (e) {
         console.error("Settings Auth Error:", e);
@@ -324,7 +324,7 @@ const SellerSettingsPage = () => {
   return (
     <div className="space-y-8">
       <div className="flex items-center gap-4">
-        <Link href="/account" className="p-4 hover:bg-background/60 backdrop-blur-3xl rounded-3xl transition-all text-muted-foreground hover:text-foreground border border-white/10 dark:border-white/5 shadow-xl group">
+        <Link href="/account/seller" className="p-4 hover:bg-background/60 backdrop-blur-3xl rounded-3xl transition-all text-muted-foreground hover:text-foreground border border-white/10 dark:border-white/5 shadow-xl group">
           <ArrowLeft className="w-6 h-6" />
         </Link>
         <div>

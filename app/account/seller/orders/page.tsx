@@ -18,7 +18,8 @@ import {
   ChevronRight,
   Zap,
   DollarSign,
-  ArrowRight
+  ArrowRight,
+  ArrowLeft
 } from 'lucide-react';
 import { useSellerOrders } from '@/hooks/useSellerOrders';
 import { calculateShippingFee } from '@/lib/shipping';
@@ -78,16 +79,20 @@ export default function SellerOrdersPage() {
       
       {/* Premium Header */}
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6">
-        <div className="space-y-2">
-          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-[11px] font-black text-primary uppercase tracking-[0.2em]">
-            <Zap className="w-3.5 h-3.5 fill-current" />
-            Order Protocol
+        <div className="flex items-center gap-6">
+          <Link 
+            href="/account/seller" 
+            className="p-4 hover:bg-background/60 backdrop-blur-3xl rounded-3xl transition-all text-muted-foreground hover:text-foreground border border-white/10 dark:border-white/5 shadow-xl group"
+          >
+            <ArrowLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
+          </Link>
+          <div className="space-y-1">
+            <h1 className="text-4xl md:text-5xl font-black text-foreground tracking-tighter uppercase">Your Orders</h1>
+            <p className="text-muted-foreground font-medium text-lg">Detailed transaction history and delivery logistics.</p>
           </div>
-          <h1 className="text-4xl md:text-5xl font-black text-foreground tracking-tighter italic uppercase">Master Ledger</h1>
-          <p className="text-muted-foreground font-medium text-lg">Detailed transaction history and delivery logistics.</p>
         </div>
         <div className="bg-background/40 backdrop-blur-3xl border border-white/10 px-10 py-5 rounded-[2.5rem] shadow-2xl flex items-baseline gap-3">
-          <span className="text-4xl font-black text-primary italic leading-none">{orders.length}</span>
+          <span className="text-4xl font-black text-primary leading-none">{orders.length}</span>
           <span className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em]">Total Transactions</span>
         </div>
       </div>

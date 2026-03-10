@@ -42,7 +42,7 @@ const SellerProductsContent = () => {
       if (shopRes.data.success && shopRes.data.data) {
         setShop(shopRes.data.data);
       } else {
-        router.push("/account");
+        router.push("/account/seller");
         return;
       }
 
@@ -121,13 +121,13 @@ const SellerProductsContent = () => {
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6">
         <div className="flex items-center gap-6">
           <Link 
-            href="/account" 
+            href="/account/seller" 
             className="p-4 hover:bg-background/60 backdrop-blur-3xl rounded-3xl transition-all text-muted-foreground hover:text-foreground border border-white/10 dark:border-white/5 shadow-xl group"
           >
             <ArrowLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
           </Link>
           <div className="space-y-1">
-            <h1 className="text-4xl md:text-5xl font-black text-foreground tracking-tighter italic uppercase">Inventory Vault</h1>
+            <h1 className="text-4xl md:text-5xl font-black text-foreground tracking-tighter uppercase">Your Products</h1>
             <p className="text-muted-foreground font-medium text-lg">Manage your digital assets and stock levels.</p>
           </div>
         </div>
@@ -154,10 +154,6 @@ const SellerProductsContent = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <button className="flex items-center justify-center gap-3 px-10 py-6 bg-background/40 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] font-black text-sm uppercase tracking-widest text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all shadow-2xl">
-            <Filter className="w-5 h-5" />
-            <span>Refine</span>
-          </button>
         </div>
 
         {/* Dynamic Products Grid */}
@@ -243,7 +239,7 @@ const SellerProductsContent = () => {
                 {/* Terminal Actions */}
                 <div className="flex items-center gap-4 w-full md:w-auto md:border-l border-white/10 md:pl-8">
                   <Link 
-                    href={`/account/products/edit/${product._id}`}
+                    href={`/account/seller/products/edit/${product._id}`}
                     className="flex-1 md:flex-none p-5 bg-background shadow-xl border border-white/10 text-primary rounded-[1.5rem] hover:bg-primary hover:text-white transition-all duration-500 flex items-center justify-center gap-3 font-black text-xs uppercase tracking-widest"
                   >
                     <Edit2 className="w-5 h-5" />
