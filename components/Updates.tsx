@@ -287,15 +287,22 @@ export const Updates = () => {
                  <div className="w-16 h-16 rounded-full bg-muted animate-pulse" />
                  <div className="w-16 h-16 rounded-full bg-muted animate-pulse" />
               </div>
-            ) : storiesData.map((story, index) => (
-              <StoryItem 
-                key={story.id} 
-                avatar={story.avatar} 
-                username={story.username} 
-                variant={story.allViewed ? 'viewed' : 'unviewed'}
-                onClick={() => openStory(index)}
-              />
-            ))}
+            ) : storiesData.length > 0 ? (
+              storiesData.map((story, index) => (
+                <StoryItem 
+                  key={story.id} 
+                  avatar={story.avatar} 
+                  username={story.username} 
+                  variant={story.allViewed ? 'viewed' : 'unviewed'}
+                  onClick={() => openStory(index)}
+                />
+              ))
+            ) : !isSeller && (
+              <div className="flex items-center gap-4 px-8 py-4 bg-muted/10 backdrop-blur-md border border-border/50 rounded-full animate-in fade-in slide-in-from-left-4 duration-700">
+                <div className="w-2 h-2 rounded-full bg-muted-foreground/30" />
+                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] whitespace-nowrap">No shop updates</p>
+              </div>
+            )}
           </div>
         </div>
         

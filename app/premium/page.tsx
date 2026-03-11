@@ -129,7 +129,7 @@ const PremiumPage = () => {
         <div className="flex items-center gap-6">
           <Link 
             href="/account/seller" 
-            className="p-4 hover:bg-background/60 backdrop-blur-3xl rounded-3xl transition-all text-muted-foreground hover:text-foreground border border-white/10 dark:border-white/5 shadow-xl group"
+            className="p-4 bg-background/60 backdrop-blur-3xl rounded-3xl transition-all text-muted-foreground hover:text-foreground border border-border shadow-sm shadow-xl group"
           >
             <ArrowLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
           </Link>
@@ -140,7 +140,7 @@ const PremiumPage = () => {
         </div>
 
         {/* X-Style Toggle */}
-        <div className="inline-flex items-center p-1 bg-background border border-white/10 rounded-2xl shadow-xl relative self-start xl:self-center">
+        <div className="inline-flex items-center p-1 bg-background border border-border rounded-2xl shadow-xl relative self-start xl:self-center">
           <div 
             className={`absolute inset-y-1 transition-all duration-500 ease-out bg-primary rounded-xl shadow-lg shadow-primary/20 ${
               isAnnual ? 'left-1/2 w-[48%] -ml-0.5' : 'left-1 w-[48%]'
@@ -175,7 +175,7 @@ const PremiumPage = () => {
                 className={`group relative flex flex-col bg-background/40 backdrop-blur-3xl transition-all duration-500 rounded-[2.5rem] border ${
                   plan.popular 
                     ? 'border-primary ring-4 ring-primary/5 shadow-2xl shadow-primary/10' 
-                    : 'border-white/10 hover:border-white/20'
+                    : 'border-border shadow-sm hover:border-primary/30'
                 }`}
               >
                 <div className="p-10 flex flex-col h-full">
@@ -221,7 +221,7 @@ const PremiumPage = () => {
                     disabled={isCurrentPlan}
                     className={`w-full py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all duration-500 ${
                       isCurrentPlan
-                        ? "bg-white/5 text-muted-foreground border border-white/10 cursor-not-allowed"
+                        ? "bg-white/5 text-muted-foreground border border-border cursor-not-allowed"
                         : plan.popular
                         ? "bg-primary text-primary-foreground hover:shadow-2xl hover:shadow-primary/30 hover:scale-[1.02] active:scale-[0.98]"
                         : "bg-foreground text-background hover:bg-foreground/90 hover:scale-[1.02] active:scale-[0.98]"
@@ -248,7 +248,7 @@ const PremiumPage = () => {
                 <thead>
                     <tr className="text-left">
                         <th className="px-6 py-4 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground">Privileges</th>
-                        <th className="px-6 py-4 text-center text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground border-x border-white/5 w-40">Free</th>
+                        <th className="px-6 py-4 text-center text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground border-x border-border w-40">Free</th>
                         <th className="px-6 py-4 text-center text-[10px] font-black uppercase tracking-[0.3em] text-primary w-40">Premium</th>
                         <th className="px-6 py-4 text-center text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground w-40">Enterprise</th>
                     </tr>
@@ -259,24 +259,24 @@ const PremiumPage = () => {
                             <tr>
                                 <td colSpan={4} className="px-6 py-8">
                                     <div className="flex items-center gap-4">
-                                        <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                                        <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-border to-transparent" />
                                         <span className="text-[11px] font-black uppercase tracking-[0.4em] text-primary/50 whitespace-nowrap">{cat.category}</span>
-                                        <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                                        <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-border to-transparent" />
                                     </div>
                                 </td>
                             </tr>
                             {cat.features.map((feat, fIdx) => (
                                 <tr key={fIdx} className="group hover:bg-white/[0.02] transition-colors">
-                                    <td className="px-6 py-5 bg-background/20 rounded-l-3xl border-y border-l border-white/5">
+                                    <td className="px-6 py-5 bg-background/20 rounded-l-3xl border-y border-l border-border">
                                         <span className="text-xs font-black uppercase tracking-widest text-foreground/80">{feat.name}</span>
                                     </td>
-                                    <td className="px-6 py-5 bg-background/20 border-y border-white/5 text-center">
+                                    <td className="px-6 py-5 bg-background/20 border-y border-border text-center">
                                         <StatusIcon status={feat.free} />
                                     </td>
                                     <td className="px-6 py-5 bg-primary/5 border-y border-x border-primary/20 text-center">
                                         <StatusIcon status={feat.premium} />
                                     </td>
-                                    <td className="px-6 py-5 bg-background/20 rounded-r-3xl border-y border-r border-white/5 text-center">
+                                    <td className="px-6 py-5 bg-background/20 rounded-r-3xl border-y border-r border-border text-center">
                                         <StatusIcon status={feat.enterprise} />
                                     </td>
                                 </tr>

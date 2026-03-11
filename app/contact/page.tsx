@@ -10,6 +10,9 @@ import {
   CheckCircle2,
   AlertCircle,
   Loader2,
+  Send,
+  Clock,
+  Globe
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -73,56 +76,44 @@ const ContactPage = () => {
   };
 
   return (
-    <main className="flex flex-col pb-24 lg:pb-0 pt-4 md:pt-10">
-      <section className="bg-background">
-        <div className="container mx-auto px-4 md:px-8 pb-10">
-          <h1 className="text-2xl md:text-3xl font-bold text-foreground">Contact Us</h1>
-          <p className="mt-2 text-muted-foreground">
-            We'd love to hear from you. Reach out anytime.
-          </p>
-
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="flex items-center gap-3 bg-background border border-border rounded-md p-4">
-              <Phone className="w-6 h-6 text-primary" />
-              <div>
-                <div className="font-semibold text-foreground">Phone</div>
-                <a href="tel:+254700000000" className="text-sm text-muted-foreground">
-                  +254 700 000 000
-                </a>
-              </div>
+    <main className="flex flex-col pb-24 lg:pb-0 bg-muted/30 pt-4 md:pt-10">
+      {/* Simple Header Section */}
+      <section className="bg-background border-b border-border">
+        <div className="container mx-auto px-4 md:px-8 pb-8 md:pb-10">
+          <div className="max-w-3xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/5 text-primary rounded-full text-xs font-bold mb-4">
+              <Mail className="w-3.5 h-3.5" />
+              Get in Touch
             </div>
-            <div className="flex items-center gap-3 bg-background border border-border rounded-md p-4">
-              <Mail className="w-6 h-6 text-primary" />
-              <div>
-                <div className="font-semibold text-foreground">Email</div>
-                <a
-                  href="mailto:support@dotsoko.com"
-                  className="text-sm text-muted-foreground"
-                >
-                  support@dotsoko.com
-                </a>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 bg-background border border-border rounded-md p-4">
-              <MapPin className="w-6 h-6 text-primary" />
-              <div>
-                <div className="font-semibold text-foreground">Location</div>
-                <div className="text-sm text-muted-foreground">Nairobi, Kenya</div>
-              </div>
-            </div>
+            <h1 className="text-3xl md:text-5xl font-black text-foreground tracking-tight">
+              Contact Us
+            </h1>
+            <p className="mt-4 text-muted-foreground text-lg leading-relaxed">
+              Have questions or need support? Our team is here to help you with anything related to 
+              the <span className="text-secondary font-semibold">.</span>Soko marketplace.
+            </p>
           </div>
+        </div>
+      </section>
 
-          <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="space-y-6">
-              <form
-                onSubmit={onSubmit}
-                className="bg-background border border-border rounded-lg p-6"
-              >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="name" className="text-sm text-muted-foreground">
-                      Name
-                    </label>
+      {/* Main Content Grid */}
+      <section className="container mx-auto px-4 md:px-8 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          
+          {/* Main Column: Contact Form */}
+          <div className="lg:col-span-8">
+            <div className="bg-background border border-border rounded-2xl p-6 md:p-8 shadow-sm">
+              <div className="flex items-center gap-3 mb-8">
+                <div className="w-10 h-10 bg-primary/5 rounded-xl flex items-center justify-center text-primary">
+                  <Send className="w-5 h-5" />
+                </div>
+                <h2 className="text-xl font-bold text-foreground uppercase tracking-tight">Send a Message</h2>
+              </div>
+
+              <form onSubmit={onSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label htmlFor="name" className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Your Name</label>
                     <input
                       id="name"
                       name="name"
@@ -131,13 +122,11 @@ const ContactPage = () => {
                       value={form.name}
                       onChange={onChange}
                       placeholder="John Doe"
-                      className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full bg-muted/20 border border-border rounded-xl px-5 py-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
                     />
                   </div>
-                  <div>
-                    <label htmlFor="email" className="text-sm text-muted-foreground">
-                      Email
-                    </label>
+                  <div className="space-y-2">
+                    <label htmlFor="email" className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Your Email</label>
                     <input
                       id="email"
                       name="email"
@@ -146,28 +135,26 @@ const ContactPage = () => {
                       value={form.email}
                       onChange={onChange}
                       placeholder="john@example.com"
-                      className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full bg-muted/20 border border-border rounded-xl px-5 py-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
                     />
                   </div>
                 </div>
-                <div className="mt-4">
-                  <label htmlFor="subject" className="text-sm text-muted-foreground">
-                    Subject
-                  </label>
+
+                <div className="space-y-2">
+                  <label htmlFor="subject" className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Subject</label>
                   <input
                     id="subject"
                     name="subject"
                     type="text"
                     value={form.subject}
                     onChange={onChange}
-                    placeholder="Order inquiry, product question..."
-                    className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder="How can we help?"
+                    className="w-full bg-muted/20 border border-border rounded-xl px-5 py-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
                   />
                 </div>
-                <div className="mt-4">
-                  <label htmlFor="message" className="text-sm text-muted-foreground">
-                    Message
-                  </label>
+
+                <div className="space-y-2">
+                  <label htmlFor="message" className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Message</label>
                   <textarea
                     id="message"
                     name="message"
@@ -175,78 +162,129 @@ const ContactPage = () => {
                     rows={6}
                     value={form.message}
                     onChange={onChange}
-                    placeholder="Write your message here..."
-                    className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder="Describe your inquiry..."
+                    className="w-full bg-muted/20 border border-border rounded-xl px-5 py-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium resize-none"
                   />
                 </div>
+
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="mt-6 w-full bg-primary text-primary-foreground font-semibold py-3 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="w-full md:w-fit px-10 bg-primary text-white font-bold py-3 rounded-xl shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 text-sm uppercase tracking-widest"
                 >
                   {isSubmitting ? (
                     <>
-                      <Loader2 className="w-5 h-5 animate-spin" />
+                      <Loader2 className="w-4 h-4 animate-spin" />
                       Sending...
                     </>
                   ) : (
-                    "Send Message"
+                    <>
+                      Send Message
+                      <Send className="w-4 h-4" />
+                    </>
                   )}
                 </button>
               </form>
             </div>
+          </div>
 
-            <div className="bg-background border border-border rounded-lg p-6">
-              <div className="font-semibold text-foreground">Business Hours</div>
-              <div className="mt-2 text-sm text-muted-foreground">
-                Mon–Fri: 9:00 AM – 6:00 PM
+          {/* Sidebar Column: Contact Info & Map */}
+          <div className="lg:col-span-4 space-y-6">
+            
+            {/* Direct Contact Card */}
+            <div className="bg-background border border-border rounded-2xl p-6 shadow-sm">
+              <h3 className="font-bold text-foreground mb-6 uppercase tracking-tight text-sm">Direct Contact</h3>
+              <div className="space-y-4">
+                {[
+                  { icon: Phone, label: "Phone", value: "+254 700 000 000", href: "tel:+254700000000" },
+                  { icon: Mail, label: "Email", value: "support@dotsoko.com", href: "mailto:support@dotsoko.com" },
+                  { icon: Globe, label: "Web", value: "www.dotsoko.com", href: "https://dotsoko.com" }
+                ].map((item, i) => (
+                  <a 
+                    key={i}
+                    href={item.href}
+                    className="flex items-center gap-4 p-3 bg-muted/30 rounded-xl hover:bg-muted/50 transition-colors group"
+                  >
+                    <div className="w-9 h-9 bg-primary/5 rounded-lg flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                      <item.icon className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest leading-none mb-1">{item.label}</div>
+                      <div className="text-sm font-bold text-foreground">{item.value}</div>
+                    </div>
+                  </a>
+                ))}
               </div>
-              <div className="text-sm text-muted-foreground">
-                Sat: 10:00 AM – 4:00 PM
-              </div>
-              <div className="text-sm text-muted-foreground">Sun: Closed</div>
-              <div className="mt-6 font-semibold text-foreground">Follow Us</div>
-              <div className="mt-2 flex flex-wrap items-center gap-3">
-                <a
-                  href="#"
-                  aria-label="X"
-                  className="p-3 rounded-full bg-foreground text-background shadow hover:scale-105 transition"
-                >
-                  <XIcon />
-                </a>
-                <a
-                  href="#"
-                  aria-label="Facebook"
-                  className="p-3 rounded-full bg-[#1877F2] text-white shadow hover:scale-105 transition"
-                >
-                  <Facebook className="w-5 h-5" />
-                </a>
-                <a
-                  href="#"
-                  aria-label="LinkedIn"
-                  className="p-3 rounded-full bg-[#0A66C2] text-white shadow hover:scale-105 transition"
-                >
-                  <Linkedin className="w-5 h-5" />
-                </a>
-                <a
-                  href="#"
-                  aria-label="Instagram"
-                  className="p-3 rounded-full bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 text-white shadow hover:scale-105 transition"
-                >
-                  <Instagram className="w-5 h-5" />
-                </a>
-              </div>
-              <iframe
-                title="Nairobi, Kenya Map"
-                src="https://www.google.com/maps?q=Nairobi,+Kenya&output=embed"
-                width="100%"
-                height="240"
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                style={{ border: 0 }}
-                className="mt-6 w-full rounded-md border border-border"
-              />
             </div>
+
+            {/* Location Card & Map */}
+            <div className="bg-background border border-border rounded-2xl p-6 shadow-sm overflow-hidden">
+              <h3 className="font-bold text-foreground mb-4 uppercase tracking-tight text-sm">Visit Us</h3>
+              <div className="flex items-start gap-3 mb-6">
+                <div className="w-9 h-9 bg-primary/5 rounded-lg flex items-center justify-center text-primary shrink-0">
+                  <MapPin className="w-4 h-4" />
+                </div>
+                <p className="text-sm font-bold text-muted-foreground leading-relaxed">
+                  Innovation District, Nairobi, Kenya<br />
+                  Central Business Complex, Hub 44
+                </p>
+              </div>
+              
+              <div className="aspect-square rounded-xl overflow-hidden border border-border grayscale hover:grayscale-0 transition-all duration-700">
+                <iframe
+                  title="HQ Map"
+                  src="https://www.google.com/maps?q=Nairobi,+Kenya&output=embed"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  loading="lazy"
+                />
+              </div>
+            </div>
+
+            {/* Related Directories */}
+            <div className="bg-muted/50 rounded-2xl p-6">
+              <h4 className="font-bold text-foreground text-sm mb-4">Connect with Us</h4>
+              <div className="flex flex-wrap gap-3">
+                {[
+                  { icon: Instagram, label: "Instagram", href: "#" },
+                  { icon: XIcon, label: "X", href: "#" },
+                  { icon: Facebook, label: "Facebook", href: "#" },
+                  { icon: Linkedin, label: "LinkedIn", href: "#" }
+                ].map((social, i) => (
+                  <a 
+                    key={i}
+                    href={social.href}
+                    title={social.label}
+                    className="w-10 h-10 bg-background border border-border rounded-xl flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/30 transition-all group"
+                  >
+                    <social.icon className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* Support Resources */}
+            <div className="bg-muted/50 rounded-2xl p-6">
+              <h4 className="font-bold text-foreground text-sm mb-4">Support Resources</h4>
+              <nav className="space-y-3">
+                {[
+                  { name: 'Help Center', href: '/help' },
+                  { name: 'Seller Support', href: '/account/seller/support' },
+                  { name: 'Terms of Service', href: '/terms' },
+                  { name: 'Privacy Policy', href: '/privacy' }
+                ].map((item) => (
+                  <a 
+                    key={item.name}
+                    href={item.href} 
+                    className="block text-sm text-muted-foreground hover:text-primary transition-colors font-medium"
+                  >
+                    {item.name}
+                  </a>
+                ))}
+              </nav>
+            </div>
+
           </div>
         </div>
       </section>
