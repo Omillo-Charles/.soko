@@ -115,58 +115,42 @@ const FeaturedProducts = () => {
             <ChevronRight className="w-4 h-4" />
           </Link>
         </div>
-        <div className="mt-6 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+        <div className="mt-6 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 items-start">
           {(products || []).map((p: any) => (
-            <div key={p._id || Math.random()} className="bg-background border border-border rounded-[1.25rem] overflow-hidden group">
-              <div className="relative aspect-square bg-muted cursor-pointer flex items-center justify-center overflow-hidden border-b border-border" onClick={() => handleProductClick(p)}>
+            <div key={p._id || Math.random()} className="group relative flex flex-col gap-2">
+              <div 
+                className="relative inline-block max-w-full rounded-[1.25rem] border border-border overflow-hidden cursor-pointer" 
+                onClick={() => handleProductClick(p)}
+              >
                 {(() => {
                   const src = p.image || "/placeholder-product.jpg";
                   const allowed = typeof src === 'string' && /^https?:\/\/(ik\.imagekit\.io|api\.dicebear\.com)\//.test(src);
                   
-                  // Dual-layer Twitter style image approach
                   if (allowed) {
                     return (
-                      <>
-                        <Image
-                          src={src}
-                          alt={p.name || "Product Background"}
-                          fill
-                          sizes="(max-width: 768px) 50vw, 25vw"
-                          className="object-cover blur-xl opacity-40 scale-110"
-                          priority={false}
-                        />
-                        <Image
-                          src={src}
-                          alt={p.name || "Product"}
-                          fill
-                          sizes="(max-width: 768px) 50vw, 25vw"
-                          className="object-contain transition-transform duration-700 group-hover:scale-110 z-0"
-                          priority={false}
-                        />
-                      </>
+                      <Image
+                        src={src}
+                        alt={p.name || "Product"}
+                        width={400} // providing a reasonable default for standard layout
+                        height={400}
+                        className="w-full max-h-[400px] object-cover transition-transform duration-700 group-hover:scale-105"
+                        priority={false}
+                      />
                     );
                   }
                   return (
-                    <>
-                      <img
-                        src={src}
-                        alt={p.name || "Product Background"}
-                        className="absolute inset-0 w-full h-full object-cover blur-xl opacity-40 scale-110"
-                      />
-                      <img
-                        src={src}
-                        alt={p.name || "Product"}
-                        className="relative w-full h-full object-contain z-0 transition-transform duration-700 group-hover:scale-110"
-                      />
-                    </>
+                    <img
+                      src={src}
+                      alt={p.name || "Product"}
+                      className="w-full max-h-[400px] object-cover transition-transform duration-700 group-hover:scale-105"
+                      loading="lazy"
+                    />
                   );
                 })()}
 
-
-
                 <button 
                   onClick={(e) => handleAddToCart(e, p)}
-                  className="absolute top-2 left-2 bg-background/80 hover:bg-background rounded-full p-2 shadow transition-all hover:scale-110 active:scale-95 z-10"
+                  className="absolute top-2 left-2 bg-background/80 backdrop-blur-md hover:bg-background rounded-full p-2 shadow-sm transition-all hover:scale-110 active:scale-95 z-10"
                   title="Add to Cart"
                 >
                   <ShoppingCart className="w-4 h-4 text-foreground" />
@@ -183,7 +167,7 @@ const FeaturedProducts = () => {
                       });
                     }
                   }}
-                  className="absolute bottom-2 left-2 bg-background/80 hover:bg-background rounded-full p-2 shadow transition-all hover:scale-110 z-10 text-foreground"
+                  className="absolute bottom-2 left-2 bg-background/80 backdrop-blur-md hover:bg-background rounded-full p-2 shadow-sm transition-all hover:scale-110 z-10 text-foreground"
                   title="Share Product"
                 >
                   <Share2 className="w-4 h-4" />
@@ -200,7 +184,7 @@ const FeaturedProducts = () => {
                       });
                     }
                   }}
-                  className="absolute top-2 right-2 bg-background/80 hover:bg-background rounded-full p-2 shadow transition-all hover:scale-110 z-10 text-amber-500"
+                  className="absolute top-2 right-2 bg-background/80 backdrop-blur-md hover:bg-background rounded-full p-2 shadow-sm transition-all hover:scale-110 z-10 text-amber-500"
                   title="Rate Product"
                 >
                   <Star className="w-4 h-4" />
@@ -216,7 +200,7 @@ const FeaturedProducts = () => {
                       });
                     }
                   }}
-                  className="absolute bottom-2 right-2 bg-background/80 hover:bg-background rounded-full p-2 shadow transition-all hover:scale-110 z-10 text-primary"
+                  className="absolute bottom-2 right-2 bg-background/80 backdrop-blur-md hover:bg-background rounded-full p-2 shadow-sm transition-all hover:scale-110 z-10 text-primary"
                   title="Comment on Product"
                 >
                   <MessageSquare className="w-4 h-4" />
@@ -232,24 +216,24 @@ const FeaturedProducts = () => {
                   />
                 </div>
               </div>
-              <div className="p-3">
+              <div className="pt-1 px-1">
                 <div className="flex items-center gap-1 mb-1">
                   {[1, 2, 3, 4, 5].map((s) => (
                     <Star 
                       key={s} 
                       className={`w-3 h-3 ${
                         (p.rating || 0) >= s 
-                          ? "fill-yellow-400 text-yellow-400" 
+                          ? "fill-amber-400 text-amber-400" 
                           : "text-muted-foreground/20 fill-muted"
                       }`} 
                     />
                   ))}
-                  <span className="text-[10px] text-muted-foreground ml-1">({p.rating?.toFixed(1) || "0.0"})</span>
+                  <span className="text-[10px] text-muted-foreground ml-1 font-bold">({p.rating?.toFixed(1) || "0.0"})</span>
                 </div>
-                <h3 className="font-semibold text-foreground text-sm md:text-base line-clamp-1 group-hover:text-primary transition-colors cursor-pointer" onClick={() => handleProductClick(p)}>
+                <h3 className="font-bold text-foreground text-sm md:text-base line-clamp-1 group-hover:text-primary transition-colors cursor-pointer" onClick={() => handleProductClick(p)}>
                   {p.name || "Untitled Product"}
                 </h3>
-                <p className="text-xs text-muted-foreground line-clamp-2 mt-1 min-h-[32px]">
+                <p className="text-xs text-muted-foreground line-clamp-2 mt-1 min-h-[32px] font-medium">
                   {p.description || "No description available"}
                 </p>
                 <div className="mt-3 flex items-center justify-between">
@@ -258,7 +242,7 @@ const FeaturedProducts = () => {
                   </span>
                   <button 
                     onClick={() => p._id && router.push(`/shop/product/${p._id}`)}
-                    className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all"
+                    className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </button>

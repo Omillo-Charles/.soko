@@ -111,7 +111,7 @@ export const ProductFeedCard = ({
 
           {/* Product Image */}
           {(product.images?.[0] || product.image) && (
-            <div className="rounded-[1.25rem] overflow-hidden border border-border mb-3 bg-muted relative aspect-[4/5] sm:aspect-square flex items-center justify-center">
+            <div className="relative inline-block max-w-full mt-3 mb-3">
               <ImageCarousel
                 images={product.images?.length > 0 ? product.images : (product.image ? [product.image] : [])}
                 alt={product.name}

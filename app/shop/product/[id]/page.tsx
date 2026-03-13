@@ -235,7 +235,7 @@ const ProductDetailsPage = () => {
 
                 {/* 2. Photo Section */}
                 <div className="px-4 md:px-8 py-2 space-y-4">
-                  <div className="aspect-square w-full max-h-[550px] rounded-[1.25rem] overflow-hidden bg-muted/50 border border-border group relative flex items-center justify-center cursor-zoom-in">
+                  <div className="relative inline-block max-w-full rounded-[1.25rem] border border-border overflow-hidden group cursor-zoom-in">
                     {(() => {
                       const src = productImages[activeImageIndex] || product.image;
                       return (
@@ -243,9 +243,9 @@ const ProductDetailsPage = () => {
                           <img 
                             src={src} 
                             alt={product.name}
-                            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                            className="w-full max-h-[600px] object-cover transition-transform duration-700 ease-out group-hover:scale-105 block"
                           />
-                          <div className="absolute bottom-3 right-3 bg-background/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-border shadow-xl shadow-foreground/5 flex flex-col items-end z-10 pointer-events-none">
+                          <div className="absolute bottom-3 right-3 bg-background/90 backdrop-blur-md px-3 py-1.5 rounded-[1rem] border border-border shadow-xl shadow-foreground/5 flex flex-col items-end z-10 pointer-events-none">
                             <span className="text-primary font-black text-xs">{formatPrice(product.price)}</span>
                           </div>
                         </>
@@ -265,7 +265,7 @@ const ProductDetailsPage = () => {
                               activeImageIndex === idx ? 'border-primary shadow-lg shadow-primary/10' : 'border-border hover:border-muted-foreground/30'
                             }`}
                           >
-                            <img src={src} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                            <img src={src} alt="" className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700" />
                           </button>
                         );
                       })}
@@ -439,9 +439,9 @@ const ProductDetailsPage = () => {
                       onClick={() => router.push(`/shop/product/${p._id}`)}
                       className="p-4 hover:bg-muted transition-colors cursor-pointer group"
                     >
-                      <div className="flex gap-4 md:gap-5">
-                        <div className="w-24 aspect-square md:w-32 rounded-2xl overflow-hidden bg-muted border border-border shrink-0 flex items-center justify-center">
-                          <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                      <div className="flex gap-4 md:gap-5 items-start">
+                        <div className="w-24 md:w-32 relative inline-block rounded-2xl overflow-hidden border border-border shrink-0 flex items-start justify-center">
+                          <img src={p.image} alt={p.name} className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700 block" />
                         </div>
                         <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
                           <div>

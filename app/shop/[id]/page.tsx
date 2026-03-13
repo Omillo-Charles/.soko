@@ -411,7 +411,7 @@ const ShopProfilePage = () => {
                       onClick={() => router.push(`/shop/product/${product._id}`)}
                       className="p-4 md:p-6 hover:bg-muted/50 transition-colors cursor-pointer"
                     >
-                      <div className="flex gap-3 md:gap-4">
+                      <div className="flex gap-3 md:gap-4 mt-2">
                         {/* Profile Image (Small in feed) */}
                         <div className="shrink-0">
                           <div className="w-10 h-10 rounded-full overflow-hidden border border-border bg-muted">
@@ -457,7 +457,7 @@ const ShopProfilePage = () => {
                           </p>
 
                           {(product.images?.length > 0 || product.image) && (
-                            <div className="rounded-[1.25rem] overflow-hidden border border-border mb-3 bg-muted relative aspect-square group/img flex items-center justify-center">
+                            <div className="relative inline-block max-w-full mt-3 mb-3 group/img">
                               <ImageCarousel 
                                 images={product.images?.length > 0 ? product.images : [product.image]} 
                                 alt={product.name} 
