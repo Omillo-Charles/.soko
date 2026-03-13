@@ -8,8 +8,8 @@ import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { useFeaturedProducts, usePersonalizedFeed, useTrackActivity } from "@/hooks/useProducts";
-import RatingModal from "./RatingModal";
-import ShareModal from "./ShareModal";
+import { UniversalShareModal } from "./UniversalShareModal";
+import FeedbackModal from "./FeedbackModal";
 import CommentModal from "./CommentModal";
 
 const FeaturedProducts = () => {
@@ -269,17 +269,18 @@ const FeaturedProducts = () => {
         </div>
       </div>
 
-      <RatingModal 
+      <FeedbackModal 
           isOpen={ratingModal.isOpen}
           onClose={() => setRatingModal(prev => ({ ...prev, isOpen: false }))}
-          productId={ratingModal.productId}
-          productName={ratingModal.productName}
-          initialRating={ratingModal.initialRating}
+          id={ratingModal.productId}
+          name={ratingModal.productName}
+          type="product"
         />
 
-        <ShareModal 
+        <UniversalShareModal 
           isOpen={shareModal.isOpen}
           onClose={() => setShareModal(prev => ({ ...prev, isOpen: false }))}
+          type="product"
           url={shareModal.url}
           title={shareModal.title}
         />

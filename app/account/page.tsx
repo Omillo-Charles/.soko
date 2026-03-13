@@ -15,7 +15,7 @@ import {
   Package
 } from "lucide-react";
 import Link from "next/link";
-import { GoldCheck } from "@/components/GoldCheck";
+import { GoldCheck } from "@/components/CommonUI";
 
 // Force Next.js Fast Refresh
 const BuyerDashboard = () => {

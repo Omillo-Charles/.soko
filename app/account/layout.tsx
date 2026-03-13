@@ -6,7 +6,7 @@ import { Menu, User, X } from "lucide-react";
 import { useUser } from "@/hooks/useUser";
 import { useMyShop } from "@/hooks/useShop";
 import { AccountSidebar } from "@/components/AccountSidebar";
-import LogoutConfirmation from "@/components/LogoutConfirmation";
+import { ConfirmationModal } from "@/components/ConfirmationModal";
 
 const AccountLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
@@ -52,10 +52,14 @@ const AccountLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-500">
-      <LogoutConfirmation 
+      <ConfirmationModal 
         isOpen={showLogoutConfirm} 
         onClose={() => setShowLogoutConfirm(false)} 
-        onConfirm={handleLogout} 
+        onConfirm={handleLogout}
+        title="Sign Out?"
+        description="Are you sure you want to sign out of your account? You'll need to sign back in to access your dashboard."
+        confirmText="Sign Out"
+        variant="danger"
       />
       
       {/* Mobile Header */}

@@ -20,6 +20,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import { calculateShippingFee } from "@/lib/shipping";
+import { ConfirmationModal } from "@/components/ConfirmationModal";
 
 const CheckoutPage = () => {
   const router = useRouter();
@@ -28,6 +29,7 @@ const CheckoutPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [showOrderConfirm, setShowOrderConfirm] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -63,6 +65,10 @@ const CheckoutPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setShowOrderConfirm(true);
+  };
+
+  const confirmOrder = async () => {
     if (cartItems.length === 0) {
       toast.error("Your cart is empty");
       return;
@@ -107,6 +113,7 @@ const CheckoutPage = () => {
       toast.error(error.response?.data?.message || "Failed to place order. Please try again.");
     } finally {
       setIsSubmitting(false);
+      setShowOrderConfirm(false);
     }
   };
 
@@ -339,6 +346,18 @@ const CheckoutPage = () => {
           </div>
         </div>
       </div>
+
+      <ConfirmationModal
+        isOpen={showOrderConfirm}
+        onClose={() => setShowOrderConfirm(false)}
+        onConfirm={confirmOrder}
+        title="Execute Order?"
+        description={`Confirm your order of ${formatPrice(total)}. This will initiate the delivery process immediately.`}
+        confirmText="Confirm Order"
+        variant="info"
+        icon={ShoppingBag}
+        isLoading={isSubmitting}
+      />
     </div>
   );
 };

@@ -24,7 +24,7 @@ import {
   Repeat2
 } from "lucide-react";
 import Link from "next/link";
-import { GoldCheck } from "@/components/GoldCheck";
+import { GoldCheck, ProductRating } from "@/components/CommonUI";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { useUser } from "@/hooks/useUser";
@@ -32,8 +32,7 @@ import { useComments } from "@/hooks/useComments";
 import { usePopularShops, useFollowShop, useMyShop } from "@/hooks/useShop";
 import { useProduct, useProducts } from "@/hooks/useProducts";
 import { categories as allCategories } from "@/constants/categories";
-import ProductRating from "@/components/ProductRating";
-import ShareModal from "@/components/ShareModal";
+import { UniversalShareModal } from "@/components/UniversalShareModal";
 import CommentModal from "@/components/CommentModal";
 
 const ProductDetailsPage = () => {
@@ -518,11 +517,12 @@ const ProductDetailsPage = () => {
 
       </div>
 
-      <ShareModal 
+      <UniversalShareModal 
         isOpen={isShareModalOpen} 
         onClose={() => setIsShareModalOpen(false)} 
         url={isMounted ? window.location.href : ''} 
-        title={product.name} 
+        title={product.name}
+        type="product"
       />
       <CommentModal 
         isOpen={isCommentModalOpen} 

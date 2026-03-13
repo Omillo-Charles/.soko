@@ -23,18 +23,16 @@ import {
   Send
 } from "lucide-react";
 import Link from "next/link";
-import { GoldCheck } from "@/components/GoldCheck";
+import { GoldCheck } from "@/components/CommonUI";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { toast } from "sonner";
 import { useShop, useShopProducts, usePopularShops, useFollowShop, useShopLists, useMyShop, useShopReviews } from "@/hooks/useShop";
 import { useUser } from "@/hooks/useUser";
-import RatingModal from "@/components/RatingModal";
-import ShopRatingModal from "@/components/ShopRatingModal";
-import ShareShopModal from "@/components/ShareShopModal";
-import ShareModal from "@/components/ShareModal";
+import FeedbackModal from "@/components/FeedbackModal";
+import { UniversalShareModal } from "@/components/UniversalShareModal";
 import CommentModal from "@/components/CommentModal";
-import { RepostModal } from "@/components/RepostModal";
+import ChoiceModal from "@/components/ChoiceModal";
 import { ImageCarousel } from "@/components/ImageCarousel";
 
 const ShopProfilePage = () => {
@@ -814,30 +812,32 @@ const ShopProfilePage = () => {
           </div>
         </main>
 
-        <RatingModal 
+        <FeedbackModal 
           isOpen={ratingModal.isOpen}
           onClose={() => setRatingModal(prev => ({ ...prev, isOpen: false }))}
-          productId={ratingModal.productId}
-          productName={ratingModal.productName}
-          initialRating={ratingModal.initialRating}
-          onRatingUpdate={() => {
+          id={ratingModal.productId}
+          name={ratingModal.productName}
+          type="product"
+          onSuccess={() => {
             // Refresh shop data or products
             window.location.reload();
           }}
         />
 
-        <ShareModal 
+        <UniversalShareModal 
           isOpen={shareModal.isOpen}
           onClose={() => setShareModal(prev => ({ ...prev, isOpen: false }))}
           url={shareModal.url}
           title={shareModal.title}
+          type="product"
         />
 
-        <ShareShopModal 
+        <UniversalShareModal 
           isOpen={shareShopModal.isOpen}
           onClose={() => setShareShopModal(prev => ({ ...prev, isOpen: false }))}
           url={shareShopModal.url}
-          shopName={shareShopModal.shopName}
+          title={shareShopModal.shopName}
+          type="shop"
         />
 
         <CommentModal
@@ -848,19 +848,35 @@ const ShopProfilePage = () => {
           onCommentAdded={refetchProducts}
         />
 
-        <ShopRatingModal
+        <FeedbackModal
           isOpen={shopRatingModal.isOpen}
           onClose={() => setShopRatingModal(prev => ({ ...prev, isOpen: false }))}
-          shopId={shopRatingModal.shopId}
-          shopName={shopRatingModal.shopName}
+          id={shopRatingModal.shopId}
+          name={shopRatingModal.shopName}
+          type="shop"
         />
 
         {repostPopover.isOpen && (
-          <RepostModal
-            isOpen={repostPopover.isOpen}
-            onClose={() => setRepostPopover({ isOpen: false, productId: null, position: { top: 0, left: 0 } })}
-            position={repostPopover.position}
-          />
+        <ChoiceModal
+          isOpen={repostPopover.isOpen}
+          onClose={() => setRepostPopover({ isOpen: false, productId: null, position: { top: 0, left: 0 } })}
+          layout="popover"
+          position={repostPopover.position}
+          items={[
+            {
+              id: "repost",
+              label: "Repost",
+              icon: Repeat2,
+              onClick: () => toast.success("Reposted to your feed"),
+            },
+            {
+              id: "resell",
+              label: "Resell",
+              icon: ShoppingCart,
+              onClick: () => toast.success("Added to your resell list"),
+            }
+          ]}
+        />
         )}
 
         {/* Right Sidebar */}

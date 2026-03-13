@@ -22,14 +22,16 @@ import {
   BadgeCheck,
   LayoutDashboard,
   CreditCard,
-  Plus
+  Plus,
+  Camera,
+  ShoppingBag
 } from "lucide-react";
 import SearchBar from "@/components/searchBar";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { ThemeToggle, GoldCheck } from "@/components/CommonUI";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { useUser } from "@/hooks/useUser";
-import { CreateChoiceModal } from "@/components/CreateChoiceModal";
+import ChoiceModal from "@/components/ChoiceModal";
 import { CreateUpdateModal } from "@/components/CreateUpdateModal";
 import { ProductCreateModal } from "@/components/ProductCreateModal";
 
@@ -388,11 +390,29 @@ const Navbar = () => {
     </div>
 
     {/* Creation Modals */}
-    <CreateChoiceModal 
+    <ChoiceModal 
       isOpen={showCreateChoice} 
       onClose={() => setShowCreateChoice(false)} 
-      onSelectUpdate={() => setShowCreateUpdate(true)}
-      onSelectProduct={() => setShowCreateProduct(true)}
+      title="Create"
+      subtitle="Select what you want to post"
+      items={[
+        {
+          id: "update",
+          label: "Post Update",
+          description: "Share a photo or video with followers",
+          icon: Camera,
+          onClick: () => setShowCreateUpdate(true),
+          variant: "primary" as const
+        },
+        {
+          id: "product",
+          label: "New Product",
+          description: "List a new item for sale in your shop",
+          icon: ShoppingBag,
+          onClick: () => setShowCreateProduct(true),
+          variant: "secondary" as const
+        }
+      ]}
     />
     <CreateUpdateModal 
       isOpen={showCreateUpdate} 

@@ -19,6 +19,7 @@ import Link from "next/link";
 import api from "@/lib/api";
 import imageCompression from 'browser-image-compression';
 import { useQueryClient } from "@tanstack/react-query";
+import { ConfirmationModal } from "@/components/ConfirmationModal";
 
 const SellerSettingsPage = () => {
   const router = useRouter();
@@ -29,6 +30,7 @@ const SellerSettingsPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState<"shop" | "account" | null>(null);
+  const [showDeleteAccountConfirm, setShowDeleteAccountConfirm] = useState(false);
   const [activeTab, setActiveTab] = useState<"profile" | "branding" | "danger">("profile");
   
   const [formData, setFormData] = useState({
@@ -288,10 +290,10 @@ const SellerSettingsPage = () => {
   };
 
   const handleDeleteAccount = async () => {
-    if (!window.confirm("PERMANENT ACTION: Are you sure you want to delete your entire account? This will delete your shop, all products, and your user profile forever. This cannot be undone.")) {
-      return;
-    }
+    setShowDeleteAccountConfirm(true);
+  };
 
+  const confirmDeleteAccount = async () => {
     setIsDeleting("account");
 
     try {
@@ -310,6 +312,7 @@ const SellerSettingsPage = () => {
       toast.error(message);
     } finally {
       setIsDeleting(null);
+      setShowDeleteAccountConfirm(false);
     }
   };
 
@@ -559,6 +562,18 @@ const SellerSettingsPage = () => {
           </div>
         )}
       </div>
+
+      <ConfirmationModal
+        isOpen={showDeleteAccountConfirm}
+        onClose={() => setShowDeleteAccountConfirm(false)}
+        onConfirm={confirmDeleteAccount}
+        title="Delete Account?"
+        description="PERMANENT ACTION: Are you sure you want to delete your entire account? This will delete your shop, all products, and your user profile forever. This cannot be undone."
+        confirmText="Delete Account"
+        variant="danger"
+        icon={Trash2}
+        isLoading={isDeleting === "account"}
+      />
     </div>
   );
 };

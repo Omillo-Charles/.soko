@@ -1,21 +1,57 @@
 "use client";
 
-import React from "react";
-import { X, Copy, Facebook, Link as LinkIcon, Instagram } from "lucide-react";
+import React, { useState } from "react";
+import { X, Copy, Check, Facebook, Link as LinkIcon, Instagram } from "lucide-react";
 import { toast } from "sonner";
-import { useState } from "react";
 
-interface ShareShopModalProps {
+export type ShareType = "product" | "shop" | "update";
+
+interface UniversalShareModalProps {
   isOpen: boolean;
   onClose: () => void;
   url: string;
-  shopName: string;
+  title: string;
+  type?: ShareType;
 }
 
-const ShareShopModal = ({ isOpen, onClose, url, shopName }: ShareShopModalProps) => {
+export const UniversalShareModal: React.FC<UniversalShareModalProps> = ({ 
+  isOpen, 
+  onClose, 
+  url, 
+  title,
+  type = "product"
+}) => {
   const [copied, setCopied] = useState(false);
 
   if (!isOpen) return null;
+
+  const getShareConfig = () => {
+    const encodedUrl = encodeURIComponent(url);
+    const encodedTitle = encodeURIComponent(title);
+
+    switch (type) {
+      case "shop":
+        return {
+          label: "Shop",
+          whatsapp: `https://wa.me/?text=${encodeURIComponent("Check out this shop: " + title + " " + url)}`,
+          x: `https://twitter.com/intent/tweet?text=${encodeURIComponent("Check out " + title + " on dotSoko!")}&url=${encodedUrl}`,
+        };
+      case "update":
+        return {
+          label: "Update",
+          whatsapp: `https://wa.me/?text=${encodeURIComponent("Check out this update from " + title + ": " + url)}`,
+          x: `https://twitter.com/intent/tweet?text=${encodeURIComponent("Check out this update from " + title)}&url=${encodedUrl}`,
+        };
+      default:
+        return {
+          label: "Product",
+          whatsapp: `https://wa.me/?text=${encodeURIComponent(title + " " + url)}`,
+          x: `https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`,
+        };
+    }
+  };
+
+  const config = getShareConfig();
 
   const shareLinks = [
     {
@@ -27,7 +63,7 @@ const ShareShopModal = ({ isOpen, onClose, url, shopName }: ShareShopModalProps)
       ),
       color: "bg-[#25D366]",
       hoverColor: "hover:bg-[#20bd5b]",
-      url: `https://wa.me/?text=${encodeURIComponent("Check out this shop: " + shopName + " " + url)}`,
+      url: config.whatsapp,
     },
     {
       name: "X",
@@ -38,7 +74,7 @@ const ShareShopModal = ({ isOpen, onClose, url, shopName }: ShareShopModalProps)
       ),
       color: "bg-black",
       hoverColor: "hover:bg-slate-800",
-      url: `https://twitter.com/intent/tweet?text=${encodeURIComponent("Check out " + shopName + " on Duuka!")}&url=${encodeURIComponent(url)}`,
+      url: config.x,
     },
     {
       name: "Facebook",
@@ -74,7 +110,7 @@ const ShareShopModal = ({ isOpen, onClose, url, shopName }: ShareShopModalProps)
       onClick={onClose}
     >
       <div 
-        className="bg-background w-full max-w-sm rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 border border-border"
+        className="bg-background w-full max-sm rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 border border-border"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="relative p-8">
@@ -92,44 +128,42 @@ const ShareShopModal = ({ isOpen, onClose, url, shopName }: ShareShopModalProps)
 
             <div className="space-y-2">
               <h3 className="text-xl font-black text-foreground leading-tight">
-                Share Shop
+                Share {config.label}
               </h3>
               <p className="text-muted-foreground font-medium text-sm px-4">
-                Share <span className="text-foreground font-bold">"{shopName}"</span> with your friends
+                Share <span className="text-foreground font-bold">"{title}"</span> with your friends
               </p>
             </div>
 
             <div className="grid grid-cols-4 gap-4 w-full">
-              {shareLinks.map((link) => (
-                <button
-                  key={link.name}
-                  onClick={() => handleShare(link.url)}
-                  className="flex flex-col items-center gap-2 group"
-                >
-                  <div className={`w-12 h-12 ${link.color} ${link.hoverColor} text-white rounded-2xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-lg shadow-black/5`}>
-                    {link.icon}
-                  </div>
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{link.name}</span>
-                </button>
+              {shareLinks.map((social) => (
+                <div key={social.name} className="flex flex-col items-center gap-2">
+                  <button
+                    onClick={() => handleShare(social.url)}
+                    className={`${social.color} ${social.hoverColor} w-12 h-12 rounded-2xl flex items-center justify-center text-primary-foreground transition-all hover:scale-110 active:scale-95 shadow-lg shadow-primary/10`}
+                    title={`Share on ${social.name}`}
+                  >
+                    {social.icon}
+                  </button>
+                  <span className="text-[10px] font-bold text-muted-foreground">{social.name}</span>
+                </div>
               ))}
             </div>
 
-            <div className="w-full pt-2">
-              <div className="relative group">
-                <input
-                  type="text"
-                  readOnly
+            <div className="w-full pt-4">
+              <div className="relative flex items-center">
+                <input 
+                  type="text" 
+                  readOnly 
                   value={url}
-                  className="w-full bg-muted/50 border border-border rounded-2xl px-4 py-3.5 pr-12 text-xs font-medium text-muted-foreground focus:outline-none focus:ring-0"
+                  className="w-full bg-muted border border-border rounded-2xl py-3 px-4 pr-12 text-sm text-muted-foreground font-medium outline-none focus:border-primary/30 transition-colors"
                 />
                 <button
                   onClick={handleCopy}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-background border border-border rounded-xl text-muted-foreground hover:text-primary hover:border-primary/30 transition-all shadow-sm active:scale-95"
+                  className="absolute right-2 p-2 bg-background rounded-xl shadow-sm border border-border text-muted-foreground hover:text-primary transition-all active:scale-90"
                 >
                   {copied ? (
-                    <div className="flex items-center gap-1.5 px-1">
-                      <span className="text-[10px] font-black text-primary uppercase">Copied</span>
-                    </div>
+                    <span className="text-[10px] font-black text-primary uppercase px-1">Copied</span>
                   ) : (
                     <Copy className="w-4 h-4" />
                   )}
@@ -142,5 +176,3 @@ const ShareShopModal = ({ isOpen, onClose, url, shopName }: ShareShopModalProps)
     </div>
   );
 };
-
-export default ShareShopModal;

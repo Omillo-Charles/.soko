@@ -24,6 +24,7 @@ import {
 import { toast } from "sonner";
 import api from "@/lib/api";
 import { ProductCreateModal } from "@/components/ProductCreateModal";
+import { ConfirmationModal } from "@/components/ConfirmationModal";
 
 const SellerProductsContent = () => {
   const router = useRouter();
@@ -35,6 +36,7 @@ const SellerProductsContent = () => {
   const [shop, setShop] = useState<any>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any>(null);
+  const [productToDelete, setProductToDelete] = useState<string | null>(null);
 
   const fetchProducts = async () => {
     try {
@@ -80,8 +82,12 @@ const SellerProductsContent = () => {
   }, [searchParams]);
 
   const handleDelete = async (productId: string) => {
-    if (!window.confirm("Are you sure you want to delete this product?")) return;
-    setIsDeleting(productId);
+    setProductToDelete(productId);
+  };
+
+  const confirmDelete = async () => {
+    if (!productToDelete) return;
+    const productId = productToDelete;
 
     try {
       const res = await api.delete(`/products/${productId}`);
@@ -96,6 +102,7 @@ const SellerProductsContent = () => {
       toast.error("An error occurred during deletion");
     } finally {
       setIsDeleting(null);
+      setProductToDelete(null);
     }
   };
 
@@ -291,6 +298,18 @@ const SellerProductsContent = () => {
           fetchProducts();
         }}
         shopName={shop?.name || "Your Shop"}
+      />
+
+      <ConfirmationModal
+        isOpen={!!productToDelete}
+        onClose={() => setProductToDelete(null)}
+        onConfirm={confirmDelete}
+        title="Purge Product?"
+        description="Are you sure you want to delete this product? This action will erase its digital footprint forever."
+        confirmText="Purge"
+        variant="danger"
+        icon={Trash2}
+        isLoading={!!isDeleting}
       />
     </div>
   );
