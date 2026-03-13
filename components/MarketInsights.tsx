@@ -53,7 +53,7 @@ export const MarketInsights = () => {
               >
                 <div className="w-16 h-16 rounded-2xl overflow-hidden border border-border shadow-sm shrink-0">
                   <img 
-                    src={shop.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${shop.name}`} 
+                    src={shop.avatar || '/defaultAvatar.jpeg'} 
                     alt={shop.name} 
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />

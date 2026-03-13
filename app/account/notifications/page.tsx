@@ -15,51 +15,16 @@ import {
   ChevronRight,
   MoreVertical
 } from "lucide-react";
+import { SettingsPageHeader } from "@/components/SettingsPageHeader";
 
 const NotificationsPage = () => {
   const [activeTab, setActiveTab] = useState("all");
 
   const notifications = [
-    {
-      id: "1",
-      type: "order",
-      title: "Order Delivered",
-      message: "Your package from Gadget Store has been delivered successfully.",
-      time: "2 hours ago",
-      isRead: false,
-      icon: Package,
-      color: "text-emerald-500 bg-emerald-500/10"
-    },
-    {
-      id: "2",
-      type: "offer",
-      title: "New Flash Sale!",
-      message: "Get up to 50% off on all accessories for the next 4 hours.",
-      time: "5 hours ago",
-      isRead: true,
-      icon: Tag,
-      color: "text-orange-500 bg-orange-500/10"
-    },
-    {
-      id: "3",
-      type: "security",
-      title: "Account Login",
-      message: "New login detected from a Safari browser on macOS.",
-      time: "Yesterday",
-      isRead: true,
-      icon: ShieldCheck,
-      color: "text-blue-500 bg-blue-500/10"
-    },
-    {
-      id: "4",
-      type: "order",
-      title: "Order Confirmed",
-      message: "Your order #SOKO-8921 has been confirmed and is being processed.",
-      time: "2 days ago",
-      isRead: true,
-      icon: Package,
-      color: "text-emerald-500 bg-emerald-500/10"
-    }
+    { id: "1", type: "order", title: "Order Delivered", message: "Your package from Gadget Store has been delivered successfully.", time: "2 hours ago", isRead: false, icon: Package, color: "text-emerald-500 bg-emerald-500/10" },
+    { id: "2", type: "offer", title: "New Flash Sale!", message: "Get up to 50% off on all accessories for the next 4 hours.", time: "5 hours ago", isRead: true, icon: Tag, color: "text-orange-500 bg-orange-500/10" },
+    { id: "3", type: "security", title: "Account Login", message: "New login detected from a Safari browser on macOS.", time: "Yesterday", isRead: true, icon: ShieldCheck, color: "text-blue-500 bg-blue-500/10" },
+    { id: "4", type: "order", title: "Order Confirmed", message: "Your order #SOKO-8921 has been confirmed and is being processed.", time: "2 days ago", isRead: true, icon: Package, color: "text-emerald-500 bg-emerald-500/10" }
   ];
 
   const tabs = [
@@ -69,29 +34,30 @@ const NotificationsPage = () => {
     { id: "security", label: "Security" }
   ];
 
-  const filteredNotifications = activeTab === "all" 
-    ? notifications 
+  const filteredNotifications = activeTab === "all"
+    ? notifications
     : notifications.filter(n => n.type === activeTab.slice(0, -1));
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
-      
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-1">
-        <div className="space-y-0.5">
-          <h1 className="text-2xl md:text-3xl font-black text-foreground tracking-tighter uppercase leading-none underline decoration-primary/30 underline-offset-8">Notifications</h1>
-          <p className="text-muted-foreground font-medium text-base">Stay updated with your latest alerts and activities.</p>
-        </div>
-        <div className="flex items-center gap-3">
+
+      <SettingsPageHeader
+        icon={<Bell className="w-12 h-12 text-primary" />}
+        title="Notifications"
+        description="Stay updated with the latest alerts, order updates, and security activity."
+        glowColor="from-primary/30 via-orange-500/30 to-primary/30"
+        action={
+          <div className="flex items-center gap-3">
             <button className="p-3 bg-muted/50 hover:bg-muted text-muted-foreground rounded-2xl transition-all border border-border">
-                <Search className="w-5 h-5" />
+              <Search className="w-5 h-5" />
             </button>
             <button className="flex items-center gap-2 bg-primary text-primary-foreground px-5 py-3 rounded-[1.2rem] font-black text-[10px] uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/20">
-                <CheckCircle2 className="w-4 h-4" />
-                Mark all read
+              <CheckCircle2 className="w-4 h-4" />
+              Mark all read
             </button>
-        </div>
-      </div>
+          </div>
+        }
+      />
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
         

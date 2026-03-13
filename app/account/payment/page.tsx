@@ -13,83 +13,41 @@ import {
   Trash2,
   Lock
 } from "lucide-react";
+import { SettingsPageHeader } from "@/components/SettingsPageHeader";
 
 const PaymentMethodsPage = () => {
   const savedCards = [
-    {
-      id: "1",
-      type: "Visa",
-      last4: "4242",
-      expiry: "12/25",
-      isDefault: true,
-      color: "from-blue-600 to-indigo-700"
-    },
-    {
-      id: "2",
-      type: "Mastercard",
-      last4: "8888",
-      expiry: "09/24",
-      isDefault: false,
-      color: "from-orange-500 to-red-600"
-    }
+    { id: "1", type: "Visa", last4: "4242", expiry: "12/25", isDefault: true, color: "from-blue-600 to-indigo-700" },
+    { id: "2", type: "Mastercard", last4: "8888", expiry: "09/24", isDefault: false, color: "from-orange-500 to-red-600" }
   ];
 
   const mobileMoney = [
-    {
-      id: "mp-1",
-      provider: "M-Pesa",
-      phone: "+254 712 *** 890",
-      isDefault: true
-    },
-    {
-      id: "am-1",
-      provider: "Airtel Money",
-      phone: "+254 733 *** 123",
-      isDefault: false
-    }
+    { id: "mp-1", provider: "M-Pesa", phone: "+254 712 *** 890", isDefault: true },
+    { id: "am-1", provider: "Airtel Money", phone: "+254 733 *** 123", isDefault: false }
   ];
 
   const recentTransactions = [
-    {
-      id: "trx-1",
-      desc: "Premium Subscription",
-      amount: -350,
-      date: "Mar 10, 2026",
-      status: "Successful",
-      type: "debit"
-    },
-    {
-      id: "trx-2",
-      desc: "Payout - Order TRX-8921",
-      amount: 12450,
-      date: "Mar 08, 2026",
-      status: "Successful",
-      type: "credit"
-    },
-    {
-      id: "trx-3",
-      desc: "Wallet Top-up",
-      amount: 5000,
-      date: "Mar 05, 2026",
-      status: "Successful",
-      type: "credit"
-    }
+    { id: "trx-1", desc: "Premium Subscription", amount: -350, date: "Mar 10, 2026", status: "Successful", type: "debit" },
+    { id: "trx-2", desc: "Payout - Order TRX-8921", amount: 12450, date: "Mar 08, 2026", status: "Successful", type: "credit" },
+    { id: "trx-3", desc: "Wallet Top-up", amount: 5000, date: "Mar 05, 2026", status: "Successful", type: "credit" }
   ];
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
-      
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-1">
-        <div className="space-y-0.5">
-          <h1 className="text-2xl md:text-3xl font-black text-foreground tracking-tighter uppercase leading-none underline decoration-primary/30 underline-offset-8">Payment Methods</h1>
-          <p className="text-muted-foreground font-medium text-base">Manage your digital assets and transaction protocols.</p>
-        </div>
-        <button className="flex items-center justify-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-[1.2rem] font-black text-[10px] uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/20">
-          <Plus className="w-4 h-4" />
-          Add Method
-        </button>
-      </div>
+
+      <SettingsPageHeader
+        icon={<CreditCard className="w-12 h-12 text-primary" />}
+        badge={{ label: "Encrypted & Secured", icon: <ShieldCheck className="w-3.5 h-3.5" /> }}
+        title="Payment Methods"
+        description="Manage your digital assets and transaction protocols securely."
+        glowColor="from-primary/30 via-indigo-500/30 to-primary/30"
+        action={
+          <button className="flex items-center justify-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-[1.2rem] font-black text-[10px] uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/20">
+            <Plus className="w-4 h-4" />
+            Add Method
+          </button>
+        }
+      />
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
         

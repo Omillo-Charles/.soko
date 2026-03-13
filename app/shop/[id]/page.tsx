@@ -161,7 +161,7 @@ const ShopProfilePage = () => {
       id: String(s._id || s.id || `shop-${Math.random()}`),
       name: String(s.name || "Unknown Shop"),
       handle: s.username ? `@${s.username}` : `@${String(s.name || "shop").toLowerCase().replace(/\s+/g, "_")}`,
-      avatar: s.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${s.name || "shop"}`,
+      avatar: s.avatar || '/defaultAvatar.jpeg',
       followers: Number(s.followersCount || s.followers?.length || 0),
       verified: Boolean(s.isVerified || false)
     }));
@@ -295,7 +295,7 @@ const ShopProfilePage = () => {
               <div className="relative flex justify-between items-end -mt-16 mb-4">
                 <div className="w-32 h-32 rounded-[2.5rem] border-4 border-background dark:border-slate-900 overflow-hidden bg-muted dark:bg-slate-800 shadow-xl">
                   <img 
-                    src={shop.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${shop.name}`} 
+                    src={shop.avatar || '/defaultAvatar.jpeg'} 
                     alt={shop.name} 
                     className="w-full h-full object-cover" 
                   />
@@ -416,7 +416,7 @@ const ShopProfilePage = () => {
                         <div className="shrink-0">
                           <div className="w-10 h-10 rounded-full overflow-hidden border border-border bg-muted">
                             <img 
-                              src={shop.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${shop.name}`} 
+                              src={shop.avatar || '/defaultAvatar.jpeg'} 
                               alt={shop.name} 
                               className="w-full h-full object-cover" 
                             />
@@ -641,7 +641,7 @@ const ShopProfilePage = () => {
                             <div className="flex items-center gap-3">
                               <div className="w-10 h-10 rounded-full overflow-hidden bg-muted">
                                 <img 
-                                  src={review.user?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${review.user?.name || 'user'}`} 
+                                  src={review.user?.avatar || '/defaultAvatar.jpeg'} 
                                   alt={review.user?.name} 
                                   className="w-full h-full object-cover"
                                 />
@@ -697,7 +697,7 @@ const ShopProfilePage = () => {
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded-full overflow-hidden bg-muted shrink-0">
                           <img 
-                            src={follower.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${follower.name || 'user'}`} 
+                            src={follower.avatar || '/defaultAvatar.jpeg'} 
                             alt={follower.name || 'User'} 
                             className="w-full h-full object-cover" 
                           />
@@ -739,7 +739,7 @@ const ShopProfilePage = () => {
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded-full overflow-hidden bg-muted shrink-0">
                           <img 
-                            src={followedShop.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${followedShop.name || 'shop'}`} 
+                            src={followedShop.avatar || '/defaultAvatar.jpeg'} 
                             alt={followedShop.name || 'Shop'} 
                             className="w-full h-full object-cover" 
                           />

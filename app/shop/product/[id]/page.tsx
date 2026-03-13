@@ -93,7 +93,7 @@ const ProductDetailsPage = () => {
         id: String(s._id || s.id || `shop-${Math.random()}`),
         name: String(s.name || "Unknown Shop"),
         handle: s.username ? `@${s.username}` : `@${String(s.name || "shop").toLowerCase().replace(/\s+/g, "_")}`,
-        avatar: s.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${s.name || "shop"}`,
+        avatar: s.avatar || '/defaultAvatar.jpeg',
         followersCount: Number(s.followersCount || s.followers?.length || 0),
         verified: Boolean(s.isVerified || false),
         isFollowing: isFollowing,
@@ -211,7 +211,7 @@ const ProductDetailsPage = () => {
                     return (
                       <Link href={`/shop/${shopIdOrHandle}`} className="group flex items-center gap-3">
                         <div className="w-9 h-9 rounded-full bg-muted overflow-hidden border border-border shadow-sm">
-                          <img src={product.shop?.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${product.shop?.name}`} className="w-full h-full object-cover" alt="" />
+                          <img src={product.shop?.avatar || '/defaultAvatar.jpeg'} className="w-full h-full object-cover" alt="" />
                         </div>
                         <div>
                           <div className="text-[13px] font-black text-foreground group-hover:text-primary transition-colors flex items-center gap-0.5">
@@ -396,7 +396,7 @@ const ProductDetailsPage = () => {
                     <div key={comment._id} className="bg-muted/50 border border-border rounded-2xl p-4 space-y-2.5 relative group">
                       <div className="flex items-center gap-2.5">
                         <div className="w-7 h-7 rounded-full overflow-hidden bg-background border border-border">
-                          <img src={comment.user?.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${comment.user?.name}`} alt="" />
+                          <img src={comment.user?.avatar || '/defaultAvatar.jpeg'} alt="" />
                         </div>
                         <div>
                           <p className="text-xs font-black text-foreground">{comment.user?.name}</p>

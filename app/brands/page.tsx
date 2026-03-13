@@ -163,7 +163,7 @@ const BrandsPage = () => {
                   <div className="relative z-10 flex items-end gap-4 -mt-10 mb-4 px-2">
                     <div className="w-20 aspect-square rounded-3xl border-4 border-background overflow-hidden bg-muted shadow-xl group-hover:scale-110 transition-transform duration-700">
                       <img 
-                        src={shop.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${shop.name}`} 
+                        src={shop.avatar || '/defaultAvatar.jpeg'} 
                         alt={shop.name} 
                         className="w-full h-full object-cover" 
                       />

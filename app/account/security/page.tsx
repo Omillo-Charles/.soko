@@ -16,6 +16,7 @@ import {
   History
 } from "lucide-react";
 import { useUser } from "@/hooks/useUser";
+import { SettingsPageHeader } from "@/components/SettingsPageHeader";
 
 const SecurityPage = () => {
   const { user, updatePassword, isUpdatingPassword, deleteAccount, isDeletingAccount } = useUser();
@@ -62,7 +63,6 @@ const SecurityPage = () => {
     setError(null);
     try {
       await deleteAccount(deleteData);
-      // Hook handles logout and redirect on success
     } catch (err: any) {
       setError(err.response?.data?.message || "Failed to delete account");
     }
@@ -70,35 +70,14 @@ const SecurityPage = () => {
 
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      
-      {/* Page Header */}
-      <div className="relative group p-0.5">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/30 via-red-500/30 to-primary/30 blur-3xl opacity-50 transition-opacity duration-1000" />
-        <div className="relative overflow-hidden rounded-[3.5rem] border border-border shadow-sm dark:border-border/50 bg-background/40 backdrop-blur-3xl shadow-2xl p-8 md:p-14">
-          <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-10">
-            <div className="flex items-center gap-6 md:gap-12">
-              <div className="relative shrink-0">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary to-secondary rounded-[3rem] blur-2xl opacity-40 group-hover:opacity-60 transition-all duration-700" />
-                <div className="relative w-24 h-24 md:w-32 md:h-32 p-2 rounded-[3.2rem] bg-gradient-to-br from-primary/30 to-secondary/30 backdrop-blur-md shadow-2xl">
-                  <div className="w-full h-full rounded-[2.8rem] bg-background border border-border dark:border-border/50 grid place-items-center">
-                    <ShieldCheck className="w-12 h-12 text-primary" />
-                  </div>
-                </div>
-              </div>
-              <div className="space-y-4">
-                <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[11px] font-black text-emerald-500 uppercase tracking-[0.2em]">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                  Account Secured
-                </div>
-                <h1 className="text-4xl md:text-5xl font-black text-foreground tracking-tighter leading-none">Security Center</h1>
-                <p className="text-muted-foreground text-base md:text-xl font-medium max-w-xl leading-relaxed">
-                  Manage your credentials, login security, and account status to keep your assets safe.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+
+      <SettingsPageHeader
+        icon={<ShieldCheck className="w-12 h-12 text-primary" />}
+        badge={{ label: "Account Secured", icon: <CheckCircle2 className="w-3.5 h-3.5" />, className: "!bg-emerald-500/10 !border-emerald-500/20 !text-emerald-500" }}
+        title="Security Center"
+        description="Manage your credentials, login security, and account status to keep your assets safe."
+        glowColor="from-primary/30 via-red-500/30 to-primary/30"
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
         

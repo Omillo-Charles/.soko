@@ -13,27 +13,11 @@ import {
   CheckCircle2
 } from "lucide-react";
 import Link from "next/link";
+import { SettingsPageHeader } from "@/components/SettingsPageHeader";
 
-// Mock data to demonstrate the UI until API Integration
 const MOCK_ADDRESSES = [
-  {
-    id: "1",
-    type: "home",
-    name: "John Doe",
-    phone: "+254 712 345 678",
-    city: "Nairobi",
-    street: "Kilimani, Argwings Kodhek Rd",
-    isDefault: true
-  },
-  {
-    id: "2",
-    type: "work",
-    name: "John Doe",
-    phone: "+254 712 345 678",
-    city: "Nairobi",
-    street: "Westlands, Waiyaki Way",
-    isDefault: false
-  }
+  { id: "1", type: "home", name: "John Doe", phone: "+254 712 345 678", city: "Nairobi", street: "Kilimani, Argwings Kodhek Rd", isDefault: true },
+  { id: "2", type: "work", name: "John Doe", phone: "+254 712 345 678", city: "Nairobi", street: "Westlands, Waiyaki Way", isDefault: false }
 ];
 
 const SavedAddresses = () => {
@@ -43,10 +27,7 @@ const SavedAddresses = () => {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   const handleSetDefault = (id: string) => {
-    setAddresses(addresses.map(addr => ({
-      ...addr,
-      isDefault: addr.id === id
-    })));
+    setAddresses(addresses.map(addr => ({ ...addr, isDefault: addr.id === id })));
     setActiveDropdown(null);
   };
 
@@ -57,26 +38,22 @@ const SavedAddresses = () => {
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      
-      {/* Header Section */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center">
-            <MapPin className="w-6 h-6 text-primary" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-black text-foreground tracking-tight">Saved Addresses</h1>
-            <p className="text-muted-foreground font-medium text-sm mt-1">Manage where your goods get delivered</p>
-          </div>
-        </div>
-        <button 
-          onClick={() => setShowAddModal(true)}
-          className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground font-black rounded-[1.5rem] hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/25 lg:self-start"
-        >
-          <Plus className="w-5 h-5" />
-          Add Address
-        </button>
-      </div>
+
+      <SettingsPageHeader
+        icon={<MapPin className="w-12 h-12 text-primary" />}
+        title="Saved Addresses"
+        description="Manage where your goods get delivered. Set a default for faster checkout."
+        glowColor="from-primary/30 via-blue-500/30 to-primary/30"
+        action={
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground font-black rounded-[1.5rem] hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/25"
+          >
+            <Plus className="w-5 h-5" />
+            Add Address
+          </button>
+        }
+      />
 
       {/* Address List */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
