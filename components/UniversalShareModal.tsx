@@ -110,7 +110,7 @@ export const UniversalShareModal: React.FC<UniversalShareModalProps> = ({
       onClick={onClose}
     >
       <div 
-        className="bg-background w-full max-sm rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 border border-border"
+        className="bg-background w-full max-w-sm rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 border border-border"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="relative p-8">
@@ -122,8 +122,8 @@ export const UniversalShareModal: React.FC<UniversalShareModalProps> = ({
           </button>
 
           <div className="flex flex-col items-center text-center space-y-6">
-            <div className="w-20 h-20 bg-primary/5 rounded-3xl flex items-center justify-center">
-              <LinkIcon className="w-10 h-10 text-primary" />
+            <div className="w-16 h-16 bg-primary/5 rounded-3xl flex items-center justify-center">
+              <LinkIcon className="w-8 h-8 text-primary" />
             </div>
 
             <div className="space-y-2">

@@ -63,7 +63,7 @@ export const PremiumUpgradeModal = ({
             
             setTimeout(() => {
               onClose();
-              window.location.href = "/premium/dashboard";
+              window.location.href = "/account/seller";
             }, 1000);
           } else if (response.data.status === 'failed') {
             setIsWaitingForCallback(false);
@@ -98,7 +98,7 @@ export const PremiumUpgradeModal = ({
             
             setTimeout(() => {
                 onClose();
-                window.location.href = "/premium/dashboard";
+                window.location.href = "/account/seller";
             }, 1000);
         } else if (response.data.status === 'failed') {
              setIsWaitingForCallback(false);

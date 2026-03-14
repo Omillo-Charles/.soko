@@ -258,7 +258,7 @@ const Navbar = () => {
                     >
                       <div className="p-1">
                         <Link 
-                          href="/premium/dashboard" 
+                          href="/account/seller" 
                           onClick={() => setShowPremiumMenu(false)}
                           className="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-primary rounded-xl transition-colors group"
                         >
